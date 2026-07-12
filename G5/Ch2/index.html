@@ -1,1 +1,815 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>पेड़ों की महिमा - रिवर्स ड्रैग एंड ड्रॉप</title>
+    <style>
+        :root {
+            --forest-bg: #1e4d2b;
+            --leaf-green: #2d6a4f;
+            --light-leaf: #d8f3dc;
+            --agree-color: #2a9d8f;
+            --agree-light: #e6f6f4;
+            --disagree-color: #e63946;
+            --disagree-light: #ffebee;
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --text-main: #1b4332;
+            --text-muted: #475569;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #a8dede 0%, #c4faf8 35%, #9fd3c7 35%, #38b000 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: "🌳";
+            position: absolute;
+            bottom: 15px;
+            left: 3%;
+            font-size: 75px;
+            opacity: 0.6;
+            z-index: 0;
+        }
+        body::after {
+            content: "🌲";
+            position: absolute;
+            bottom: 25px;
+            right: 3%;
+            font-size: 75px;
+            opacity: 0.6;
+            z-index: 0;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 620px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 560px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border: 4px solid var(--leaf-green);
+            z-index: 1;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* 1) Splash Screen (5 Seconds) */
+        #splash-screen {
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+        }
+
+        .splash-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--forest-bg);
+            text-align: center;
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(0.95); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* 2) Instruction Screen */
+        #instruction-screen {
+            align-items: center;
+            text-align: center;
+        }
+
+        .ins-title {
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--forest-bg);
+        }
+
+        .ins-box {
+            background: #f4fcf7;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            text-align: left;
+            width: 100%;
+            border: 2px dashed var(--leaf-green);
+        }
+
+        .ins-item {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-action {
+            background: var(--leaf-green);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 15px rgba(45, 106, 79, 0.3);
+        }
+
+        .btn-action:hover {
+            background: var(--forest-bg);
+        }
+
+        /* 3) Main Game Screen */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+
+        .competency-badge {
+            background: #e8f5e9;
+            color: var(--forest-bg);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid var(--leaf-green);
+            max-width: 65%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .volume-slider {
+            width: 60px;
+            accent-color: var(--leaf-green);
+            cursor: pointer;
+        }
+
+        .mute-btn {
+            background: none;
+            border: 1px solid var(--leaf-green);
+            padding: 4px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #f4fcf7;
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid var(--light-leaf);
+        }
+
+        /* Statement Card Container */
+        .statement-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 150px;
+            margin-bottom: 24px;
+        }
+
+        .drop-target-card {
+            background: #ffffff;
+            border: 3px dashed var(--leaf-green);
+            border-radius: 18px;
+            padding: 20px;
+            font-size: 17px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-main);
+            width: 95%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .drop-target-card::before {
+            content: "🍃";
+            position: absolute;
+            top: -12px;
+            left: 15px;
+            font-size: 20px;
+        }
+
+        /* Dynamic Flashing Background Colors */
+        .drop-target-card.hovered {
+            background: #f0fdf4;
+            border-color: #16a34a;
+            transform: scale(1.02);
+        }
+
+        .drop-target-card.correct-flash {
+            background-color: #d8f3dc !important;
+            border-color: #2a9d8f !important;
+            color: #1b4332 !important;
+        }
+
+        .drop-target-card.wrong-flash {
+            background-color: #ffe3e3 !important;
+            border-color: #e63946 !important;
+            color: #b91c1c !important;
+        }
+
+        /* Blinking Buttons Wrapper */
+        .drag-items-container {
+            display: flex;
+            gap: 16px;
+            margin-top: auto;
+            min-height: 100px;
+            position: relative;
+        }
+
+        .drag-btn {
+            flex: 1;
+            border-radius: 18px;
+            padding: 16px 10px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 18px;
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            touch-action: none;
+            z-index: 10;
+            animation: pulseBlink 1.8s infinite ease-in-out;
+        }
+
+        .drag-btn:active {
+            cursor: grabbing;
+            z-index: 99;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: none; 
+        }
+
+        .drag-btn[data-choice="agree"] {
+            background: #ffffff;
+            border: 3px solid var(--agree-color);
+            color: var(--agree-color);
+        }
+
+        .drag-btn[data-choice="disagree"] {
+            background: #ffffff;
+            border: 3px solid var(--disagree-color);
+            color: var(--disagree-color);
+        }
+
+        @keyframes pulseBlink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.75; transform: scale(0.96); }
+        }
+
+        .btn-icon {
+            font-size: 28px;
+        }
+
+        .feedback-msg {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 14px;
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+            display: none;
+        }
+
+        /* 4) End Screen */
+        #result-screen {
+            text-align: center;
+            align-items: center;
+        }
+
+        .congrats-art {
+            font-size: 64px;
+            margin-bottom: 10px;
+            animation: joyBounce 1.5s infinite ease-in-out;
+        }
+
+        @keyframes joyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--light-leaf);
+            border: 4px solid var(--leaf-green);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            font-weight: 800;
+            color: var(--leaf-green);
+            margin: 16px 0;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .result-msg-box {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            padding: 16px;
+            border-radius: 16px;
+            width: 100%;
+            line-height: 1.5;
+        }
+
+        /* Confetti Particles */
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: explode 0.8s ease-out forwards;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        @keyframes explode {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--x), var(--y)) scale(0.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        
+        <div id="splash-screen" class="screen active">
+            <div class="splash-title">🌿 पेड़ों की महिमा 🌿<br><span style="font-size: 18px; font-weight: 600;">पर्यावरण जागरूकता खेल</span></div>
+        </div>
+
+        <div id="instruction-screen" class="screen">
+            <div class="ins-title">सही बटन को पहचानें! 🤔</div>
+            <div class="ins-box">
+                <div class="ins-item">📄 <span>ऊपर बीच में पर्यावरण से जुड़ा एक वास्तविक जीवन का कथन दिखाई देगा।</span></div>
+                <div class="ins-item">👇 <span>नीचे चमकते हुए 'सहमत' या 'असहमत' बटनों में से सही बटन को चुनें।</span></div>
+                <div class="ins-item">🎯 <span>उस बटन को खींचकर (Drag) ऊपर दिए गए कथन कार्ड पर छोड़ें (Drop)।</span></div>
+                <div class="ins-item">🔄 <span>गलत चुनाव करने पर सुधार के लिए 1 और अंतिम अवसर मिलेगा।</span></div>
+            </div>
+            <button class="btn-action" onclick="startQuiz()">खेल शुरू करें 🚀</button>
+        </div>
+
+        <div id="quiz-screen" class="screen">
+            <div class="game-header">
+                <div class="competency-badge" id="competency-box">योग्यता</div>
+                <div class="volume-control">
+                    <button class="mute-btn" id="muteBtn" onclick="toggleMute()">🔊</button>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.1" value="0.8" oninput="updateVolume()">
+                </div>
+            </div>
+            
+            <div class="stats-bar">
+                <div id="q-count">कथन: 1/10</div>
+                <div id="score-count">अंक: 0/10</div>
+            </div>
+
+            <div class="statement-container">
+                <div class="drop-target-card" id="main-statement-card">कथन लोड हो रहा है...</div>
+            </div>
+
+            <div class="feedback-msg" id="feedback-box"></div>
+
+            <div class="drag-items-container" id="buttons-container">
+                <div class="drag-btn" data-choice="agree" id="btn-agree">
+                    <div class="btn-icon">🟢</div>
+                    <div>सहमत</div>
+                </div>
+                <div class="drag-btn" data-choice="disagree" id="btn-disagree">
+                    <div class="btn-icon">🔴</div>
+                    <div>असहमत</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <div class="congrats-art" id="result-emoji">🎉</div>
+            <div class="ins-title" id="result-title">शानदार खेल!</div>
+            <div class="score-circle" id="final-score">0/10</div>
+            <div class="result-msg-box" id="result-message">खेलने के लिए धन्यवाद!</div>
+            <button class="btn-action" onclick="restartQuiz()">🔄 फिर से खेलें</button>
+        </div>
+
+    </div>
+
+    <script>
+        const statementsData = [
+            {
+                q: "बढ़ते वायु प्रदूषण को रोकने के लिए हमें शहरों में और अधिक सीमेंट की इमारतों के बजाय पेड़ों की संख्या बढ़ानी चाहिए।",
+                expected: "agree",
+                competency: "पर्यावरण की समस्या का समाधान"
+            },
+            {
+                q: "पेड़ों का महत्व केवल इंसानों की लकड़ी की ज़रूरतें पूरी करने तक ही सीमित है, पशु-पक्षियों के लिए उनका कोई उपयोग नहीं है।",
+                expected: "disagree",
+                competency: "तर्क के आधार पर विचारों का मूल्यांकन"
+            },
+            {
+                q: "यदि पृथ्वी पर पेड़ों की संख्या अत्यधिक कम हो जाए, तो शहरों का तापमान और वायु प्रदूषण बहुत अधिक बढ़ जाएगा।",
+                expected: "agree",
+                competency: "कारण और परिणाम का विश्लेषण"
+            },
+            {
+                q: "अपने किसी प्रिय मित्र को जन्मदिन पर प्लास्टिक के खिलौने के स्थान पर एक छोटा जीवित पौधा उपहार में देना एक बेहद जिम्मेदार निर्णय है।",
+                expected: "agree",
+                competency: "पर्यावरण के प्रति जिम्मेदार निर्णय"
+            },
+            {
+                q: "यदि हमारे मोहल्ले में कोई व्यक्ति बिना कारण हरे-भरे पेड़ों को काट रहा है, तो हमें एक अच्छे नागरिक के रूप में उसे अनदेखा कर देना चाहिए।",
+                expected: "disagree",
+                competency: "जिम्मेदार नागरिक व्यवहार अपनाना"
+            },
+            {
+                q: "विद्यार्थियों द्वारा 'पेड़ बचाओ अभियान' के तहत सिर्फ नए पौधे लगाना ही काफी नहीं है, बल्कि नियमित रूप से उनकी देखभाल करना भी आवश्यक है।",
+                expected: "agree",
+                competency: "सकारात्मक पर्यावरणीय कार्य"
+            },
+            {
+                q: "एक विद्यार्थी का यह सोचना बिल्कुल सही है कि 'मेरे अकेले एक पेड़ लगाने से पूरी पृथ्वी के पर्यावरण पर कोई सकारात्मक अंतर नहीं आएगा।'",
+                expected: "disagree",
+                competency: "सामूहिक प्रयासों के महत्व की समझ"
+            },
+            {
+                q: "पेड़ों को 'हरा सोना' इसलिए कहा जाता है क्योंकि वे बहुत मूल्यवान हैं और इंसानी समाज के अस्तित्व के लिए साफ़ हवा व जीवन देते हैं।",
+                expected: "agree",
+                competency: "भाषा में छिपे गहरे भाव की व्याख्या"
+            },
+            {
+                q: "जंगल और बड़े पेड़ पक्षियों तथा जंगली जानवरों को न केवल भोजन देते हैं बल्कि उन्हें रहने के लिए सुरक्षित प्राकृतिक आश्रय भी प्रदान करते हैं।",
+                expected: "agree",
+                competency: "पारिस्थितिकी संबंधों का विश्लेषण"
+            },
+            {
+                q: "गर्मियों के मौसम में धूप से बचने के लिए विद्यालय के मैदानों के चारों ओर छायादार पेड़ लगाने की जगह प्लास्टिक की कृत्रिम छतें लगाना बेहतर है।",
+                expected: "disagree",
+                competency: "वास्तविक जीवन में पेड़ों का महत्व"
+            }
+        ];
+
+        let gameQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let currentAttempts = 0; 
+        let globalVolume = 0.8;
+        let isMuted = false;
+        let isTransitioning = false;
+
+        let activeDragElement = null;
+        let startX, startY;
+        let initialTransforms = { 'btn-agree': { x: 0, y: 0 }, 'btn-disagree': { x: 0, y: 0 } };
+
+        // Web Audio API Synthesizer (No external file needed)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSynthesizedSound(type) {
+            if (isMuted) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            gain.gain.setValueAtTime(globalVolume * 0.3, audioCtx.currentTime);
+
+            if (type === 'correct') {
+                // Happy high pitch chime sound
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                // Low harsh buzzer sound
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(130.81, audioCtx.currentTime); // C3
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'victory') {
+                // Short fanfare celebration sound
+                osc.type = 'sine';
+                const now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(392.00, now); // G4
+                osc.frequency.setValueAtTime(523.25, now + 0.15); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.3); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.45); // G5
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                osc.start();
+                osc.stop(now + 0.8);
+            }
+        }
+
+        const targetCard = document.getElementById('main-statement-card');
+        const dragBtns = document.querySelectorAll('.drag-btn');
+
+        window.onload = () => {
+            setTimeout(() => {
+                switchScreen('instruction-screen');
+            }, 5000);
+            setupDragAndDrop();
+        };
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(scr => scr.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('muteBtn').innerText = isMuted ? "🔇" : "🔊";
+        }
+
+        function updateVolume() {
+            globalVolume = document.getElementById('volumeSlider').value;
+        }
+
+        function startQuiz() {
+            // Context activation for modern browsers audio policy
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            gameQuestions = [...statementsData].sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            score = 0;
+            switchScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            currentAttempts = 0;
+            isTransitioning = false;
+            const currentQuestion = gameQuestions[currentIndex];
+            
+            document.getElementById('q-count').innerText = `कथन: ${currentIndex + 1}/10`;
+            document.getElementById('score-count').innerText = `अंक: ${score}/10`;
+            document.getElementById('competency-box').innerText = currentQuestion.competency;
+            
+            targetCard.innerText = currentQuestion.q;
+            targetCard.className = 'drop-target-card';
+            
+            document.getElementById('feedback-box').style.display = 'none';
+            
+            dragBtns.forEach(btn => {
+                btn.style.transition = 'none';
+                btn.style.transform = 'translate(0px, 0px)';
+                btn.style.pointerEvents = 'auto';
+                btn.style.opacity = '1';
+                initialTransforms[btn.id] = { x: 0, y: 0 };
+            });
+        }
+
+        function setupDragAndDrop() {
+            dragBtns.forEach(btn => {
+                btn.addEventListener('mousedown', (e) => dragStart(e, btn));
+                btn.addEventListener('touchstart', (e) => dragStart(e, btn), { passive: false });
+            });
+
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('touchmove', dragMove, { passive: false });
+
+            document.addEventListener('mouseup', dragEnd);
+            document.addEventListener('touchend', dragEnd);
+        }
+
+        function dragStart(e, element) {
+            if (isTransitioning) return;
+            activeDragElement = element;
+            
+            let id = element.id;
+            if (e.type === 'touchstart') {
+                startX = e.touches[0].clientX - initialTransforms[id].x;
+                startY = e.touches[0].clientY - initialTransforms[id].y;
+            } else {
+                startX = e.clientX - initialTransforms[id].x;
+                startY = e.clientY - initialTransforms[id].y;
+            }
+            element.style.transition = 'none';
+        }
+
+        function dragMove(e) {
+            if (!activeDragElement) return;
+            if (e.type === 'touchmove') e.preventDefault(); 
+
+            let id = activeDragElement.id;
+            let currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            let currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+            initialTransforms[id].x = currentX - startX;
+            initialTransforms[id].y = currentY - startY;
+
+            activeDragElement.style.transform = `translate(${initialTransforms[id].x}px, ${initialTransforms[id].y}px)`;
+
+            let btnRect = activeDragElement.getBoundingClientRect();
+            let bCenterX = btnRect.left + btnRect.width / 2;
+            let bCenterY = btnRect.top + btnRect.height / 2;
+
+            let targetRect = targetCard.getBoundingClientRect();
+            if (bCenterX >= targetRect.left && bCenterX <= targetRect.right && bCenterY >= targetRect.top && bCenterY <= targetRect.bottom) {
+                targetCard.classList.add('hovered');
+            } else {
+                targetCard.classList.remove('hovered');
+            }
+        }
+
+        function dragEnd(e) {
+            if (!activeDragElement) return;
+            let currentElement = activeDragElement;
+            activeDragElement = null;
+
+            let btnRect = currentElement.getBoundingClientRect();
+            let bCenterX = btnRect.left + btnRect.width / 2;
+            let bCenterY = btnRect.top + btnRect.height / 2;
+
+            let targetRect = targetCard.getBoundingClientRect();
+            targetCard.classList.remove('hovered');
+
+            if (bCenterX >= targetRect.left && bCenterX <= targetRect.right && bCenterY >= targetRect.top && bCenterY <= targetRect.bottom) {
+                let choiceType = currentElement.getAttribute('data-choice');
+                validateDrop(choiceType, currentElement);
+            } else {
+                snapBack(currentElement);
+            }
+        }
+
+        function snapBack(element) {
+            element.style.transition = 'transform 0.3s ease';
+            element.style.transform = 'translate(0px, 0px)';
+            initialTransforms[element.id] = { x: 0, y: 0 };
+        }
+
+        function validateDrop(choiceType, draggedBtn) {
+            const currentQuestion = gameQuestions[currentIndex];
+            const feedback = document.getElementById('feedback-box');
+
+            if (choiceType === currentQuestion.expected) {
+                isTransitioning = true;
+                dragBtns.forEach(b => b.style.pointerEvents = 'none');
+                
+                // Active Flashing UI Colors
+                targetCard.classList.remove('wrong-flash', 'hovered');
+                targetCard.classList.add('correct-flash');
+                
+                playSynthesizedSound('correct');
+                triggerConfetti();
+                
+                score++;
+                document.getElementById('score-count').innerText = `अंक: ${score}/10`;
+                setTimeout(proceedNext, 1500);
+            } else {
+                currentAttempts++;
+                targetCard.classList.remove('correct-flash', 'hovered');
+                targetCard.classList.add('wrong-flash');
+                playSynthesizedSound('wrong');
+
+                if (currentAttempts === 1) {
+                    feedback.innerText = "गलत विकल्प! कथन को फिर से पढ़कर सही बटन ड्रैग करें, आपके पास 1 आखिरी अवसर है।";
+                    feedback.style.display = 'block';
+                    snapBack(draggedBtn);
+                    setTimeout(() => { targetCard.classList.remove('wrong-flash'); }, 1000);
+                } else {
+                    isTransitioning = true;
+                    dragBtns.forEach(b => b.style.pointerEvents = 'none');
+                    feedback.style.display = 'none';
+                    
+                    setTimeout(() => { 
+                        targetCard.classList.remove('wrong-flash');
+                        targetCard.classList.add('correct-flash');
+                    }, 500);
+                    
+                    draggedBtn.style.transition = 'opacity 0.5s ease';
+                    draggedBtn.style.opacity = '0';
+
+                    setTimeout(proceedNext, 2000);
+                }
+            }
+        }
+
+        function triggerConfetti() {
+            const container = document.querySelector('.quiz-container');
+            for(let i = 0; i < 30; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = '50%';
+                p.style.top = '35%';
+                p.style.setProperty('--x', (Math.random() * 360 - 180) + 'px');
+                p.style.setProperty('--y', (Math.random() * 360 - 180) + 'px');
+                p.style.backgroundColor = ['#2d6a4f', '#52b788', '#ffb703', '#4cc9f0', '#f72585'][Math.floor(Math.random() * 5)];
+                container.appendChild(p);
+                setTimeout(() => p.remove(), 800);
+            }
+        }
+
+        function proceedNext() {
+            currentIndex++;
+            if (currentIndex < gameQuestions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            switchScreen('result-screen');
+            const percent = (score / gameQuestions.length) * 100;
+            document.getElementById('final-score').innerText = `${score}/10`;
+
+            const emojiEl = document.getElementById('result-emoji');
+            const titleEl = document.getElementById('result-title');
+            const msgBox = document.getElementById('result-message');
+
+            if (percent >= 80) {
+                emojiEl.innerText = "🏆";
+                titleEl.innerText = "असाधारण विवेक!";
+                msgBox.innerText = "शानदार! 🎉 आपने सही बटन का सही चयन करके पेड़ों की उपयोगिता और पर्यावरण संरक्षण का बेहतरीन मूल्यांकन किया है। आपकी तार्किक क्षमता लाजवाब है!";
+                msgBox.style.backgroundColor = "var(--light-leaf)";
+                msgBox.style.color = "var(--text-main)";
+                playSynthesizedSound('victory');
+            } else if (percent >= 50) {
+                emojiEl.innerText = "👍";
+                titleEl.innerText = "सराहनीय प्रयास!";
+                msgBox.innerText = "बहुत बढ़िया! 👍 पर्यावरण संतुलन और सामाजिक जिम्मेदारियों के प्रति आपकी समझ अच्छी है। अपनी सोच को और बेहतर बनाने के लिए अभ्यास जारी रखें।";
+                msgBox.style.backgroundColor = "#fff7ed";
+                msgBox.style.color = "#c2410c";
+                playSynthesizedSound('victory');
+            } else {
+                emojiEl.innerText = "🌿";
+                titleEl.innerText = "पुनः प्रयास करें!";
+                msgBox.innerText = "कोई बात नहीं! 🌿 पेड़ों के महत्व, हमारी जिम्मेदारियों और जीव-जंतुओं के लिए उनकी आवश्यकता को समझने के लिए एक बार फिर से प्रयास करें।";
+                msgBox.style.backgroundColor = "#ffe3e3";
+                msgBox.style.color = "#b91c1c";
+            }
+        }
+
+        function restartQuiz() {
+            switchScreen('instruction-screen');
+        }
+    </script>
+</body>
+</html>
