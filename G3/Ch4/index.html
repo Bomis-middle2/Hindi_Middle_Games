@@ -38,7 +38,7 @@
             width: 100%;
             max-width: 900px;
             height: 95vh;
-            max-height: 700px;
+            max-height: 720px;
             background: var(--card-bg);
             border-radius: 20px;
             box-shadow: var(--shadow);
@@ -78,17 +78,26 @@
 
         .logo-box {
             background: white;
-            color: var(--primary-dark);
-            padding: 25px 45px;
-            border-radius: 18px;
+            padding: 20px 35px;
+            border-radius: 20px;
             box-shadow: var(--shadow);
             margin-bottom: 25px;
             animation: pulse 2s infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 80%;
+        }
+
+        .logo-box img {
+            max-width: 260px;
+            height: auto;
+            display: block;
         }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.04); }
             100% { transform: scale(1); }
         }
 
@@ -182,7 +191,6 @@
 
         canvas {
             border-radius: 16px;
-            cursor: pointer;
         }
 
         /* Question Box */
@@ -277,20 +285,24 @@
                 width: 320px;
                 height: 320px;
             }
+            .logo-box img {
+                max-width: 200px;
+            }
         }
     </style>
 </head>
 <body>
 
 <div id="game-container">
+    <!-- Splash Screen -->
     <div id="splash-screen" class="screen active">
         <div class="logo-box">
-            <h1>ज्ञान की यात्रा</h1>
-            <p>शैक्षणिक खेल श्रृंखला</p>
+            <img src="assets/logo.png" alt="Logo">
         </div>
         <h2>अध्यापकों एवं विद्यार्थियों के लिए प्रस्तुत</h2>
     </div>
 
+    <!-- Welcome Screen -->
     <div id="welcome-screen" class="screen">
         <h1 class="title">बिंदु जोड़ो - जगमग दीया 🪔</h1>
         <p class="subtitle">पाठ 4: जगमग जगमग (सोहनलाल द्विवेदी)</p>
@@ -301,10 +313,11 @@
         <button class="btn" onclick="startGame()">खेल शुरू करें</button>
     </div>
 
+    <!-- Game Screen -->
     <div id="game-screen" class="screen">
         <div class="game-header">
             <div class="stat-box" id="score-display">अंक: 0</div>
-            <div class="stat-box" id="dot-display">बिंदु: 1/8</div>
+            <div class="stat-box" id="dot-display">बिंदु: 1/10</div>
             <div class="stat-box" id="timer-display">समय: 00:00</div>
         </div>
 
@@ -323,6 +336,7 @@
         </div>
     </div>
 
+    <!-- End Screen -->
     <div id="end-screen" class="screen">
         <div class="end-card">
             <h2>शुभ दीपावली! 🪔✨</h2>
@@ -335,7 +349,7 @@
 </div>
 
 <script>
-    // Audio Synthesizer
+    // Audio Synthesizer (Web Audio API)
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
@@ -389,16 +403,18 @@
         }
     }
 
-    // Dot Coordinates defining a Diya shape on a 360x360 canvas
+    // 10 Detailed Dot Coordinates defining a complete Diya & Flame shape on 360x360 canvas
     const dotPoints = [
-        { id: 1, x: 180, y: 70, label: "1" },   // Flame Tip
-        { id: 2, x: 215, y: 130, label: "2" },  // Flame Right
-        { id: 3, x: 180, y: 175, label: "3" },  // Flame Base / Wick
-        { id: 4, x: 300, y: 185, label: "4" },  // Diya Top Right Rim
-        { id: 5, x: 250, y: 285, label: "5" },  // Diya Bottom Right
-        { id: 6, x: 110, y: 285, label: "6" },  // Diya Bottom Left
-        { id: 7, x: 60, y: 185, label: "7" },   // Diya Top Left Rim
-        { id: 8, x: 145, y: 130, label: "8" }   // Flame Left
+        { id: 1, x: 180, y: 55, label: "1" },   // Flame Apex
+        { id: 2, x: 215, y: 110, label: "2" },  // Flame Right Outer
+        { id: 3, x: 195, y: 160, label: "3" },  // Flame Right Base
+        { id: 4, x: 310, y: 175, label: "4" },  // Diya Top-Right Rim
+        { id: 5, x: 260, y: 285, label: "5" },  // Diya Bottom-Right Curve
+        { id: 6, x: 180, y: 300, label: "6" },  // Diya Bottom Base Center
+        { id: 7, x: 100, y: 285, label: "7" },  // Diya Bottom-Left Curve
+        { id: 8, x: 50,  y: 175, label: "8" },  // Diya Top-Left Rim
+        { id: 9, x: 165, y: 160, label: "9" },  // Flame Left Base
+        { id: 10, x: 145, y: 110, label: "10" } // Flame Left Outer
     ];
 
     // Questions corresponding to connecting dot i to i+1
@@ -409,12 +425,12 @@
             answer: 0
         },
         {
-            q: "'दृग ठग' शब्द का क्या अर्थ है?",
+            q: "'दृग ठग' शब्द का कविता में क्या अर्थ है?",
             options: ["आँखों को मोह लेने वाला", "आँखों में धूल झोंकना", "चोरी करना", "सो जाना"],
             answer: 0
         },
         {
-            q: "तुलसी के नन्हें थाले में क्या रखा है?",
+            q: "तुलसी के नन्हें थाले में क्या जल रहा है?",
             options: ["फूल", "दीप", "मिठाई", "पानी"],
             answer: 1
         },
@@ -424,33 +440,43 @@
             answer: 0
         },
         {
-            q: "'राजा के घर, कंगले के घर' से क्या तात्पर्य है?",
-            options: ["दिवाली सबको समान खुशी देती है", "केवल राजा दिवाली मनाते हैं", "गरीब दिवाली नहीं मनाते", "केवल अमीर दीप जलाते हैं"],
+            q: "'राजा के घर, कंगले के घर' पंक्ति का क्या आशय है?",
+            options: ["दिवाली सबके लिए समान खुशियाँ लाती है", "केवल राजा ही दीप जलाते हैं", "गरीब त्योहार नहीं मनाते", "दीवाले केवल महलों में जलते हैं"],
             answer: 0
         },
         {
-            q: "संस्कृत में 'दीपावली' का क्या अर्थ है?",
-            options: ["दीपों की कतार", "रोशनी का पहाड़", "मिठाई का डिब्बा", "रंगों की होली"],
+            q: "संस्कृत भाषा में 'दीपावली' का अर्थ क्या होता है?",
+            options: ["दीपों की कतार", "रोशनी का पहाड़", "सुंदर मिठाइयाँ", "रंगों का त्योहार"],
             answer: 0
         },
         {
-            q: "'उजियाली' शब्द का विलोम (उल्टा) शब्द क्या है?",
+            q: "'उजियाली' शब्द का विलोम (उल्टा) शब्द क्या होगा?",
             options: ["अंधियारा", "सवेरा", "चमक", "सुघर"],
+            answer: 0
+        },
+        {
+            q: "नेपाल में दीपावली के त्योहार को किस नाम से जाना जाता है?",
+            options: ["तिहार", "दीपमाला", "लॉय क्रॉथोंग", "वैशाखी"],
+            answer: 0
+        },
+        {
+            q: "'सुघर' शब्द का क्या अर्थ होता है?",
+            options: ["सुंदर ढंग से सजाया हुआ", "बड़ा घर", "टूटा हुआ घर", "पुराना घर"],
             answer: 0
         }
     ];
 
-    let currentDotIndex = 0; // index of the last connected dot (0 means dot 1 is start)
+    let currentDotIndex = 0; 
     let score = 0;
     let secondsElapsed = 0;
     let timerInterval = null;
     let canvas, ctx;
     let isCompleted = false;
 
-    // Splash Timer (5 seconds)
+    // Splash Screen Timer (3.5 seconds)
     setTimeout(() => {
         switchScreen('splash-screen', 'welcome-screen');
-    }, 5000);
+    }, 3500);
 
     function switchScreen(fromId, toId) {
         document.getElementById(fromId).classList.remove('active');
@@ -503,30 +529,29 @@
 
             // Fill Diya color when completed
             if (isCompleted) {
-                ctx.fillStyle = "rgba(255, 152, 0, 0.3)";
+                ctx.fillStyle = "rgba(255, 152, 0, 0.35)";
                 ctx.fill();
             }
         }
 
-        // Draw Glow Effect if completed
+        // Glow Effect upon Diya completion
         if (isCompleted) {
-            // Flame Glow
-            const gradient = ctx.createRadialGradient(180, 120, 10, 180, 120, 80);
-            gradient.addColorStop(0, 'rgba(255, 235, 59, 0.9)');
-            gradient.addColorStop(0.5, 'rgba(255, 152, 0, 0.5)');
+            const gradient = ctx.createRadialGradient(180, 110, 10, 180, 110, 90);
+            gradient.addColorStop(0, 'rgba(255, 235, 59, 0.95)');
+            gradient.addColorStop(0.5, 'rgba(255, 152, 0, 0.6)');
             gradient.addColorStop(1, 'rgba(255, 152, 0, 0)');
             ctx.fillStyle = gradient;
             ctx.beginPath();
-            ctx.arc(180, 120, 80, 0, Math.PI * 2);
+            ctx.arc(180, 110, 90, 0, Math.PI * 2);
             ctx.fill();
         }
 
-        // Draw Dots and Labels
+        // Draw Dots and Numbers
         dotPoints.forEach((p, idx) => {
             const isReached = idx <= currentDotIndex;
             const isNext = idx === currentDotIndex + 1;
 
-            // Dot circle
+            // Dot Circle
             ctx.beginPath();
             ctx.arc(p.x, p.y, isNext ? 10 : 7, 0, Math.PI * 2);
             ctx.fillStyle = isReached ? '#ffd54f' : (isNext ? '#ff5722' : '#ffffff');
@@ -535,13 +560,12 @@
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Dot Label Number
-            ctx.font = 'bold 14px Segoe UI';
+            // Label Position Calculations
+            ctx.font = 'bold 13px Segoe UI';
             ctx.fillStyle = isNext ? '#ff5722' : '#ffffff';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            // Offset label slightly outside dot
             let offsetX = p.x > 180 ? 18 : (p.x < 180 ? -18 : 0);
             let offsetY = p.y > 180 ? 18 : -18;
             ctx.fillText(p.label, p.x + offsetX, p.y + offsetY);
@@ -550,13 +574,12 @@
 
     function loadQuestion() {
         if (currentDotIndex >= dotPoints.length - 1) {
-            // All dots connected
             completeDiya();
             return;
         }
 
         const nextDotNum = currentDotIndex + 2;
-        document.getElementById('target-dot-tag').innerText = `बिंदु ${currentDotIndex + 1} ➔ बिंदु ${nextDotNum} जोड़ने के लिए उत्तर दें:`;
+        document.getElementById('target-dot-tag').innerText = `बिंदु ${currentDotIndex + 1} ➔ बिंदु ${nextDotNum} जोड़ने के लिए:`;
 
         const qData = questionBank[currentDotIndex];
         document.getElementById('question-text').innerText = qData.q;
@@ -592,7 +615,6 @@
 
     function completeDiya() {
         isCompleted = true;
-        // Connect last dot back to dot 1
         drawCanvas();
         playSound('win');
 
