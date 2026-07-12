@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>पेड़ों की महिमा - सहमत या असहमत</title>
+    <title>पेड़ों की महिमा - रिवर्स ड्रैग एंड ड्रॉप</title>
     <style>
         :root {
             --forest-bg: #1e4d2b;
@@ -13,7 +13,7 @@
             --agree-light: #e6f6f4;
             --disagree-color: #e63946;
             --disagree-light: #ffebee;
-            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-bg: rgba(255, 255, 255, 0.96);
             --text-main: #1b4332;
             --text-muted: #475569;
         }
@@ -28,7 +28,6 @@
         }
 
         body {
-            /* बाल-सुलभ पेड़, आसमान और प्रकृति की बैकग्राउंड थीम */
             background: linear-gradient(to bottom, #a8dede 0%, #c4faf8 35%, #9fd3c7 35%, #38b000 100%);
             background-attachment: fixed;
             color: var(--text-main);
@@ -41,7 +40,6 @@
             overflow: hidden;
         }
 
-        /* बैकग्राउंड को और अधिक प्राकृतिक और आकर्षक बनाने के लिए सजावटी तत्व */
         body::before {
             content: "🌳";
             position: absolute;
@@ -90,7 +88,7 @@
             display: flex;
         }
 
-        /* 1) Splash Screen (Exactly 5 seconds) */
+        /* 1) Splash Screen (5 Seconds) */
         #splash-screen {
             align-items: center;
             background: #ffffff;
@@ -223,36 +221,32 @@
             border: 1px solid var(--light-leaf);
         }
 
-        /* Drag Area (The Leaf Statement) */
-        .drag-area {
+        /* Drop Zone Area (The Static Statement Card) */
+        .statement-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 130px;
+            min-height: 150px;
             margin-bottom: 24px;
-            position: relative;
         }
 
-        .drag-card {
+        .drop-target-card {
             background: #ffffff;
             border: 3px dashed var(--leaf-green);
-            border-radius: 16px;
-            padding: 18px;
+            border-radius: 18px;
+            padding: 20px;
             font-size: 17px;
             font-weight: 700;
             text-align: center;
             color: var(--text-main);
-            cursor: grab;
-            width: 92%;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            touch-action: none; /* Prevents scroll interference on mobile */
-            position: absolute;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
-            z-index: 10;
+            width: 95%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
             line-height: 1.6;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
-        .drag-card::before {
+        .drop-target-card::before {
             content: "🍃";
             position: absolute;
             top: -12px;
@@ -260,69 +254,81 @@
             font-size: 20px;
         }
 
-        .drag-card:active {
-            cursor: grabbing;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+        /* Drop target states */
+        .drop-target-card.hovered {
+            background: #f0fdf4;
+            border-color: #16a34a;
             transform: scale(1.02);
         }
 
-        /* Drop Zones (Agree and Disagree Boxes) */
-        .drop-zones-container {
-            display: flex;
-            gap: 16px;
-            margin-top: auto;
-        }
-
-        .drop-zone {
-            flex: 1;
-            border-radius: 18px;
-            padding: 20px 10px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 18px;
-            transition: all 0.2s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            border: 3px solid var(--border);
-            background: #fafafa;
-        }
-
-        .drop-zone[data-zone-type="agree"] {
-            border-color: var(--agree-color);
-            color: var(--agree-color);
-        }
-        .drop-zone[data-zone-type="agree"].hovered {
-            background: var(--agree-light);
-            transform: scale(1.03);
-        }
-
-        .drop-zone[data-zone-type="disagree"] {
-            border-color: var(--disagree-color);
-            color: var(--disagree-color);
-        }
-        .drop-zone[data-zone-type="disagree"].hovered {
-            background: var(--disagree-light);
-            transform: scale(1.03);
-        }
-
-        /* Flashing Animation Colors */
-        .drop-zone.correct-flash {
+        .drop-target-card.correct-flash {
             background-color: #d8f3dc !important;
             border-color: #1b4332 !important;
             color: #1b4332 !important;
         }
 
-        .drop-zone.wrong-flash {
+        .drop-target-card.wrong-flash {
             background-color: #ffe3e3 !important;
             border-color: #b91c1c !important;
             color: #b91c1c !important;
         }
 
-        .zone-icon {
-            font-size: 32px;
+        /* Drag Items Container (Blinking Buttons Area) */
+        .drag-items-container {
+            display: flex;
+            gap: 16px;
+            margin-top: auto;
+            min-height: 100px;
+            position: relative;
+        }
+
+        .drag-btn {
+            flex: 1;
+            border-radius: 18px;
+            padding: 16px 10px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 18px;
+            cursor: grab;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            touch-action: none;
+            z-index: 10;
+            /* Blinking Animation Setup */
+            animation: pulseBlink 2s infinite ease-in-out;
+        }
+
+        .drag-btn:active {
+            cursor: grabbing;
+            z-index: 99;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: none; /* Stop blinking while holding */
+        }
+
+        .drag-btn[data-choice="agree"] {
+            background: #ffffff;
+            border: 3px solid var(--agree-color);
+            color: var(--agree-color);
+        }
+
+        .drag-btn[data-choice="disagree"] {
+            background: #ffffff;
+            border: 3px solid var(--disagree-color);
+            color: var(--disagree-color);
+        }
+
+        /* Smooth Blinking Animation Effect */
+        @keyframes pulseBlink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.75; transform: scale(0.96); }
+        }
+
+        .btn-icon {
+            font-size: 28px;
         }
 
         .feedback-msg {
@@ -381,7 +387,7 @@
             line-height: 1.5;
         }
 
-        /* Confetti Effect Particle */
+        /* Confetti Burst Particle */
         .particle {
             position: absolute;
             width: 8px;
@@ -409,12 +415,12 @@
         </div>
 
         <div id="instruction-screen" class="screen">
-            <div class="ins-title">सोचें और निर्णय लें! 🤔</div>
+            <div class="ins-title">सही बटन को पहचानें! 🤔</div>
             <div class="ins-box">
-                <div class="ins-item">📄 <span>ऊपर पर्यावरण और पेड़ों से जुड़ा एक वास्तविक जीवन का कथन आएगा।</span></div>
-                <div class="ins-item">👇 <span>कथन को ध्यान से पढ़ें और उसे नीचे दिए गए 'सहमत' या 'असहमत' बॉक्स में खींचें (Drag & Drop)।</span></div>
-                <div class="ins-item">🔄 <span>गलत चुनाव करने पर आपको अपनी सोच सुधारने का 1 और अवसर मिलेगा।</span></div>
-                <div class="ins-item">🔊 <span>आप अपनी इच्छा से वॉल्यूम स्लाइडर द्वारा खेल की आवाज़ कम-ज्यादा कर सकते हैं।</span></div>
+                <div class="ins-item">📄 <span>ऊपर बीच में पर्यावरण से जुड़ा एक वास्तविक जीवन का कथन दिखाई देगा।</span></div>
+                <div class="ins-item">👇 <span>नीचे चमकते हुए (Blinking) 'सहमत' या 'असहमत' बटनों में से सही बटन को चुनें।</span></div>
+                <div class="ins-item">🎯 <span>उस बटन को खींचकर (Drag) ऊपर दिए गए मुख्य कथन कार्ड पर ले जाकर छोड़ें (Drop)।</span></div>
+                <div class="ins-item">🔄 <span>गलत चुनाव करने पर सुधार के लिए आपको 1 और अंतिम अवसर मिलेगा।</span></div>
             </div>
             <button class="btn-action" onclick="startQuiz()">खेल शुरू करें 🚀</button>
         </div>
@@ -433,20 +439,20 @@
                 <div id="score-count">अंक: 0/10</div>
             </div>
 
-            <div class="drag-area" id="drag-container">
-                <div class="drag-card" id="draggable-card">कथन लोड हो रहा है...</div>
+            <div class="statement-container">
+                <div class="drop-target-card" id="main-statement-card">कथन लोड हो रहा है...</div>
             </div>
 
             <div class="feedback-msg" id="feedback-box"></div>
 
-            <div class="drop-zones-container">
-                <div class="drop-zone" data-zone-type="agree">
-                    <div class="zone-icon">🟢</div>
-                    <div>सहमत<br>(Agree)</div>
+            <div class="drag-items-container" id="buttons-container">
+                <div class="drag-btn" data-choice="agree" id="btn-agree">
+                    <div class="btn-icon">🟢</div>
+                    <div>सहमत</div>
                 </div>
-                <div class="drop-zone" data-zone-type="disagree">
-                    <div class="zone-icon">🔴</div>
-                    <div>असहमत<br>(Disagree)</div>
+                <div class="drag-btn" data-choice="disagree" id="btn-disagree">
+                    <div class="btn-icon">🔴</div>
+                    <div>असहमत</div>
                 </div>
             </div>
         </div>
@@ -462,7 +468,7 @@
     </div>
 
     <script>
-        // Expected Drop Target Types: "agree" or "disagree"
+        // Game Dataset from the provided text resource
         const statementsData = [
             {
                 q: "बढ़ते वायु प्रदूषण को रोकने के लिए हमें शहरों में और अधिक सीमेंट की इमारतों के बजाय पेड़ों की संख्या बढ़ानी चाहिए।",
@@ -524,19 +530,19 @@
         let isMuted = false;
         let isTransitioning = false;
 
-        let activeDrag = false;
+        // Multi-drag coordinate tracking setup
+        let activeDragElement = null;
         let startX, startY;
-        let initialX = 0, initialY = 0;
+        let initialTransforms = { 'btn-agree': { x: 0, y: 0 }, 'btn-disagree': { x: 0, y: 0 } };
 
         const sndCorrect = new Audio('./assets/correct.mp3');
         const sndWrong = new Audio('./assets/wrong.mp3');
         const sndClapping = new Audio('./assets/clapping.mp3');
 
-        const dragCard = document.getElementById('draggable-card');
-        const dropZones = document.querySelectorAll('.drop-zone');
+        const targetCard = document.getElementById('main-statement-card');
+        const dragBtns = document.querySelectorAll('.drag-btn');
 
         window.onload = () => {
-            // Automatically switch from splash screen to instructions screen after 5 seconds
             setTimeout(() => {
                 switchScreen('instruction-screen');
             }, 5000);
@@ -566,11 +572,10 @@
 
         function playSound(audio) {
             audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio resource initialized safely."));
+            audio.play().catch(e => console.log("Audio safe fallback execution."));
         }
 
         function startQuiz() {
-            // Shuffle dataset every time the game starts
             gameQuestions = [...statementsData].sort(() => Math.random() - 0.5);
             currentIndex = 0;
             score = 0;
@@ -583,116 +588,115 @@
             isTransitioning = false;
             const currentQuestion = gameQuestions[currentIndex];
             
-            document.getElementById('q-count').innerText = `कथन: ${currentIndex + 1}/10`;
+            document.getElementById('q-count').innerText = `कठन: ${currentIndex + 1}/10`;
             document.getElementById('score-count').innerText = `अंक: ${score}/10`;
             document.getElementById('competency-box').innerText = currentQuestion.competency;
             
-            dragCard.style.transition = 'none';
-            dragCard.style.transform = 'translate(0px, 0px)';
-            dragCard.innerText = currentQuestion.q;
-            dragCard.style.pointerEvents = 'auto';
-            dragCard.style.opacity = '1';
+            // Set Static Question Text
+            targetCard.innerText = currentQuestion.q;
+            targetCard.className = 'drop-target-card';
             
             document.getElementById('feedback-box').style.display = 'none';
             
-            dropZones.forEach(zone => {
-                zone.className = 'drop-zone';
+            // Reset both buttons to original styles and positions
+            dragBtns.forEach(btn => {
+                btn.style.transition = 'none';
+                btn.style.transform = 'translate(0px, 0px)';
+                btn.style.pointerEvents = 'auto';
+                btn.style.opacity = '1';
+                initialTransforms[btn.id] = { x: 0, y: 0 };
             });
         }
 
         function setupDragAndDrop() {
-            // Mouse Handlers
-            dragCard.addEventListener('mousedown', dragStart);
-            document.addEventListener('mousemove', dragMove);
-            document.addEventListener('mouseup', dragEnd);
+            dragBtns.forEach(btn => {
+                btn.addEventListener('mousedown', (e) => dragStart(e, btn));
+                btn.addEventListener('touchstart', (e) => dragStart(e, btn), { passive: false });
+            });
 
-            // Touch Handlers for seamless Mobile/Tablet gameplay
-            dragCard.addEventListener('touchstart', dragStart, { passive: false });
+            document.addEventListener('mousemove', dragMove);
             document.addEventListener('touchmove', dragMove, { passive: false });
+
+            document.addEventListener('mouseup', dragEnd);
             document.addEventListener('touchend', dragEnd);
         }
 
-        function dragStart(e) {
+        function dragStart(e, element) {
             if (isTransitioning) return;
-            activeDrag = true;
+            activeDragElement = element;
             
+            let id = element.id;
             if (e.type === 'touchstart') {
-                startX = e.touches[0].clientX - initialX;
-                startY = e.touches[0].clientY - initialY;
+                startX = e.touches[0].clientX - initialTransforms[id].x;
+                startY = e.touches[0].clientY - initialTransforms[id].y;
             } else {
-                startX = e.clientX - initialX;
-                startY = e.clientY - initialY;
+                startX = e.clientX - initialTransforms[id].x;
+                startY = e.clientY - initialTransforms[id].y;
             }
-            dragCard.style.transition = 'none';
+            element.style.transition = 'none';
         }
 
         function dragMove(e) {
-            if (!activeDrag) return;
-            if (e.type === 'touchmove') e.preventDefault(); // Lock viewport scrolling
+            if (!activeDragElement) return;
+            if (e.type === 'touchmove') e.preventDefault(); // Stop mobile scroll bounce
 
+            let id = activeDragElement.id;
             let currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
             let currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
 
-            initialX = currentX - startX;
-            initialY = currentY - startY;
+            initialTransforms[id].x = currentX - startX;
+            initialTransforms[id].y = currentY - startY;
 
-            dragCard.style.transform = `translate(${initialX}px, ${initialY}px)`;
+            activeDragElement.style.transform = `translate(${initialTransforms[id].x}px, ${initialTransforms[id].y}px)`;
 
-            let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-            let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
-            
-            dropZones.forEach(zone => {
-                let rect = zone.getBoundingClientRect();
-                if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom) {
-                    zone.classList.add('hovered');
-                } else {
-                    zone.classList.remove('hovered');
-                }
-            });
-        }
+            // Detect if button center is hovering over the statement drop card
+            let btnRect = activeDragElement.getBoundingClientRect();
+            let bCenterX = btnRect.left + btnRect.width / 2;
+            let bCenterY = btnRect.top + btnRect.height / 2;
 
-        function dragEnd(e) {
-            if (!activeDrag) return;
-            activeDrag = false;
-
-            let cardRect = dragCard.getBoundingClientRect();
-            let centerX = cardRect.left + cardRect.width / 2;
-            let centerY = cardRect.top + cardRect.height / 2;
-
-            let droppedZone = null;
-
-            dropZones.forEach(zone => {
-                let rect = zone.getBoundingClientRect();
-                if (centerX >= rect.left && centerX <= rect.right && centerY >= rect.top && centerY <= rect.bottom) {
-                    droppedZone = zone;
-                }
-                zone.classList.remove('hovered');
-            });
-
-            if (droppedZone) {
-                let zoneType = droppedZone.getAttribute('data-zone-type');
-                validateDrop(zoneType, droppedZone);
+            let targetRect = targetCard.getBoundingClientRect();
+            if (bCenterX >= targetRect.left && bCenterX <= targetRect.right && bCenterY >= targetRect.top && bCenterY <= targetRect.bottom) {
+                targetCard.classList.add('hovered');
             } else {
-                snapBack();
+                targetCard.classList.remove('hovered');
             }
         }
 
-        function snapBack() {
-            dragCard.style.transition = 'transform 0.3s ease';
-            dragCard.style.transform = 'translate(0px, 0px)';
-            initialX = 0;
-            initialY = 0;
+        function dragEnd(e) {
+            if (!activeDragElement) return;
+            let currentElement = activeDragElement;
+            activeDragElement = null;
+
+            let btnRect = currentElement.getBoundingClientRect();
+            let bCenterX = btnRect.left + btnRect.width / 2;
+            let bCenterY = btnRect.top + btnRect.height / 2;
+
+            let targetRect = targetCard.getBoundingClientRect();
+            targetCard.classList.remove('hovered');
+
+            if (bCenterX >= targetRect.left && bCenterX <= targetRect.right && bCenterY >= targetRect.top && bCenterY <= targetRect.bottom) {
+                let choiceType = currentElement.getAttribute('data-choice');
+                validateDrop(choiceType, currentElement);
+            } else {
+                snapBack(currentElement);
+            }
         }
 
-        function validateDrop(zoneType, targetZone) {
+        function snapBack(element) {
+            element.style.transition = 'transform 0.3s ease';
+            element.style.transform = 'translate(0px, 0px)';
+            initialTransforms[element.id] = { x: 0, y: 0 };
+        }
+
+        function validateDrop(choiceType, draggedBtn) {
             const currentQuestion = gameQuestions[currentIndex];
             const feedback = document.getElementById('feedback-box');
 
-            if (zoneType === currentQuestion.expected) {
-                // Correct match sequence
+            if (choiceType === currentQuestion.expected) {
+                // Correct match
                 isTransitioning = true;
-                dragCard.style.pointerEvents = 'none';
-                targetZone.classList.add('correct-flash');
+                draggedBtn.style.pointerEvents = 'none';
+                targetCard.classList.add('correct-flash');
                 playSound(sndCorrect);
                 triggerConfetti();
                 score++;
@@ -700,28 +704,30 @@
                 
                 setTimeout(proceedNext, 1500);
             } else {
-                // Wrong match sequence
+                // Incorrect match
                 currentAttempts++;
                 playSound(sndWrong);
-                targetZone.classList.add('wrong-flash');
+                targetCard.classList.add('wrong-flash');
 
                 if (currentAttempts === 1) {
-                    feedback.innerText = "गलत विकल्प! कथन पर पुनः विचार करें, आपके पास 1 आखिरी मौका है।";
+                    feedback.innerText = "गलत विकल्प! कथन को फिर से पढ़कर सही बटन ड्रैग करें, आपके पास 1 आखिरी अवसर है।";
                     feedback.style.display = 'block';
-                    snapBack();
-                    setTimeout(() => { targetZone.classList.remove('wrong-flash'); }, 1000);
+                    snapBack(draggedBtn);
+                    setTimeout(() => { targetCard.classList.remove('wrong-flash'); }, 1000);
                 } else {
-                    // Show correct option automatically after 2 failed attempts
+                    // Fail state action (reveal system auto response)
                     isTransitioning = true;
-                    dragCard.style.pointerEvents = 'none';
+                    draggedBtn.style.pointerEvents = 'none';
                     feedback.style.display = 'none';
                     
-                    setTimeout(() => { targetZone.classList.remove('wrong-flash'); }, 500);
-                    const correctZone = document.querySelector(`[data-zone-type="${currentQuestion.expected}"]`);
-                    correctZone.classList.add('correct-flash');
+                    setTimeout(() => { 
+                        targetCard.classList.remove('wrong-flash');
+                        targetCard.classList.add('correct-flash');
+                    }, 500);
                     
-                    dragCard.style.transition = 'opacity 0.5s ease';
-                    dragCard.style.opacity = '0';
+                    // Hide the active wrong button smoothly to denote change
+                    draggedBtn.style.transition = 'opacity 0.5s ease';
+                    draggedBtn.style.opacity = '0';
 
                     setTimeout(proceedNext, 2000);
                 }
@@ -744,8 +750,6 @@
         }
 
         function proceedNext() {
-            initialX = 0;
-            initialY = 0;
             currentIndex++;
             if (currentIndex < gameQuestions.length) {
                 loadQuestion();
@@ -766,20 +770,20 @@
             if (percent >= 80) {
                 emojiEl.innerText = "🏆";
                 titleEl.innerText = "असाधारण विवेक!";
-                msgBox.innerText = "शानदार! 🎉 आपने पेड़ों के महत्व और पर्यावरण संरक्षण से जुड़े सभी कथनों का बिल्कुल सही मूल्यांकन किया है। आपकी तार्किक सोच कमाल की है!";
+                msgBox.innerText = "शानदार! 🎉 आपने सही बटन का सही चयन करके पेड़ों की उपयोगिता और पर्यावरण संरक्षण का बेहतरीन मूल्यांकन किया है। आपकी तार्किक क्षमता लाजवाब है!";
                 msgBox.style.backgroundColor = "var(--light-leaf)";
                 msgBox.style.color = "var(--text-main)";
                 playSound(sndClapping);
             } else if (percent >= 50) {
                 emojiEl.innerText = "👍";
                 titleEl.innerText = "सराहनीय प्रयास!";
-                msgBox.innerText = "बहुत बढ़िया! 👍 पर्यावरण संरक्षण और सामाजिक जिम्मेदारियों के प्रति आपके विचार अच्छे हैं। अपनी सोच को और मजबूत बनाने के लिए अभ्यास करते रहें।";
+                msgBox.innerText = "बहुत बढ़िया! 👍 पर्यावरण संतुलन और सामाजिक जिम्मेदारियों के प्रति आपकी समझ अच्छी है। अपनी सोच को और बेहतर बनाने के लिए अभ्यास जारी रखें।";
                 msgBox.style.backgroundColor = "#fff7ed";
                 msgBox.style.color = "#c2410c";
             } else {
                 emojiEl.innerText = "🌿";
                 titleEl.innerText = "पुनः प्रयास करें!";
-                msgBox.innerText = "कोई बात नहीं! 🌿 पेड़ों की उपयोगिता और प्रकृति के प्रति हमारी ज़िम्मेदारियों को और गहराई से समझने के लिए एक बार फिर से खेलें।";
+                msgBox.innerText = "कोई बात नहीं! 🌿 पेड़ों के महत्व, हमारी जिम्मेदारियों और जीव-जंतुओं के लिए उनकी आवश्यकता को समझने के लिए एक बार फिर से प्रयास करें।";
                 msgBox.style.backgroundColor = "#ffe3e3";
                 msgBox.style.color = "#b91c1c";
             }
