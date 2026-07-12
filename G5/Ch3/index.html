@@ -1,1 +1,769 @@
 
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>पेड़ों की महिमा - ट्रेज़र मैप क्वेस्ट</title>
+    <style>
+        :root {
+            --map-bg: #f2e3c6;
+            --island-green: #2d6a4f;
+            --path-brown: #8b5a2b;
+            --ocean-blue: #4cc9f0;
+            --gold: #ffb703;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --text-main: #1b4332;
+            --text-muted: #4a5568;
+            --danger: #e63946;
+            --success: #2a9d8f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #a8dede 0%, #4cc9f0 100%);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 700px;
+            height: 92vh;
+            min-height: 540px;
+            max-height: 750px;
+            background: var(--map-bg);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            border: 6px solid var(--path-brown);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* 1) Splash Screen */
+        #splash-screen {
+            background: #ffffff;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .logo-placeholder {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--island-green);
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        .logo-sub {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(0.96); opacity: 0.9; }
+            50% { transform: scale(1.04); opacity: 1; }
+        }
+
+        /* 2) Instruction Screen */
+        #instruction-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(242, 227, 198, 0.85), rgba(242, 227, 198, 0.85)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><text y="30" font-size="30" opacity="0.15">🗺️</text></svg>');
+        }
+
+        .title-banner {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--path-brown);
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 0px #fff;
+        }
+
+        .ins-card {
+            background: var(--card-bg);
+            border: 2px dashed var(--path-brown);
+            border-radius: 14px;
+            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+            text-align: left;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+        }
+
+        .ins-line {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            line-height: 1.4;
+        }
+
+        .btn-universal {
+            background: var(--path-brown);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(139, 90, 43, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .btn-universal:hover {
+            transform: scale(1.03);
+        }
+
+        /* 3) Game Play Screen */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed rgba(139, 90, 43, 0.3);
+        }
+
+        .score-board {
+            background: var(--card-bg);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 2px solid var(--path-brown);
+            display: flex;
+            gap: 15px;
+        }
+
+        .audio-ctrl {
+            background: var(--card-bg);
+            border: 2px solid var(--path-brown);
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Map Visual Track Component */
+        .map-track-container {
+            height: 70px;
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            border: 1px solid rgba(139, 90, 43, 0.2);
+        }
+
+        .map-line {
+            position: absolute;
+            height: 4px;
+            background: var(--path-brown);
+            left: 25px;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .map-node {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #fff;
+            border: 3px solid var(--path-brown);
+            z-index: 2;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .map-node.completed {
+            background: var(--success);
+            border-color: var(--island-green);
+        }
+
+        .map-node.active {
+            background: var(--gold);
+            transform: scale(1.25);
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        .avatar-token {
+            position: absolute;
+            font-size: 20px;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: mapBob 1s infinite ease-in-out;
+        }
+
+        @keyframes mapBob {
+            0%, 100% { transform: translate(-50%, 0); }
+            50% { transform: translate(-50%, -5px); }
+        }
+
+        /* Quest Challenge Card */
+        .quest-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 5px;
+            overflow-y: auto;
+        }
+
+        .competency-tag {
+            align-self: flex-start;
+            background: #e8f5e9;
+            color: var(--island-green);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            border: 1px solid rgba(45, 106, 79, 0.3);
+        }
+
+        .question-text {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 1.5;
+            color: var(--text-main);
+            margin-bottom: 12px;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background: #fff;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 12px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: #f8fafc;
+            border-color: var(--path-brown);
+        }
+
+        .option-btn.correct {
+            background: #d8f3dc !important;
+            border-color: var(--success) !important;
+            color: var(--island-green) !important;
+        }
+
+        .option-btn.wrong {
+            background: #ffe3e3 !important;
+            border-color: var(--danger) !important;
+            color: #b91c1c !important;
+        }
+
+        .feedback-banner {
+            padding: 8px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .feedback-banner.attempt-one {
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+        }
+
+        /* 4) End Screen */
+        #result-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.92)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><text y="40" font-size="40" opacity="0.1">🌳</text></svg>');
+        }
+
+        .chest-art {
+            font-size: 70px;
+            margin-bottom: 15px;
+            animation: chestOpen 1.2s ease-in-out forwards;
+        }
+
+        @keyframes chestOpen {
+            0% { transform: scale(0.7); }
+            50% { transform: scale(1.1) rotate(-5deg); }
+            100% { transform: scale(1); }
+        }
+
+        .congrats-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--island-green);
+            margin-bottom: 10px;
+        }
+
+        .final-badge {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 4px solid #fff;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 26px;
+            font-weight: 900;
+            color: #fff;
+            margin: 15px 0;
+            text-shadow: 1px 2px 2px rgba(0,0,0,0.3);
+        }
+
+        .summary-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-muted);
+            max-width: 480px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        /* Particle Blast Elements */
+        .confetti-piece {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: particleBlast 0.7s ease-out forwards;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        @keyframes particleBlast {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0.4); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+
+        <div id="splash-screen" class="screen active">
+            <div class="logo-placeholder">Innovine</div>
+            <div class="logo-sub">Edutech Games</div>
+        </div>
+
+        <div id="instruction-screen" class="screen">
+            <div class="title-banner">🗺️ हरा सोना: ट्रेज़र मैप क्वेस्ट</div>
+            <div class="ins-card">
+                <div class="ins-line">🧭 <span>पेड़ों की महिमा जानने के लिए नक्शे के 10 अलग-अलग पड़ावों को पार करें।</span></div>
+                <div class="ins-line">❓ <span>हर पड़ाव पर पर्यावरण सुरक्षा और जिम्मेदार नागरिक व्यवहार से जुड़ा सवाल मिलेगा।</span></div>
+                <div class="ins-line">🎯 <span>सही रास्ते का चुनाव करें। गलत जवाब पर सुधरने के लिए 1 मौका और मिलेगा।</span></div>
+                <div class="ins-line">🏆 <span>सभी सही निर्णय लेकर अंत में 'हरा सोना' गुप्त खजाना हासिल करें!</span></div>
+            </div>
+            <button class="btn-universal" onclick="initiateQuest()">खोज शुरू करें 🚀</button>
+        </div>
+
+        <div id="gameplay-screen" class="screen">
+            <div class="game-header">
+                <div class="score-board">
+                    <span id="label-step">पड़ाव: 1/10</span>
+                    <span id="label-score">अंक: 0/10</span>
+                </div>
+                <div class="audio-ctrl" id="btn-audio" onclick="toggleMuteState()">🔊</div>
+            </div>
+
+            <div class="map-track-container">
+                <div class="map-line"></div>
+                <div class="map-node" id="node-0"><div class="avatar-token" id="hero-token">🤠</div></div>
+                <div class="map-node" id="node-1"></div>
+                <div class="map-node" id="node-2"></div>
+                <div class="map-node" id="node-3"></div>
+                <div class="map-node" id="node-4"></div>
+                <div class="map-node" id="node-5"></div>
+                <div class="map-node" id="node-6"></div>
+                <div class="map-node" id="node-7"></div>
+                <div class="map-node" id="node-8"></div>
+                <div class="map-node" id="node-9"></div>
+            </div>
+
+            <div class="quest-card">
+                <div style="width:100%;">
+                    <div class="competency-tag" id="quest-competency">योग्यता</div>
+                    <div class="question-text" id="quest-question">लोड हो रहा है...</div>
+                    <div class="options-grid" id="quest-options-box">
+                        </div>
+                </div>
+                <div class="feedback-banner" id="quest-feedback"></div>
+            </div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <div class="chest-art">👑🏆🌳</div>
+            <div class="congrats-title">अद्भुत सफलता!</div>
+            <div class="final-badge" id="badge-score">0/10</div>
+            <div class="summary-text" id="summary-msg">बधाई हो! आपने पेड़ों के महत्व और सामाजिक कर्तव्यों से जुड़े सभी पड़ावों को सफलता पूर्वक सुलझाकर 'हरा सोना' का रहस्यमयी खजाना पा लिया है।</div>
+            <button class="btn-universal" onclick="restartQuestGame()">🔄 दोबारा खेलें</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Production Grade Dataset mapping strictly to the text chapter elements
+        const dataset = [
+            {
+                q: "विद्यालय के मैदान में गर्मियों के समय बहुत अधिक तपती गर्मी होती है। पेड़ों के महत्व को समझते हुए विद्यालय प्रबंधन को क्या व्यावहारिक कदम उठाना चाहिए?",
+                options: ["मैदान में और अधिक सीमेंट की परत लगवाना", "अधिक छायादार पेड़ लगाकर उनकी नियमित देखभाल करना", "सभी बचे हुए छोटे पेड़ों को काट देना", "मैदान में केवल बिजली के पंखों की संख्या बढ़ाना"],
+                correctIndex: 1,
+                competency: "पर्यावरण संरक्षण के ज्ञान का वास्तविक जीवन में प्रयोग"
+            },
+            {
+                q: "रिया अपने प्रिय मित्र को जन्मदिन पर एक ऐसा उपहार देना चाहती है जो लंबे समय तक उपयोगी और पर्यावरण के अनुकूल रहे। वह क्या दे सकती है?",
+                options: ["प्लास्टिक से बना एक खिलौना", "एक छोटा जीवित पौधा जिसे मित्र बड़ा कर सके", "चमकदार केवल एक सजावटी वस्तु", "कागज की बनी एक क्षणिक वस्तु"],
+                correctIndex: 1,
+                competency: "पर्यावरण के प्रति जिम्मेदार निर्णय लेना"
+            },
+            {
+                q: "एक व्यक्ति का सोचना है कि, 'पेड़ों का महत्व केवल इंसानी इस्तेमाल की लकड़ी प्राप्त करने तक ही सीमित है।' इस विचार के बारे में आपका क्या मूल्यांकन है?",
+                options: ["यह सही है क्योंकि पेड़ केवल इमारती लकड़ी देते हैं।", "यह गलत है क्योंकि पेड़ जीवन के लिए आवश्यक हवा, आवास व अन्य कई सुविधाएँ देते हैं।", "यह सही है क्योंकि पेड़ केवल गहरे जंगलों में ही उपयोगी होते हैं।", "यह गलत है क्योंकि पेड़ों का कोई वास्तविक उपयोग नहीं होता।"],
+                correctIndex: 1,
+                competency: "तर्क के आधार पर विचारों का मूल्यांकन"
+            },
+            {
+                q: "एक व्यस्त शहर में वायु प्रदूषण का स्तर खतरनाक ढंग से बढ़ रहा है। पेड़ों की प्राकृतिक भूमिका को ध्यान में रखते हुए सबसे प्रभावी समाधान क्या होगा?",
+                options: ["अधिक निजी वाहनों का प्रयोग बढ़ाना", "सड़कों के किनारे पेड़ों की कटाई बढ़ाना", "अधिक संख्या में पौधे लगाना और उनकी कड़ाई से रक्षा करना", "कूड़ा-कचरा खुले स्थानों में फेंकना"],
+                correctIndex: 2,
+                competency: "पर्यावरण की समस्या का समाधान करना"
+            },
+            {
+                q: "पाठ के अनुसार पेड़ों को 'हरा सोना' (Green Gold) कहना किस मुख्य बात को प्रदर्शित करता है?",
+                options: ["पेड़ों की पत्तियों का रंग सोने जैसा पीला होता है।", "पेड़ अत्यंत मूल्यवान और समस्त जीव जगत के लिए जीवन उपयोगी होते हैं।", "पेड़ केवल व्यावसायिक लकड़ी के व्यापार के लिए बने हैं।", "पेड़ों की जड़ों से बहुमूल्य सोना प्राप्त होता है।"],
+                correctIndex: 1,
+                competency: "भाषा में छिपे भाव को समझना और व्याख्या करना"
+            },
+            {
+                q: "यदि आपके मोहल्ले या कॉलोनी में कुछ लोग बिना किसी ठोस कारण के हरे-भरे पेड़ों की शाखाओं को नुकसान पहुँचा रहे हैं, तो एक अच्छे नागरिक के रूप में आप क्या करेंगे?",
+                options: ["उन्हें तुरंत रोकेंगे और पेड़ों की सुरक्षा के महत्व के प्रति जागरूक करेंगे।", "उन्हें और अधिक पेड़ काटने के लिए प्रेरित करेंगे।", "इस बात को पूरी तरह से अनदेखा कर अपने काम में लग जाएँगे।", "स्वयं भी पेड़ों को नुकसान पहुँचाना शुरू करेंगे।"],
+                correctIndex: 0,
+                competency: "जिम्मेदार नागरिक व्यवहार अपनाना"
+            },
+            {
+                q: "यदि पृथ्वी पर जंगलों और पेड़ों की संख्या निरंतर बहुत कम होती चली जाए, तो भविष्य में इसका सबसे संभावित प्राकृतिक परिणाम क्या होगा?",
+                options: ["वायुमंडल की शुद्धता अत्यधिक बढ़ जाएगी।", "वन्य जीव-जंतुओं को रहने के लिए अधिक स्थान मिलेगा।", "प्रदूषण और पृथ्वी का तापमान खतरनाक रूप से बढ़ जाएगा।", "वर्षा का चक्र हमेशा एक समान बना रहेगा."],
+                correctIndex: 2,
+                competency: "कारण और परिणाम का विश्लेषण"
+            },
+            {
+                q: "कक्षा के छात्र अपने विद्यालय परिसर में 'पेड़ बचाओ अभियान' शुरू करना चाहते हैं। इसके अंतर्गत सबसे व्यावहारिक और प्रभावी कार्य कौन-सा होगा?",
+                options: ["दीवारों पर पेड़ों के चित्र बनाना", "नए पौधे रोपित करना और सामूहिक रूप से उनकी दैनिक देखभाल करना", "पेड़ों के चारों तरफ कचरा इकट्ठा करना", "पेड़ों की हरी शाखाओं को तोड़ना"],
+                correctIndex: 1,
+                competency: "सकारात्मक पर्यावरणीय कार्यों का चयन"
+            },
+            {
+                q: "प्राकृतिक संतुलन (Ecological balance) बनाए रखने में पेड़ पक्षियों और छोटे वन्य जानवरों के लिए क्यों जीवनरेखा माने जाते हैं?",
+                options: ["क्योंकि वे केवल देखने में बहुत सुंदर और आकर्षक दिखाई देते हैं।", "क्योंकि वे उन्हें पोषण के लिए भोजन और रहने के लिए सुरक्षित प्राकृतिक आवास प्रदान करते हैं।", "क्योंकि वे केवल इंसानी समाज की आवश्यकताओं को पूरा करते हैं।", "क्योंकि वे एक स्थान से दूसरे स्थान तक चल सकते हैं।"],
+                correctIndex: 1,
+                competency: "पारिस्थितिकी संबंधों का विश्लेषण"
+            },
+            {
+                q: "एक विद्यार्थी कहता है, 'मेरे अकेले एक छोटा पौधा लगाने से इस विशाल पृथ्वी के पर्यावरण पर कोई बड़ा बदलाव नहीं आएगा।' आपकी समझ से सही उत्तर क्या होगा?",
+                options: ["वह बिल्कुल सही है, क्योंकि एक अकेला व्यक्ति कुछ नहीं बदल सकता।", "पेड़ लगाने का पूरा प्रयास ही व्यर्थ है।", "प्रत्येक व्यक्ति के छोटे-छोटे प्रयास मिलकर अंत में बड़ा वैश्विक परिवर्तन लाते हैं।", "केवल सरकारें ही दुनिया में पेड़ लगाने के लिए सक्षम हैं।"],
+                correctIndex: 2,
+                competency: "सामूहिक प्रयासों के महत्व को समझना"
+            }
+        ];
+
+        let activePool = [];
+        let indexTrack = 0;
+        let runningScore = 0;
+        let attemptCounter = 0;
+        let silenceMode = false;
+        let blockInteraction = false;
+
+        // Built-in Web Audio API Synthesizer Context to bypass asset failure
+        const SynthesizerCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function triggerAudioSynthesizer(variant) {
+            if (silenceMode) return;
+            
+            const oscillator = SynthesizerCtx.createOscillator();
+            const volumeGain = SynthesizerCtx.createGain();
+            oscillator.connect(volumeGain);
+            volumeGain.connect(SynthesizerCtx.destination);
+            
+            volumeGain.gain.setValueAtTime(0.2, SynthesizerCtx.currentTime);
+
+            if (variant === 'correct') {
+                oscillator.type = 'triangle';
+                oscillator.frequency.setValueAtTime(587.33, SynthesizerCtx.currentTime); // D5
+                oscillator.frequency.setValueAtTime(880.00, SynthesizerCtx.currentTime + 0.1); // A5
+                volumeGain.gain.exponentialRampToValueAtTime(0.01, SynthesizerCtx.currentTime + 0.35);
+                oscillator.start();
+                oscillator.stop(SynthesizerCtx.currentTime + 0.35);
+            } else if (variant === 'clapping') {
+                // Short happy trill to simulate celebration applause
+                oscillator.type = 'sine';
+                const time = SynthesizerCtx.currentTime;
+                oscillator.frequency.setValueAtTime(659.25, time);
+                oscillator.frequency.setValueAtTime(783.99, time + 0.08);
+                oscillator.frequency.setValueAtTime(987.77, time + 0.16);
+                volumeGain.gain.exponentialRampToValueAtTime(0.01, time + 0.4);
+                oscillator.start();
+                oscillator.stop(time + 0.4);
+            } else if (variant === 'wrong') {
+                oscillator.type = 'sawtooth';
+                oscillator.frequency.setValueAtTime(146.83, SynthesizerCtx.currentTime); // D3
+                volumeGain.gain.exponentialRampToValueAtTime(0.01, SynthesizerCtx.currentTime + 0.4);
+                oscillator.start();
+                oscillator.stop(SynthesizerCtx.currentTime + 0.4);
+            } else if (variant === 'victory') {
+                oscillator.type = 'sine';
+                const time = SynthesizerCtx.currentTime;
+                oscillator.frequency.setValueAtTime(523.25, time);
+                oscillator.frequency.setValueAtTime(659.25, time + 0.12);
+                oscillator.frequency.setValueAtTime(783.99, time + 0.24);
+                oscillator.frequency.setValueAtTime(1046.50, time + 0.36);
+                volumeGain.gain.exponentialRampToValueAtTime(0.01, time + 0.8);
+                oscillator.start();
+                oscillator.stop(time + 0.8);
+            }
+        }
+
+        // Automatic screen transitions handling
+        window.onload = () => {
+            setTimeout(() => {
+                transitionScreen('instruction-screen');
+            }, 5000); // Strict 5 second logo display policy
+        };
+
+        function transitionScreen(id) {
+            document.querySelectorAll('.screen').forEach(scr => scr.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function toggleMuteState() {
+            silenceMode = !silenceMode;
+            document.getElementById('btn-audio').innerText = silenceMode ? "🔇" : "🔊";
+        }
+
+        function initiateQuest() {
+            if (SynthesizerCtx.state === 'suspended') {
+                SynthesizerCtx.resume();
+            }
+            // Randomise questions pool on every play session to ensure freshness
+            activePool = [...dataset].sort(() => Math.random() - 0.5);
+            indexTrack = 0;
+            runningScore = 0;
+            
+            // Build map track structure layout dynamically
+            buildMapNodes();
+            transitionScreen('gameplay-screen');
+            renderChallengeNode();
+        }
+
+        function buildMapNodes() {
+            for (let i = 0; i < 10; i++) {
+                const node = document.getElementById(`node-${i}`);
+                node.className = 'map-node';
+                if(i === 0) {
+                    node.classList.add('active');
+                    if(!document.getElementById('hero-token')) {
+                        const token = document.createElement('div');
+                        token.className = 'avatar-token';
+                        token.id = 'hero-token';
+                        token.innerText = "🤠";
+                        node.appendChild(token);
+                    }
+                }
+            }
+        }
+
+        function renderChallengeNode() {
+            attemptCounter = 0;
+            blockInteraction = false;
+            const currentItem = activePool[indexTrack];
+
+            document.getElementById('label-step').innerText = `पड़ाव: ${indexTrack + 1}/10`;
+            document.getElementById('label-score').innerText = `अंक: ${runningScore}/10`;
+            document.getElementById('quest-competency').innerText = currentItem.competency;
+            document.getElementById('quest-question').innerText = currentItem.q;
+
+            const feedback = document.getElementById('quest-feedback');
+            feedback.style.display = 'none';
+            feedback.className = 'feedback-banner';
+
+            // Sync visual avatar token along the nodes track
+            for(let i=0; i<10; i++) {
+                const targetNode = document.getElementById(`node-${i}`);
+                targetNode.classList.remove('active');
+                if(i === indexTrack) {
+                    targetNode.classList.add('active');
+                    const token = document.getElementById('hero-token');
+                    targetNode.appendChild(token);
+                }
+            }
+
+            const optionsBox = document.getElementById('quest-options-box');
+            optionsBox.innerHTML = '';
+
+            currentItem.options.forEach((optText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerHTML = `<span style="font-size:12px; opacity:0.6;">●</span> <span>${optText}</span>`;
+                btn.onclick = () => verifySelectedAnswer(index, btn);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function verifySelectedAnswer(chosenIdx, clickedBtn) {
+            if (blockInteraction) return;
+            const currentItem = activePool[indexTrack];
+            const feedback = document.getElementById('quest-feedback');
+
+            if (chosenIdx === currentItem.correctIndex) {
+                blockInteraction = true;
+                clickedBtn.classList.add('correct');
+                
+                triggerAudioSynthesizer('correct');
+                triggerAudioSynthesizer('clapping');
+                createExplosionBurst();
+
+                // Mark current map node as permanently green/completed
+                document.getElementById(`node-${indexTrack}`).classList.add('completed');
+
+                runningScore++;
+                document.getElementById('label-score').innerText = `अंक: ${runningScore}/10`;
+                setTimeout(progressToNextStep, 1500);
+            } else {
+                attemptCounter++;
+                clickedBtn.classList.add('wrong');
+                clickedBtn.disabled = true;
+                triggerAudioSynthesizer('wrong');
+
+                if (attemptCounter === 1) {
+                    feedback.innerText = "गलत रास्ता! रास्ते पर आगे बढ़ने के लिए दोबारा सोचें, आपके पास 1 अंतिम प्रयास है।";
+                    feedback.className = "feedback-banner attempt-one";
+                    feedback.style.display = 'block';
+                } else {
+                    // Maximum attempts exhausted, lock options and auto proceed
+                    blockInteraction = true;
+                    feedback.style.display = 'none';
+
+                    // Force highlight correct path option to student
+                    const alternativeBtns = document.querySelectorAll('.option-btn');
+                    alternativeBtns[currentItem.correctIndex].classList.add('correct');
+
+                    setTimeout(progressToNextStep, 2000);
+                }
+            }
+        }
+
+        function createExplosionBurst() {
+            const wrapper = document.getElementById('gameplay-screen');
+            for (let i = 0; i < 25; i++) {
+                const div = document.createElement('div');
+                div.className = 'confetti-piece';
+                div.style.left = '50%';
+                div.style.top = '45%';
+                div.style.setProperty('--dx', (Math.random() * 300 - 150) + 'px');
+                div.style.setProperty('--dy', (Math.random() * 300 - 150) + 'px');
+                div.style.backgroundColor = ['#ffb703', '#2d6a4f', '#4cc9f0', '#2a9d8f', '#e63946'][Math.floor(Math.random() * 5)];
+                wrapper.appendChild(div);
+                setTimeout(() => div.remove(), 700);
+            }
+        }
+
+        function progressToNextStep() {
+            indexTrack++;
+            if (indexTrack < activePool.length) {
+                renderChallengeNode();
+            } else {
+                concludeQuestGame();
+            }
+        }
+
+        function concludeQuestGame() {
+            transitionScreen('result-screen');
+            document.getElementById('badge-score').innerText = `${runningScore}/10`;
+            triggerAudioSynthesizer('victory');
+
+            const msgText = document.getElementById('summary-msg');
+            if (runningScore >= 8) {
+                msgText.innerText = "असाधारण! 🎉 आपने पेड़ों के महत्व और सामाजिक कर्तव्यों से जुड़े सभी पड़ावों को सफलतापूर्वक सुलझाकर 'हरा सोना' का रहस्यमयी असली खजाना पा लिया है। आपकी तार्किक क्षमता लाजवाब है!";
+            } else if (runningScore >= 5) {
+                msgText.innerText = "सराहनीय प्रयास! 👍 आप खजाने के बेहद करीब पहुँच चुके हैं। पर्यावरण संतुलन और जिम्मेदारियों के प्रति आपकी समझ अच्छी है। इसे और बेहतर करने के लिए फिर से प्रयास करें।";
+            } else {
+                msgText.innerText = "कोई बात नहीं! 🌿 पर्यावरण और पेड़ों के महत्व को गहराई से समझने के लिए एक बार फिर से इस खोजी यात्रा पर निकलें। प्रयास करने से ही सफलता मिलेगी!";
+            }
+        }
+
+        function restartQuestGame() {
+            transitionScreen('instruction-screen');
+        }
+    </script>
+</body>
+</html>
