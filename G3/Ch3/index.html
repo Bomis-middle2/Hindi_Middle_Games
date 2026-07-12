@@ -203,6 +203,11 @@
             animation: bounce 0.5s infinite alternate;
         }
 
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-3px); }
+        }
+
         .cell.checkpoint::after {
             content: '❓';
             font-size: 1.2rem;
@@ -240,7 +245,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: background 0.1s;
+            transition: background 0.1s, transform 0.1s;
         }
 
         .ctrl-btn:active {
@@ -356,13 +361,14 @@
 <body>
 
 <div id="game-container">
-    <!-- Screen 1: Splash Screen -->
     <div id="splash-screen" class="screen active">
         <div class="logo-box">
-                </div>
-        
+            <h1 style="font-size: 2.5rem; margin-bottom: 5px;">हवा महल</h1>
+            <p style="font-weight: bold; letter-spacing: 1px;">भूलभुलैया साहसिक</p>
+        </div>
+        <p style="font-size: 1.1rem;">जयपुर की ऐतिहासिक यात्रा...</p>
+    </div>
 
-    <!-- Screen 2: Welcome Screen -->
     <div id="welcome-screen" class="screen">
         <h1 class="title">हवा महल भूलभुलैया (Maze Adventure)</h1>
         <p class="subtitle">पाठ 3: हवा महल - जयपुर की यात्रा पर आधारित गेम</p>
@@ -373,7 +379,6 @@
         <button class="btn" onclick="startGame()">खेल शुरू करें</button>
     </div>
 
-    <!-- Screen 3: Game Screen -->
     <div id="game-screen" class="screen">
         <div class="game-header">
             <div class="stat-box" id="score-display">अंक: 0</div>
@@ -394,7 +399,6 @@
             </div>
         </div>
 
-        <!-- Question Modal -->
         <div id="question-modal" class="modal">
             <div class="modal-card">
                 <h3 id="question-text">प्रश्न यहाँ आएगा...</h3>
@@ -403,7 +407,6 @@
         </div>
     </div>
 
-    <!-- Screen 4: End Screen -->
     <div id="end-screen" class="screen">
         <div class="end-card">
             <h2>बधाई हो! 🎉</h2>
@@ -471,7 +474,7 @@
         }
     }
 
-    // Question Bank based on Chapter 3
+    // Question Bank based on Chapter 3: Hawa Mahal
     const allQuestions = [
         {
             q: "जयपुर शहर को किस नाम से जाना जाता है?",
@@ -515,9 +518,9 @@
         }
     ];
 
-    // Maze Grid (8x8 Layout)
+    // Maze Grid Layout (8x8 Grid)
     // 0 = path, 1 = wall, 2 = checkpoint (question), 3 = goal
-    const mazeLayout = [
+    const initialMazeLayout = [
         [0, 0, 1, 0, 0, 0, 1, 0],
         [1, 0, 1, 0, 1, 2, 1, 0],
         [0, 2, 0, 0, 1, 0, 0, 0],
@@ -528,6 +531,7 @@
         [0, 1, 0, 0, 0, 1, 1, 3]
     ];
 
+    let mazeLayout = JSON.parse(JSON.stringify(initialMazeLayout));
     const mazeSize = 8;
     let playerPos = { x: 0, y: 0 };
     let score = 0;
@@ -536,10 +540,10 @@
     let currentQuestions = [];
     let pendingMove = null;
 
-    // Auto-Transition Splash to Welcome Screen after 5 seconds
+    // Auto-Transition Splash to Welcome Screen after 3 seconds
     setTimeout(() => {
         switchScreen('splash-screen', 'welcome-screen');
-    }, 5000);
+    }, 3000);
 
     function switchScreen(fromId, toId) {
         document.getElementById(fromId).classList.remove('active');
@@ -551,6 +555,9 @@
         score = 0;
         secondsElapsed = 0;
         playerPos = { x: 0, y: 0 };
+
+        // Reset Maze Layout Checkpoints
+        mazeLayout = JSON.parse(JSON.stringify(initialMazeLayout));
 
         // Shuffle questions
         currentQuestions = [...allQuestions].sort(() => Math.random() - 0.5);
@@ -653,6 +660,7 @@
             playSound('correct');
             score += 10;
             document.getElementById('score-display').innerText = `अंक: ${score}`;
+            
             // Mark checkpoint cleared
             mazeLayout[pendingMove.y][pendingMove.x] = 0;
             const cell = document.getElementById(`cell-${pendingMove.x}-${pendingMove.y}`);
@@ -681,16 +689,7 @@
     }
 
     function restartGame() {
-        // Reset Checkpoints in maze layout
-        for (let y = 0; y < mazeSize; y++) {
-            for (let x = 0; x < mazeSize; x++) {
-                if ((x === 1 && y === 2) || (x === 3 && y === 3) || 
-                    (x === 5 && y === 1) || (x === 6 && y === 4) || (x === 1 && y === 6)) {
-                    mazeLayout[y][x] = 2;
-                }
-            }
-        }
-        startGame();
+        switchScreen('end-screen', 'welcome-screen');
     }
 
     // Keyboard Controls
