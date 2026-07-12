@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>पर्यावरण रक्षक - ड्रैग एंड ड्रॉप गेम</title>
+    <title>पेड़ों की महिमा - सहमत या असहमत</title>
     <style>
         :root {
-            --forest-bg: #2d6a4f;
-            --leaf-green: #40916c;
+            --forest-bg: #1e4d2b;
+            --leaf-green: #2d6a4f;
             --light-leaf: #d8f3dc;
-            --accent-yellow: #ffb703;
+            --agree-color: #2a9d8f;
+            --agree-light: #e6f6f4;
+            --disagree-color: #e63946;
+            --disagree-light: #ffebee;
             --card-bg: rgba(255, 255, 255, 0.95);
             --text-main: #1b4332;
             --text-muted: #475569;
-            --success: #2a9d8f;
-            --error: #e63946;
         }
 
         * {
@@ -27,8 +28,8 @@
         }
 
         body {
-            /* बाल-सुलभ पेड़ों और बादलों की सुंदर प्राकृतिक थीम */
-            background: linear-gradient(to bottom, #90e0ef 0%, #b5e2fa 40%, #74c69d 40%, #52b788 100%);
+            /* बाल-सुलभ पेड़, आसमान और प्रकृति की बैकग्राउंड थीम */
+            background: linear-gradient(to bottom, #a8dede 0%, #c4faf8 35%, #9fd3c7 35%, #38b000 100%);
             background-attachment: fixed;
             color: var(--text-main);
             display: flex;
@@ -40,40 +41,40 @@
             overflow: hidden;
         }
 
-        /* बैकग्राउंड में सजावटी पेड़ बनाने के लिए CSS */
+        /* बैकग्राउंड को और अधिक प्राकृतिक और आकर्षक बनाने के लिए सजावटी तत्व */
         body::before {
-            content: "🌲";
+            content: "🌳";
             position: absolute;
-            bottom: 10px;
-            left: 5%;
-            font-size: 70px;
-            opacity: 0.7;
+            bottom: 15px;
+            left: 3%;
+            font-size: 75px;
+            opacity: 0.6;
             z-index: 0;
         }
         body::after {
-            content: "🌳";
+            content: "🌲";
             position: absolute;
-            bottom: 20px;
-            right: 5%;
-            font-size: 80px;
-            opacity: 0.7;
+            bottom: 25px;
+            right: 3%;
+            font-size: 75px;
+            opacity: 0.6;
             z-index: 0;
         }
 
         .quiz-container {
             width: 100%;
-            max-width: 650px;
+            max-width: 620px;
             background: var(--card-bg);
             border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
             padding: 20px;
             position: relative;
             overflow: hidden;
-            min-height: 580px;
+            min-height: 560px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border: 4px solid #40916c;
+            border: 4px solid var(--leaf-green);
             z-index: 1;
         }
 
@@ -89,7 +90,7 @@
             display: flex;
         }
 
-        /* 1) Splash Screen */
+        /* 1) Splash Screen (Exactly 5 seconds) */
         #splash-screen {
             align-items: center;
             background: #ffffff;
@@ -128,7 +129,7 @@
         }
 
         .ins-box {
-            background: #f2fbf5;
+            background: #f4fcf7;
             padding: 20px;
             border-radius: 16px;
             margin-bottom: 24px;
@@ -148,7 +149,7 @@
         }
 
         .btn-action {
-            background: var(--forest-bg);
+            background: var(--leaf-green);
             color: white;
             border: none;
             padding: 16px 32px;
@@ -158,11 +159,11 @@
             cursor: pointer;
             width: 100%;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
+            box-shadow: 0 5px 15px rgba(45, 106, 79, 0.3);
         }
 
         .btn-action:hover {
-            background: var(--text-main);
+            background: var(--forest-bg);
         }
 
         /* 3) Main Game Screen */
@@ -197,7 +198,7 @@
 
         .volume-slider {
             width: 60px;
-            accent-color: var(--forest-bg);
+            accent-color: var(--leaf-green);
             cursor: pointer;
         }
 
@@ -213,95 +214,115 @@
         .stats-bar {
             display: flex;
             justify-content: space-between;
-            background: #f2fbf5;
+            background: #f4fcf7;
             padding: 10px 14px;
             border-radius: 12px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             font-weight: 700;
             font-size: 14px;
-            border: 1px solid #d8f3dc;
+            border: 1px solid var(--light-leaf);
         }
 
-        /* Drag Card (The Leaf Element) */
+        /* Drag Area (The Leaf Statement) */
         .drag-area {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 120px;
-            margin-bottom: 20px;
+            min-height: 130px;
+            margin-bottom: 24px;
             position: relative;
         }
 
         .drag-card {
             background: #ffffff;
-            border: 3px solid var(--leaf-green);
+            border: 3px dashed var(--leaf-green);
             border-radius: 16px;
-            padding: 16px;
-            font-size: 16px;
+            padding: 18px;
+            font-size: 17px;
             font-weight: 700;
             text-align: center;
             color: var(--text-main);
             cursor: grab;
-            width: 90%;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            touch-action: none;
+            width: 92%;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            touch-action: none; /* Prevents scroll interference on mobile */
             position: absolute;
             transition: transform 0.1s ease, box-shadow 0.1s ease;
             z-index: 10;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .drag-card::before {
-            content: "🍁";
-            font-size: 20px;
+            content: "🍃";
             position: absolute;
             top: -12px;
-            left: 12px;
+            left: 15px;
+            font-size: 20px;
         }
 
         .drag-card:active {
             cursor: grabbing;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.18);
             transform: scale(1.02);
         }
 
-        /* Drop Zones (The Basket/Containers) */
+        /* Drop Zones (Agree and Disagree Boxes) */
         .drop-zones-container {
             display: flex;
-            flex-direction: column;
-            gap: 12px;
+            gap: 16px;
             margin-top: auto;
         }
 
         .drop-zone {
-            background: #f4fbf7;
-            border: 2px dashed var(--leaf-green);
-            border-radius: 16px;
-            padding: 14px;
+            flex: 1;
+            border-radius: 18px;
+            padding: 20px 10px;
             text-align: center;
-            font-weight: 700;
-            font-size: 15px;
-            color: var(--text-main);
+            font-weight: 800;
+            font-size: 18px;
             transition: all 0.2s ease;
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: 3px solid var(--border);
+            background: #fafafa;
         }
 
-        .drop-zone.hovered {
-            background: var(--light-leaf);
-            border-color: var(--forest-bg);
-            transform: scale(1.01);
+        .drop-zone[data-zone-type="agree"] {
+            border-color: var(--agree-color);
+            color: var(--agree-color);
+        }
+        .drop-zone[data-zone-type="agree"].hovered {
+            background: var(--agree-light);
+            transform: scale(1.03);
         }
 
+        .drop-zone[data-zone-type="disagree"] {
+            border-color: var(--disagree-color);
+            color: var(--disagree-color);
+        }
+        .drop-zone[data-zone-type="disagree"].hovered {
+            background: var(--disagree-light);
+            transform: scale(1.03);
+        }
+
+        /* Flashing Animation Colors */
         .drop-zone.correct-flash {
-            background-color: var(--light-leaf) !important;
-            border-color: var(--success) !important;
-            color: var(--forest-bg) !important;
+            background-color: #d8f3dc !important;
+            border-color: #1b4332 !important;
+            color: #1b4332 !important;
         }
 
         .drop-zone.wrong-flash {
             background-color: #ffe3e3 !important;
-            border-color: var(--error) !important;
+            border-color: #b91c1c !important;
             color: #b91c1c !important;
+        }
+
+        .zone-icon {
+            font-size: 32px;
         }
 
         .feedback-msg {
@@ -339,13 +360,13 @@
             height: 120px;
             border-radius: 50%;
             background: var(--light-leaf);
-            border: 4px solid var(--forest-bg);
+            border: 4px solid var(--leaf-green);
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 30px;
             font-weight: 800;
-            color: var(--forest-bg);
+            color: var(--leaf-green);
             margin: 16px 0;
             box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
@@ -360,7 +381,7 @@
             line-height: 1.5;
         }
 
-        /* Confetti Particle effect */
+        /* Confetti Effect Particle */
         .particle {
             position: absolute;
             width: 8px;
@@ -388,12 +409,12 @@
         </div>
 
         <div id="instruction-screen" class="screen">
-            <div class="ins-title">प्रकृति रक्षक कैसे बनें? 🌲</div>
+            <div class="ins-title">सोचें और निर्णय लें! 🤔</div>
             <div class="ins-box">
-                <div class="ins-item">📄 <span>ऊपर एक कार्ड (पत्ती) पर पर्यावरण की स्थिति लिखी होगी।</span></div>
-                <div class="ins-item">👇 <span>उसे माउस या उंगली से खींचकर (Drag) नीचे की सही श्रेणी में छोड़ें (Drop)।</span></div>
-                <div class="ins-item">🔄 <span>गलत श्रेणी चुनने पर सुधार के लिए 1 अंतिम अवसर मिलेगा।</span></div>
-                <div class="ins-item">🔊 <span>आप अपनी सुविधा से ध्वनि का वॉल्यूम बदल सकते हैं।</span></div>
+                <div class="ins-item">📄 <span>ऊपर पर्यावरण और पेड़ों से जुड़ा एक वास्तविक जीवन का कथन आएगा।</span></div>
+                <div class="ins-item">👇 <span>कथन को ध्यान से पढ़ें और उसे नीचे दिए गए 'सहमत' या 'असहमत' बॉक्स में खींचें (Drag & Drop)।</span></div>
+                <div class="ins-item">🔄 <span>गलत चुनाव करने पर आपको अपनी सोच सुधारने का 1 और अवसर मिलेगा।</span></div>
+                <div class="ins-item">🔊 <span>आप अपनी इच्छा से वॉल्यूम स्लाइडर द्वारा खेल की आवाज़ कम-ज्यादा कर सकते हैं।</span></div>
             </div>
             <button class="btn-action" onclick="startQuiz()">खेल शुरू करें 🚀</button>
         </div>
@@ -408,20 +429,25 @@
             </div>
             
             <div class="stats-bar">
-                <div id="q-count">प्रश्न: 1/10</div>
+                <div id="q-count">कथन: 1/10</div>
                 <div id="score-count">अंक: 0/10</div>
             </div>
 
             <div class="drag-area" id="drag-container">
-                <div class="drag-card" id="draggable-card">कार्ड लोड हो रहा है...</div>
+                <div class="drag-card" id="draggable-card">कथन लोड हो रहा है...</div>
             </div>
 
             <div class="feedback-msg" id="feedback-box"></div>
 
             <div class="drop-zones-container">
-                <div class="drop-zone" data-zone-id="0">🟢 पर्यावरण और स्वास्थ्य (Environment & Health)</div>
-                <div class="drop-zone" data-zone-id="1">🔵 जिम्मेदारी और समाज (Responsibility & Society)</div>
-                <div class="drop-zone" data-zone-id="2">🐾 पारिस्थितिकी और जीव-जंतु (Ecology & Animals)</div>
+                <div class="drop-zone" data-zone-type="agree">
+                    <div class="zone-icon">🟢</div>
+                    <div>सहमत<br>(Agree)</div>
+                </div>
+                <div class="drop-zone" data-zone-type="disagree">
+                    <div class="zone-icon">🔴</div>
+                    <div>असहमत<br>(Disagree)</div>
+                </div>
             </div>
         </div>
 
@@ -436,57 +462,57 @@
     </div>
 
     <script>
-        // Mapping: 0 = Environment & Health, 1 = Responsibility & Society, 2 = Ecology & Animals
-        const questionsData = [
+        // Expected Drop Target Types: "agree" or "disagree"
+        const statementsData = [
             {
-                q: "एक शहर में प्रदूषण बहुत तेजी से बढ़ रहा है। वहाँ की हवा को साफ़ और शुद्ध करने के लिए सबसे प्रभावी कदम क्या होगा?",
-                zone: 0,
+                q: "बढ़ते वायु प्रदूषण को रोकने के लिए हमें शहरों में और अधिक सीमेंट की इमारतों के बजाय पेड़ों की संख्या बढ़ानी चाहिए।",
+                expected: "agree",
                 competency: "पर्यावरण की समस्या का समाधान"
             },
             {
-                q: "विद्यालय के मैदान में गर्मियों के समय बहुत तेज़ धूप होती है। मैदान को ठंडा रखने के लिए विद्यालय को क्या करना चाहिए?",
-                zone: 0,
-                competency: "वास्तविक जीवन में पेड़ों का प्रयोग"
+                q: "पेड़ों का महत्व केवल इंसानों की लकड़ी की ज़रूरतें पूरी करने तक ही सीमित है, पशु-पक्षियों के लिए उनका कोई उपयोग नहीं है।",
+                expected: "disagree",
+                competency: "तर्क के आधार पर विचारों का मूल्यांकन"
             },
             {
-                q: "पृथ्वी पर पेड़ों की संख्या अत्यधिक कम हो जाने पर मानव स्वास्थ्य और प्रकृति का तापमान बिगड़ने का सबसे बड़ा कारण क्या है?",
-                zone: 0,
+                q: "यदि पृथ्वी पर पेड़ों की संख्या अत्यधिक कम हो जाए, तो शहरों का तापमान और वायु प्रदूषण बहुत अधिक बढ़ जाएगा।",
+                expected: "agree",
                 competency: "कारण और परिणाम का विश्लेषण"
             },
             {
-                q: "रिया अपने मित्र को जन्मदिन पर एक छोटा पौधा उपहार में देती है जिसे वह बड़ा कर सके। यह क्रिया क्या दर्शाती है?",
-                zone: 1,
+                q: "अपने किसी प्रिय मित्र को जन्मदिन पर प्लास्टिक के खिलौने के स्थान पर एक छोटा जीवित पौधा उपहार में देना एक बेहद जिम्मेदार निर्णय है।",
+                expected: "agree",
                 competency: "पर्यावरण के प्रति जिम्मेदार निर्णय"
             },
             {
-                q: "आपके मोहल्ले में कुछ लोग बिना वजह हरे-भरे पेड़ों को काट रहे हैं। एक अच्छे नागरिक के रूप में आपका कर्तव्य क्या होगा?",
-                zone: 1,
+                q: "यदि हमारे मोहल्ले में कोई व्यक्ति बिना कारण हरे-भरे पेड़ों को काट रहा है, तो हमें एक अच्छे नागरिक के रूप में उसे अनदेखा कर देना चाहिए।",
+                expected: "disagree",
                 competency: "जिम्मेदार नागरिक व्यवहार अपनाना"
             },
             {
-                q: "कक्षा के विद्यार्थियों द्वारा 'पेड़ बचाओ अभियान' के तहत नए पौधे लगाना और नियमित पानी देना किस गुण को दर्शाता है?",
-                zone: 1,
+                q: "विद्यार्थियों द्वारा 'पेड़ बचाओ अभियान' के तहत सिर्फ नए पौधे लगाना ही काफी नहीं है, बल्कि नियमित रूप से उनकी देखभाल करना भी आवश्यक है।",
+                expected: "agree",
                 competency: "सकारात्मक पर्यावरणीय कार्य"
             },
             {
-                q: "एक विद्यार्थी कहता है, 'मेरे अकेले एक पेड़ लगाने से पूरी पृथ्वी पर कोई बड़ा बदलाव नहीं आएगा।' इस विचार का खंडन कौन सा तर्क करता है?",
-                zone: 1,
+                q: "एक विद्यार्थी का यह सोचना बिल्कुल सही है कि 'मेरे अकेले एक पेड़ लगाने से पूरी पृथ्वी के पर्यावरण पर कोई सकारात्मक अंतर नहीं आएगा।'",
+                expected: "disagree",
                 competency: "सामूहिक प्रयासों के महत्व की समझ"
             },
             {
-                q: "पेड़ों को 'हरा सोना' कहना और उन्हें बहुत मूल्यवान समझना इंसानी समाज के लिए किस बात का परिचायक है?",
-                zone: 0,
+                q: "पेड़ों को 'हरा सोना' इसलिए कहा जाता है क्योंकि वे बहुत मूल्यवान हैं और इंसानी समाज के अस्तित्व के लिए साफ़ हवा व जीवन देते हैं।",
+                expected: "agree",
                 competency: "भाषा में छिपे गहरे भाव की व्याख्या"
             },
             {
-                q: "घने जंगल और बड़े पेड़ विभिन्न प्रकार के पक्षियों और जानवरों को भोजन के साथ-साथ रहने का सुरक्षित स्थान (आश्रय) देते हैं। यह क्या है?",
-                zone: 2,
+                q: "जंगल और बड़े पेड़ पक्षियों तथा जंगली जानवरों को न केवल भोजन देते हैं बल्कि उन्हें रहने के लिए सुरक्षित प्राकृतिक आश्रय भी प्रदान करते हैं।",
+                expected: "agree",
                 competency: "पारिस्थितिकी संबंधों का विश्लेषण"
             },
             {
-                q: "व्यक्ति का यह सोचना कि पेड़ केवल इंसानों की लकड़ी की ज़रूरतें पूरी करते हैं, उनके किस पहलू को अनदेखा करता है?",
-                zone: 2,
-                competency: "तर्क के आधार पर विचारों का मूल्यांकन"
+                q: "गर्मियों के मौसम में धूप से बचने के लिए विद्यालय के मैदानों के चारों ओर छायादार पेड़ लगाने की जगह प्लास्टिक की कृत्रिम छतें लगाना बेहतर है।",
+                expected: "disagree",
+                competency: "वास्तविक जीवन में पेड़ों का महत्व"
             }
         ];
 
@@ -510,6 +536,7 @@
         const dropZones = document.querySelectorAll('.drop-zone');
 
         window.onload = () => {
+            // Automatically switch from splash screen to instructions screen after 5 seconds
             setTimeout(() => {
                 switchScreen('instruction-screen');
             }, 5000);
@@ -539,11 +566,12 @@
 
         function playSound(audio) {
             audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio handoff handled safely."));
+            audio.play().catch(e => console.log("Audio resource initialized safely."));
         }
 
         function startQuiz() {
-            gameQuestions = [...questionsData].sort(() => Math.random() - 0.5);
+            // Shuffle dataset every time the game starts
+            gameQuestions = [...statementsData].sort(() => Math.random() - 0.5);
             currentIndex = 0;
             score = 0;
             switchScreen('quiz-screen');
@@ -555,7 +583,7 @@
             isTransitioning = false;
             const currentQuestion = gameQuestions[currentIndex];
             
-            document.getElementById('q-count').innerText = `प्रश्न: ${currentIndex + 1}/10`;
+            document.getElementById('q-count').innerText = `कथन: ${currentIndex + 1}/10`;
             document.getElementById('score-count').innerText = `अंक: ${score}/10`;
             document.getElementById('competency-box').innerText = currentQuestion.competency;
             
@@ -573,10 +601,12 @@
         }
 
         function setupDragAndDrop() {
+            // Mouse Handlers
             dragCard.addEventListener('mousedown', dragStart);
             document.addEventListener('mousemove', dragMove);
             document.addEventListener('mouseup', dragEnd);
 
+            // Touch Handlers for seamless Mobile/Tablet gameplay
             dragCard.addEventListener('touchstart', dragStart, { passive: false });
             document.addEventListener('touchmove', dragMove, { passive: false });
             document.addEventListener('touchend', dragEnd);
@@ -598,7 +628,7 @@
 
         function dragMove(e) {
             if (!activeDrag) return;
-            if (e.type === 'touchmove') e.preventDefault();
+            if (e.type === 'touchmove') e.preventDefault(); // Lock viewport scrolling
 
             let currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
             let currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
@@ -640,8 +670,8 @@
             });
 
             if (droppedZone) {
-                let zoneId = parseInt(droppedZone.getAttribute('data-zone-id'));
-                validateDrop(zoneId, droppedZone);
+                let zoneType = droppedZone.getAttribute('data-zone-type');
+                validateDrop(zoneType, droppedZone);
             } else {
                 snapBack();
             }
@@ -654,11 +684,12 @@
             initialY = 0;
         }
 
-        function validateDrop(zoneId, targetZone) {
+        function validateDrop(zoneType, targetZone) {
             const currentQuestion = gameQuestions[currentIndex];
             const feedback = document.getElementById('feedback-box');
 
-            if (zoneId === currentQuestion.zone) {
+            if (zoneType === currentQuestion.expected) {
+                // Correct match sequence
                 isTransitioning = true;
                 dragCard.style.pointerEvents = 'none';
                 targetZone.classList.add('correct-flash');
@@ -669,22 +700,24 @@
                 
                 setTimeout(proceedNext, 1500);
             } else {
+                // Wrong match sequence
                 currentAttempts++;
                 playSound(sndWrong);
                 targetZone.classList.add('wrong-flash');
 
                 if (currentAttempts === 1) {
-                    feedback.innerText = "गलत बॉक्स! कार्ड की स्थिति को समझें, आपके पास 1 अंतिम अवसर है।";
+                    feedback.innerText = "गलत विकल्प! कथन पर पुनः विचार करें, आपके पास 1 आखिरी मौका है।";
                     feedback.style.display = 'block';
                     snapBack();
                     setTimeout(() => { targetZone.classList.remove('wrong-flash'); }, 1000);
                 } else {
+                    // Show correct option automatically after 2 failed attempts
                     isTransitioning = true;
                     dragCard.style.pointerEvents = 'none';
                     feedback.style.display = 'none';
                     
                     setTimeout(() => { targetZone.classList.remove('wrong-flash'); }, 500);
-                    const correctZone = document.querySelector(`[data-zone-id="${currentQuestion.zone}"]`);
+                    const correctZone = document.querySelector(`[data-zone-type="${currentQuestion.expected}"]`);
                     correctZone.classList.add('correct-flash');
                     
                     dragCard.style.transition = 'opacity 0.5s ease';
@@ -701,7 +734,7 @@
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = '50%';
-                p.style.top = '30%';
+                p.style.top = '35%';
                 p.style.setProperty('--x', (Math.random() * 360 - 180) + 'px');
                 p.style.setProperty('--y', (Math.random() * 360 - 180) + 'px');
                 p.style.backgroundColor = ['#2d6a4f', '#52b788', '#ffb703', '#4cc9f0', '#f72585'][Math.floor(Math.random() * 5)];
@@ -732,21 +765,21 @@
 
             if (percent >= 80) {
                 emojiEl.innerText = "🏆";
-                titleEl.innerText = "सर्वश्रेष्ठ प्रदर्शन!";
-                msgBox.innerText = "अद्भुत! 🎉 आपने पेड़ों की महिमा, सामाजिक जिम्मेदारी और पर्यावरण संतुलन को बहुत अच्छे से समझा है। आप एक सच्चे प्रकृति रक्षक हैं!";
+                titleEl.innerText = "असाधारण विवेक!";
+                msgBox.innerText = "शानदार! 🎉 आपने पेड़ों के महत्व और पर्यावरण संरक्षण से जुड़े सभी कथनों का बिल्कुल सही मूल्यांकन किया है। आपकी तार्किक सोच कमाल की है!";
                 msgBox.style.backgroundColor = "var(--light-leaf)";
                 msgBox.style.color = "var(--text-main)";
                 playSound(sndClapping);
             } else if (percent >= 50) {
                 emojiEl.innerText = "👍";
-                titleEl.innerText = "अच्छा प्रयास!";
-                msgBox.innerText = "सराहनीय! 👍 पर्यावरण संरक्षण और सामाजिक कर्तव्यों के प्रति आपकी समझ अच्छी है। इसे और बेहतर करने के लिए अभ्यास जारी रखें।";
+                titleEl.innerText = "सराहनीय प्रयास!";
+                msgBox.innerText = "बहुत बढ़िया! 👍 पर्यावरण संरक्षण और सामाजिक जिम्मेदारियों के प्रति आपके विचार अच्छे हैं। अपनी सोच को और मजबूत बनाने के लिए अभ्यास करते रहें।";
                 msgBox.style.backgroundColor = "#fff7ed";
                 msgBox.style.color = "#c2410c";
             } else {
                 emojiEl.innerText = "🌿";
                 titleEl.innerText = "पुनः प्रयास करें!";
-                msgBox.innerText = "कोई बात नहीं! 🌿 पेड़ों के महत्व, हमारी जिम्मेदारियों और जीव-जंतुओं के लिए उनकी आवश्यकता को फिर से समझने के लिए एक बार फिर खेलें।";
+                msgBox.innerText = "कोई बात नहीं! 🌿 पेड़ों की उपयोगिता और प्रकृति के प्रति हमारी ज़िम्मेदारियों को और गहराई से समझने के लिए एक बार फिर से खेलें।";
                 msgBox.style.backgroundColor = "#ffe3e3";
                 msgBox.style.color = "#b91c1c";
             }
