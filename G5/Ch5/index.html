@@ -3,32 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>गुल्लक - कैसल एस्केप</title>
+    <title>गुल्लक की खोज - खेल</title>
     <style>
         :root {
-            --castle-stone: #475569;
-            --gold-key: #eab308;
-            --door-wood: #7c2d12;
-            --success-green: #16a34a;
-            --danger-red: #dc2626;
-            --bg-dark: #0f172a;
-            --card-bg: rgba(255, 255, 255, 0.98);
-            --text-main: #1e293b;
-            --text-muted: #64748b;
+            --clay-brown: #b45309;
+            --gold-coin: #f59e0b;
+            --sky-blue: #0ea5e9;
+            --success-green: #22c55e;
+            --danger-red: #ef4444;
+            --bg-light: #f0f9ff;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
 
         body {
-            background: linear-gradient(to bottom, #1e293b 0%, #0f172a 100%);
-            color: var(--text-main);
+            background: linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 100%);
+            color: var(--text-dark);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -39,14 +39,14 @@
 
         .game-container {
             width: 100%;
-            max-width: 600px;
-            height: 94vh;
-            min-height: 570px;
-            max-height: 760px;
-            background: #f8fafc;
+            max-width: 550px;
+            height: 92vh;
+            min-height: 550px;
+            max-height: 720px;
+            background: #ffffff;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            border: 5px solid var(--castle-stone);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border: 4px solid var(--clay-brown);
             position: relative;
             overflow: hidden;
             display: flex;
@@ -58,7 +58,7 @@
             width: 100%;
             height: 100%;
             flex-direction: column;
-            padding: 18px;
+            padding: 16px;
             position: relative;
         }
 
@@ -75,24 +75,24 @@
         }
 
         .brand-logo {
-            font-size: 40px;
-            font-weight: 900;
-            color: var(--castle-stone);
-            letter-spacing: 2px;
+            font-size: 38px;
+            font-weight: 800;
+            color: var(--clay-brown);
+            letter-spacing: 1px;
             animation: pulseLogo 2s infinite ease-in-out;
         }
 
         .brand-sub {
-            font-size: 12px;
-            color: var(--text-muted);
-            letter-spacing: 6px;
+            font-size: 11px;
+            color: var(--text-gray);
+            letter-spacing: 4px;
             margin-top: 5px;
             text-transform: uppercase;
         }
 
         @keyframes pulseLogo {
-            0%, 100% { transform: scale(0.97); opacity: 0.9; }
-            50% { transform: scale(1.03); opacity: 1; }
+            0%, 100% { transform: scale(0.98); opacity: 0.9; }
+            50% { transform: scale(1.02); opacity: 1; }
         }
 
         /* 2) Instruction Screen */
@@ -103,49 +103,49 @@
         }
 
         .title-header {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--door-wood);
-            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--clay-brown);
+            margin-bottom: 15px;
         }
 
         .ins-box {
-            background: var(--card-bg);
-            border: 3px dashed var(--castle-stone);
-            border-radius: 16px;
-            padding: 20px;
+            background: var(--bg-light);
+            border: 2px dashed var(--clay-brown);
+            border-radius: 12px;
+            padding: 16px;
             width: 100%;
-            max-width: 460px;
+            max-width: 440px;
             text-align: left;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .ins-item {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--text-muted);
+            margin-bottom: 10px;
+            color: #334155;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             line-height: 1.4;
         }
 
         .btn-start {
-            background: var(--door-wood);
+            background: var(--clay-brown);
             color: white;
             border: none;
-            padding: 14px 35px;
-            font-size: 18px;
+            padding: 12px 30px;
+            font-size: 16px;
             font-weight: 700;
-            border-radius: 25px;
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 5px 15px rgba(124, 45, 18, 0.4);
+            box-shadow: 0 4px 10px rgba(180, 83, 9, 0.3);
             transition: transform 0.2s;
         }
 
         .btn-start:hover {
-            transform: scale(1.03);
+            transform: scale(1.02);
         }
 
         /* 3) Game Play Screen */
@@ -154,133 +154,130 @@
             justify-content: space-between;
             align-items: center;
             padding-bottom: 8px;
-            border-bottom: 2px dashed #cbd5e1;
+            border-bottom: 2px solid #e2e8f0;
         }
 
         .stats-hud {
             background: #fff;
-            padding: 6px 14px;
-            border-radius: 20px;
+            padding: 4px 12px;
+            border-radius: 15px;
             font-weight: 700;
-            font-size: 14px;
-            border: 2px solid var(--castle-stone);
+            font-size: 13px;
+            border: 2px solid var(--clay-brown);
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
 
         .audio-btn {
             background: #fff;
-            border: 2px solid var(--castle-stone);
+            border: 2px solid var(--clay-brown);
             border-radius: 50%;
-            width: 32px;
-            height: 32px;
+            width: 30px;
+            height: 30px;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        /* Castle Progress Visual Area */
-        .castle-escape-hud-zone {
-            height: 80px;
+        /* Simple Road Progress Visual Area */
+        .road-hud-zone {
+            height: 60px;
             margin: 12px 0;
-            background: #334155;
-            border-radius: 12px;
+            background: #e2e8f0;
+            border-radius: 10px;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 15px;
-            border: 2px solid #475569;
+            padding: 0 12px;
+            border: 2px solid #cbd5e1;
         }
 
-        .escape-track-line {
+        .road-line {
             position: absolute;
-            left: 40px;
-            right: 40px;
+            left: 30px;
+            right: 30px;
             height: 4px;
-            background: #1e293b;
+            background: #94a3b8;
             z-index: 1;
         }
 
         .gate-node {
-            width: 26px;
-            height: 26px;
+            width: 22px;
+            height: 22px;
             background: #64748b;
-            border: 2px solid #94a3b8;
+            border: 2px solid #fff;
             border-radius: 50%;
             z-index: 2;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
+            font-size: 9px;
             color: white;
             font-weight: bold;
             transition: all 0.3s;
         }
 
         .gate-node.unlocked {
-            background: var(--gold-key);
-            border-color: #fff;
+            background: var(--gold-coin);
             transform: scale(1.1);
-            box-shadow: 0 0 8px var(--gold-key);
+            box-shadow: 0 0 6px var(--gold-coin);
         }
 
         .player-token {
             position: absolute;
-            font-size: 24px;
-            top: 12px;
-            left: 15px;
-            transition: left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 20px;
+            top: 18px;
+            left: 10px;
+            transition: left 0.4s ease-out;
             z-index: 3;
         }
 
-        /* Question & Action Area */
+        /* Question Card Area */
         .question-box-card {
             background: #fff;
-            border-radius: 16px;
-            padding: 16px;
+            border-radius: 12px;
+            padding: 14px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
             border: 1px solid #e2e8f0;
         }
 
         .competency-tag {
             align-self: flex-start;
-            background: #f0fdf4;
-            color: var(--success-green);
-            padding: 4px 10px;
-            border-radius: 8px;
+            background: #fef3c7;
+            color: #d97706;
+            padding: 2px 8px;
+            border-radius: 6px;
             font-size: 11px;
             font-weight: 700;
-            margin-bottom: 8px;
-            border: 1px solid rgba(22, 163, 74, 0.2);
+            margin-bottom: 6px;
         }
 
         .main-question {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
-            line-height: 1.5;
-            color: #0f172a;
-            margin-bottom: 12px;
+            line-height: 1.4;
+            color: var(--text-dark);
+            margin-bottom: 10px;
         }
 
         .options-stack {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .option-btn {
             background: #fff;
             border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 10px 14px;
-            font-size: 14px;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 13px;
             font-weight: 600;
             text-align: left;
             cursor: pointer;
@@ -288,8 +285,8 @@
         }
 
         .option-btn:hover:not(:disabled) {
-            background: #f8fafc;
-            border-color: var(--door-wood);
+            background: #fafafa;
+            border-color: var(--clay-brown);
         }
 
         .option-btn.correct {
@@ -305,12 +302,12 @@
         }
 
         .hint-banner {
-            padding: 8px;
-            border-radius: 8px;
+            padding: 6px;
+            border-radius: 6px;
             text-align: center;
             font-weight: 700;
-            font-size: 13px;
-            margin-top: 10px;
+            font-size: 12px;
+            margin-top: 8px;
             display: none;
             background: #fff7ed;
             color: #c2410c;
@@ -325,56 +322,50 @@
         }
 
         .victory-art {
-            font-size: 65px;
-            margin-bottom: 15px;
-            animation: bounceArt 1.5s infinite ease-in-out;
-        }
-
-        @keyframes bounceArt {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            font-size: 55px;
+            margin-bottom: 10px;
         }
 
         .score-circle {
-            width: 100px;
-            height: 100px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
-            background: var(--gold-key);
-            border: 4px solid #fff;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            background: var(--gold-coin);
+            border: 3px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
-            font-weight: 900;
+            font-size: 22px;
+            font-weight: 800;
             color: #fff;
-            margin: 15px 0;
+            margin: 12px 0;
         }
 
         .end-msg {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            color: var(--text-muted);
-            max-width: 450px;
-            line-height: 1.5;
-            margin-bottom: 25px;
+            color: var(--text-gray);
+            max-width: 400px;
+            line-height: 1.4;
+            margin-bottom: 20px;
             padding: 0 10px;
         }
 
-        /* Sparkles Particles */
+        /* Sparkles */
         .sparkle-dot {
             position: absolute;
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
-            animation: burstOut 0.7s ease-out forwards;
+            animation: burstOut 0.6s ease-out forwards;
             pointer-events: none;
             z-index: 99;
         }
 
         @keyframes burstOut {
             0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--mx), var(--my)) scale(0.4); opacity: 0; }
+            100% { transform: translate(var(--mx), var(--my)) scale(0.3); opacity: 0; }
         }
     </style>
 </head>
@@ -388,40 +379,38 @@
         </div>
 
         <div id="instruction-screen" class="screen">
-            <div class="title-header">🏰 गुल्लक: कैसल एस्केप</div>
+            <div class="title-header">💰 गुल्लक की खोज: खेल</div>
             <div class="ins-box">
-                <div class="ins-item">🪙 <span>आप महल के मुख्य कक्ष में बंद हैं। बाहर निकलने के लिए 10 गेट पार करने हैं।</span></div>
-                <div class="ins-item">🔑 <span>'गुल्लक' कविता पर आधारित हर सही उत्तर गेट का ताला (Lock) खोल देगा।</span></div>
-                <div class="ins-item">🎯 <span>गलत उत्तर देने पर ताला खोलने के लिए 1 और अंतिम अवसर (Attempt 2) मिलेगा।</span></div>
-                <div class="ins-item">🔓 <span>सभी 10 द्वारों को अनलॉक करें और समझदारी की चाबी लेकर महल से मुक्त हों!</span></div>
+                <div class="ins-item">🪙 <span>आपको रास्ते में आगे बढ़ते हुए 10 आसान फाटकों को पार करना है।</span></div>
+                <div class="ins-item">🔑 <span>'गुल्लक' कविता के प्रश्नों का सही उत्तर देकर ताला खोलें।</span></div>
+                <div class="ins-item">🎯 <span>गलत उत्तर देने पर आपको 1 और मौका (दूसरा प्रयास) मिलेगा।</span></div>
+                <div class="ins-item">🔓 <span>सभी सही जवाब देकर अपनी भरी हुई गुल्लक तक पहुँचें!</span></div>
             </div>
-            <button class="btn-start" onclick="startCastleEscape()">एस्केप शुरू करें 🚀</button>
+            <button class="btn-start" onclick="startGame()">खेल शुरू करें 🚀</button>
         </div>
 
         <div id="gameplay-screen" class="screen">
             <div class="top-navbar">
                 <div class="stats-hud">
-                    <span id="hud-gate">गेट: 1/10</span>
+                    <span id="hud-gate">फाटक: 1/10</span>
                     <span id="hud-score">अंक: 0/10</span>
                 </div>
                 <div class="audio-btn" id="audio-toggle" onclick="toggleMute()">🔊</div>
             </div>
 
-            <div class="castle-escape-hud-zone">
-                <div class="escape-track-line"></div>
-                
+            <div class="road-hud-zone">
+                <div class="road-line"></div>
                 <div class="gate-node" id="gn-1">1</div>
                 <div class="gate-node" id="gn-3">3</div>
                 <div class="gate-node" id="gn-5">5</div>
                 <div class="gate-node" id="gn-7">7</div>
                 <div class="gate-node" id="gn-10">10</div>
-                
-                <div class="player-token" id="hero-token">🤠</div>
+                <div class="player-token" id="hero-token">🏃</div>
             </div>
 
             <div class="question-box-card">
                 <div>
-                    <div class="competency-tag" id="lbl-comp">योग्यता</div>
+                    <div class="competency-tag" id="lbl-comp">पाठ की समझ</div>
                     <div class="main-question" id="lbl-question">लोड हो रहा है...</div>
                     <div class="options-stack" id="box-options">
                         </div>
@@ -431,77 +420,77 @@
         </div>
 
         <div id="result-screen" class="screen">
-            <div class="victory-art">🔓🏰💰</div>
-            <div class="title-header" style="color:var(--success-green);">महल से मुक्ति मिली!</div>
+            <div class="victory-art">🐷🪙🎉</div>
+            <div class="title-header" style="color:var(--success-green);">खोज पूरी हुई!</div>
             <div class="score-circle" id="lbl-final-score">0/10</div>
-            <div class="end-msg" id="lbl-final-msg">बधाई हो! आपने बचत के महत्व और वित्तीय साक्षरता से जुड़े सभी प्रश्नों के सही ताले खोलकर सफलतापूर्वक महल से निकास कर लिया है।</div>
+            <div class="end-msg" id="lbl-final-msg">बधाई हो! आपने पैसे बचाने की अच्छी आदत से जुड़े सभी सही उत्तर देकर अपनी सुंदर गुल्लक खोज ली है।</div>
             <button class="btn-start" onclick="resetGame()">🔄 फिर से खेलें</button>
         </div>
 
     </div>
 
     <script>
-        // High Quality Concise Dataset based on Chapter 5: गुल्लक
+        // Concise and Pointed Options in Easy Grade 5 Hindi - Chapter 5: गुल्लक
         const chapterDataset = [
             {
-                q: "कविता के अनुसार, जब बच्चे की मिट्टी की गुल्लक पूरी भर जाती है, तो उसके मन में क्या समा जाता है?",
-                options: ["उदास भाव", "नई उमंग", "गुस्सा", "डर"],
+                q: "कविता में जब बच्चे की मिट्टी की गुल्लक पूरी भर जाती है, तो उसे कैसा लगता है?",
+                options: ["वह उदास होता है", "वह बहुत खुश होता है", "वह गुस्सा होता है", "वह डर जाता है"],
                 correct: 1,
                 comp: "कविता के मुख्य भाव की समझ"
             },
             {
-                q: "गुल्लक भरने पर बच्चा किन चीज़ों को खरीदने के बारे में सोचने लगता है?",
-                options: ["मकान", "गेंद-किताब", "गाड़ी", "दुकान"],
+                q: "गुल्लक भर जाने के बाद बच्चा अपनी गुल्लक के पैसों से क्या खरीदना चाहता है?",
+                options: ["नया मकान", "गेंद और किताब", "बड़ी गाड़ी", "बड़ी दुकान"],
                 correct: 1,
                 comp: "तथ्यात्मक ज्ञान"
             },
             {
                 q: "मम्मी बच्चे को प्यार से हँसकर पैसे किस तरह खर्च करने की सीख देती हैं?",
-                options: ["जल्दी से", "सँभलकर", "बिना सोचे", "ज्यादा"],
+                options: ["जल्दी से", "सँभलकर और सोचकर", "बिना सोचे-समझे", "बहुत ज्यादा"],
                 correct: 1,
-                comp: "चरित्र के संवाद की समझ"
+                comp: "पाठ के मुख्य संवाद की समझ"
             },
             {
-                q: "मम्मी के अनुसार, जीवन में बड़ा सपना पूरा करने के लिए रोज़ क्या करना आवश्यक है?",
-                options: ["पैसे फेंकना", "थोड़ी-थोड़ी बचत", "कर्ज लेना", "खर्च बढ़ाना"],
+                q: "मम्मी के अनुसार, जीवन में अपना बड़ा सपना पूरा करने के लिए हमें रोज़ क्या करना चाहिए?",
+                options: ["पैसे फेंकने चाहिए", "थोड़ी-थोड़ी बचत", "कर्ज लेना चाहिए", "खर्च बढ़ाना चाहिए"],
                 correct: 1,
-                comp: "मूल्यों का विकास"
+                comp: "अच्छी आदतों का विकास"
             },
             {
-                q: "रोज़ थोड़ा-थोड़ा पैसा बचाने से वह आगे चलकर किसके जैसा विशाल बन जाता है?",
-                options: ["नदी जैसा", "धन अंबार जैसा", "तालाब जैसा", "कूड़े जैसा"],
+                q: "रोज़ थोड़ा-थोड़ा पैसा बचाने से वह आगे चलकर किसके जैसा बहुत बड़ा बन जाता है?",
+                options: ["नदी जैसा", "धन के बड़े ढेर जैसा", "तालाब जैसा", "कचरे जैसा"],
                 correct: 1,
-                comp: "काव्यात्मक उपमा की समझ"
+                comp: "कविता की पंक्तियों की समझ"
             },
             {
-                q: "जापान में बच्चे अपनी रोज़ की छोटी-छोटी बचत सुरक्षित रखने के लिए क्या रखते हैं?",
-                options: ["तिजोरी", "बचत बॉक्स", "बड़ा झोला", "बैंक खाता"],
+                q: "जापान देश के बच्चे अपनी रोज़ की छोटी-छोटी बचत को सुरक्षित रखने के लिए क्या रखते हैं?",
+                options: ["लोहे की तिजोरी", "एक छोटा बचत बॉक्स", "एक बड़ा झोला", "बड़ा बैंक खाता"],
                 correct: 1,
-                comp: "अंतरराष्ट्रीय संस्कृतियों की पहचान"
+                comp: "दुनिया के बच्चों की आदतें"
             },
             {
-                q: "अमेरिका में बच्चों द्वारा खेला जाने वाला 'Save Money Challenge' क्या निर्धारित करता है?",
-                options: ["पैसे उड़ाना", "कितना पैसा बचाना है", "चोरी करना", "सिक्के फेंकना"],
+                q: "अमेरिका में बच्चे जो 'Save Money Challenge' खेल खेलते हैं, उसका क्या मतलब है?",
+                options: ["पैसे उड़ाना", "पैसे बचाने का नियम बनाना", "पैसे चुराना", "सिक्के फेंकना"],
                 correct: 1,
-                comp: "वैश्विक वित्तीय आदतों की समझ"
+                comp: "खेल-खेल में बचत सीखना"
             },
             {
                 q: "स्कूलों में बच्चों को 'वित्तीय साक्षरता' (Financial Literacy) क्यों सिखाई जाती है?",
-                options: ["पैसे गिनने के लिए", "पैसे का सही उपयोग सीखने हेतु", "अमीर दिखने के लिए", "बैंक खोलने के लिए"],
+                options: ["तेज़ी से पैसे गिनने के लिए", "पैसे का सही उपयोग सीखने के लिए", "अमीर दिखने के लिए", "नया बैंक खोलने के लिए"],
                 correct: 1,
-                comp: "व्यावहारिक शिक्षा का उद्देश्य"
+                comp: "व्यावहारिक शिक्षा का महत्व"
             },
             {
-                q: "पुरातत्व विभाग के अनुसार, दुनिया का सबसे पुराना सिक्का (2700 साल पुराना) किस देश में मिला था?",
+                q: "इतिहासकारों के अनुसार, दुनिया का सबसे पुराना सिक्का किस देश में मिला था?",
                 options: ["भारत", "तुर्की", "चीन", "जापान"],
                 correct: 1,
-                comp: "ऐतिहासिक सामान्य ज्ञान"
+                comp: "इतिहास की सामान्य जानकारी"
             },
             {
-                q: "यदि आपके माता-पिता आपको कुछ पैसे दें, तो पर्यावरण और भविष्य के लिए सबसे सही निर्णय क्या होगा?",
-                options: ["प्लास्टिक खिलौने खरीदना", "कुछ हिस्सा गुल्लक में बचाना", "फास्ट फ़ूड खाना", "पैसे खो देना"],
+                q: "यदि आपके माता-पिता आपको कुछ पैसे दें, तो सबसे अच्छी और सही आदत क्या होगी?",
+                options: ["प्लास्टिक के खिलौने लाना", "कुछ पैसे गुल्लक में बचाना", "बाहर का खाना खाना", "पैसे कहीं खो देना"],
                 correct: 1,
-                comp: "तार्किक व उत्तरदायी निर्णय क्षमता"
+                comp: "सही निर्णय लेने की क्षमता"
             }
         ];
 
@@ -512,7 +501,6 @@
         let muted = false;
         let actionLocked = false;
 
-        // In-built AudioContext Synthesizer to guarantee instant audio response without assets
         const audioEngine = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSoundTone(actionType) {
@@ -521,32 +509,31 @@
             const gainNode = audioEngine.createGain();
             osc.connect(gainNode);
             gainNode.connect(audioEngine.destination);
-            gainNode.gain.setValueAtTime(0.12, audioEngine.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioEngine.currentTime);
 
             if (actionType === 'correct') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(440, audioEngine.currentTime); // A4
-                osc.frequency.setValueAtTime(554.37, audioEngine.currentTime + 0.08); // C#5
-                osc.frequency.setValueAtTime(659.25, audioEngine.currentTime + 0.16); // E5
+                osc.frequency.setValueAtTime(440, audioEngine.currentTime); 
+                osc.frequency.setValueAtTime(554.37, audioEngine.currentTime + 0.08); 
+                osc.frequency.setValueAtTime(659.25, audioEngine.currentTime + 0.16); 
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioEngine.currentTime + 0.3);
+            } else if (actionType === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(140, audioEngine.currentTime); 
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.35);
                 osc.start();
                 osc.stop(audioEngine.currentTime + 0.35);
-            } else if (actionType === 'wrong') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(146.83, audioEngine.currentTime); // D3
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.4);
-                osc.start();
-                osc.stop(audioEngine.currentTime + 0.4);
-            } else if (actionType === 'escape') {
+            } else if (actionType === 'win') {
                 osc.type = 'sine';
                 const t = audioEngine.currentTime;
                 osc.frequency.setValueAtTime(523.25, t);
                 osc.frequency.setValueAtTime(659.25, t + 0.1);
                 osc.frequency.setValueAtTime(783.99, t + 0.2);
-                osc.frequency.setValueAtTime(1046.50, t + 0.3);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.75);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.6);
                 osc.start();
-                osc.stop(t + 0.75);
+                osc.stop(t + 0.6);
             }
         }
 
@@ -564,26 +551,25 @@
             setTimeout(() => { showScreen('instruction-screen'); }, 5000); // Strict 5-sec Splash
         };
 
-        function startCastleEscape() {
+        function startGame() {
             if (audioEngine.state === 'suspended') { audioEngine.resume(); }
             challengePool = [...chapterDataset].sort(() => Math.random() - 0.5);
             activeIndex = 0;
             runningScore = 0;
 
-            // Reset visual nodes
             document.querySelectorAll('.gate-node').forEach(n => n.classList.remove('unlocked'));
-            document.getElementById('hero-token').style.left = "15px";
+            document.getElementById('hero-token').style.left = "10px";
 
             showScreen('gameplay-screen');
-            loadNextGate();
+            loadNextQuestion();
         }
 
-        function loadNextGate() {
+        function loadNextQuestion() {
             currentAttempts = 0;
             actionLocked = false;
             const currentItem = challengePool[activeIndex];
 
-            document.getElementById('hud-gate').innerText = `गेट: ${activeIndex + 1}/10`;
+            document.getElementById('hud-gate').innerText = `फाटक: ${activeIndex + 1}/10`;
             document.getElementById('hud-score').innerText = `अंक: ${runningScore}/10`;
             document.getElementById('lbl-comp').innerText = currentItem.comp;
             document.getElementById('lbl-question').innerText = currentItem.q;
@@ -600,9 +586,8 @@
                 optionsContainer.appendChild(btn);
             });
 
-            // Dynamically update visual hero position over gates row
             if (activeIndex > 0) {
-                const leftOffset = 15 + (activeIndex * (80 / 10));
+                const leftOffset = 10 + (activeIndex * (80 / 10));
                 document.getElementById('hero-token').style.left = `${leftOffset}%`;
             }
         }
@@ -616,9 +601,8 @@
                 actionLocked = true;
                 selectedBtn.classList.add('correct');
                 playSoundTone('correct');
-                triggerSparkleBurst();
+                triggerSparkles();
 
-                // Unlock mapped visual nodes incrementally
                 if (activeIndex === 0) document.getElementById('gn-1').classList.add('unlocked');
                 if (activeIndex === 2) document.getElementById('gn-3').classList.add('unlocked');
                 if (activeIndex === 4) document.getElementById('gn-5').classList.add('unlocked');
@@ -626,7 +610,7 @@
                 if (activeIndex === 9) document.getElementById('gn-10').classList.add('unlocked');
 
                 runningScore++;
-                setTimeout(proceedForward, 1300);
+                setTimeout(proceedForward, 1200);
             } else {
                 currentAttempts++;
                 selectedBtn.classList.add('wrong');
@@ -634,55 +618,55 @@
                 playSoundTone('wrong');
 
                 if (currentAttempts === 1) {
-                    hintBox.innerText = "गलत विकल्प! गेट लॉक है, ध्यान से सोचें। आपके पास 1 अंतिम अवसर है।";
+                    hintBox.innerText = "गलत विकल्प! ध्यान से सोचें, आपके पास 1 और मौका है।";
                     hintBox.style.display = 'block';
                 } else {
                     actionLocked = true;
                     hintBox.style.display = 'none';
                     const allButtons = document.querySelectorAll('.option-btn');
                     allButtons[item.correct].classList.add('correct');
-                    setTimeout(proceedForward, 2000);
+                    setTimeout(proceedForward, 1800);
                 }
             }
         }
 
-        function triggerSparkleBurst() {
+        function triggerSparkles() {
             const container = document.getElementById('gameplay-screen');
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 15; i++) {
                 const dot = document.createElement('div');
                 dot.className = 'sparkle-dot';
                 dot.style.left = '50%';
                 dot.style.top = '30%';
-                dot.style.setProperty('--mx', (Math.random() * 240 - 120) + 'px');
-                dot.style.setProperty('--my', (Math.random() * 240 - 120) + 'px');
-                dot.style.backgroundColor = ['#eab308', '#7c2d12', '#16a34a', '#38bdf8', '#ec4899'][Math.floor(Math.random() * 5)];
+                dot.style.setProperty('--mx', (Math.random() * 200 - 100) + 'px');
+                dot.style.setProperty('--my', (Math.random() * 200 - 100) + 'px');
+                dot.style.backgroundColor = ['#f59e0b', '#b45309', '#22c55e', '#38bdf8'][Math.floor(Math.random() * 4)];
                 container.appendChild(dot);
-                setTimeout(() => dot.remove(), 700);
+                setTimeout(() => dot.remove(), 600);
             }
         }
 
         function proceedForward() {
             activeIndex++;
             if (activeIndex < challengePool.length) {
-                loadNextGate();
+                loadNextQuestion();
             } else {
-                document.getElementById('hero-token').style.left = "88%";
-                setTimeout(triggerEscapeConclude, 600);
+                document.getElementById('hero-token').style.left = "85%";
+                setTimeout(endGame, 500);
             }
         }
 
-        function triggerEscapeConclude() {
+        function endGame() {
             showScreen('result-screen');
             document.getElementById('lbl-final-score').innerText = `${runningScore}/10`;
-            playSoundTone('escape');
+            playSoundTone('win');
 
             const messageBox = document.getElementById('lbl-final-msg');
             if (runningScore >= 8) {
-                messageBox.innerText = "अद्भुत सफलता! 🎉 आपने बचत के महत्व, मम्मी की सीख और वैश्विक वित्तीय आदतों से जुड़े सभी द्वारों को सफलतापूर्वक अनलॉक कर लिया है। आप महल से पूरी तरह मुक्त हैं!";
+                messageBox.innerText = "बहुत बढ़िया! 🎉 आपने बचत करने की अच्छी आदतों से जुड़े सभी फाटकों को पार कर लिया है और अपनी गुल्लक तक पहुँच गए हैं।";
             } else if (runningScore >= 5) {
-                messageBox.innerText = "अच्छा प्रयास! 👍 आप महल से बाहर तो आ गए हैं, लेकिन कुछ द्वारों पर ताला तोड़ने में अधिक समय लगा। अपनी वित्तीय साक्षरता को और मजबूत करने के लिए दोबारा खेलें।";
+                messageBox.innerText = "अच्छा प्रयास! 👍 आप अपनी गुल्लक तक तो पहुँच गए हैं, लेकिन कुछ फाटकों पर उत्तर गलत हुए। पैसे बचाने की समझ को और अच्छा करने के लिए फिर से खेलें।";
             } else {
-                messageBox.innerText = "कोई बात नहीं! 🌿 गुल्लक की बचत की आदत और समझदारी की बातों को एक बार फिर से अच्छी तरह समझने के लिए फिर से प्रयास करें। अभ्यास ही आपको विजेता बनाएगा!";
+                messageBox.innerText = "कोई बात नहीं! 🌿 गुल्लक की कविता और अच्छी बातों को एक बार फिर से समझने के लिए दोबारा खेलें। कोशिश करने से ही आप जीतेंगे!";
             }
         }
 
