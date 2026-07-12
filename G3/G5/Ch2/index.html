@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Drag & Drop Game - Pedon Ki Mahima</title>
+    <title>पर्यावरण रक्षक - ड्रैग एंड ड्रॉप गेम</title>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
+            --forest-bg: #2d6a4f;
+            --leaf-green: #40916c;
+            --light-leaf: #d8f3dc;
+            --accent-yellow: #ffb703;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-main: #1b4332;
             --text-muted: #475569;
-            --primary: #15803d;
-            --primary-dark: #166534;
-            --success-light: #dcfce7;
-            --error-light: #fee2e2;
-            --border: #cbd5e1;
+            --success: #2a9d8f;
+            --error: #e63946;
         }
 
         * {
@@ -27,14 +27,37 @@
         }
 
         body {
-            background: var(--bg-gradient);
+            /* बाल-सुलभ पेड़ों और बादलों की सुंदर प्राकृतिक थीम */
+            background: linear-gradient(to bottom, #90e0ef 0%, #b5e2fa 40%, #74c69d 40%, #52b788 100%);
+            background-attachment: fixed;
             color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 12px;
+            position: relative;
             overflow: hidden;
+        }
+
+        /* बैकग्राउंड में सजावटी पेड़ बनाने के लिए CSS */
+        body::before {
+            content: "🌲";
+            position: absolute;
+            bottom: 10px;
+            left: 5%;
+            font-size: 70px;
+            opacity: 0.7;
+            z-index: 0;
+        }
+        body::after {
+            content: "🌳";
+            position: absolute;
+            bottom: 20px;
+            right: 5%;
+            font-size: 80px;
+            opacity: 0.7;
+            z-index: 0;
         }
 
         .quiz-container {
@@ -42,7 +65,7 @@
             max-width: 650px;
             background: var(--card-bg);
             border-radius: 24px;
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
             padding: 20px;
             position: relative;
             overflow: hidden;
@@ -50,6 +73,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            border: 4px solid #40916c;
+            z-index: 1;
         }
 
         .screen {
@@ -99,21 +124,21 @@
             font-size: 26px;
             font-weight: 800;
             margin-bottom: 20px;
-            color: var(--primary);
+            color: var(--forest-bg);
         }
 
         .ins-box {
-            background: #f8fafc;
+            background: #f2fbf5;
             padding: 20px;
             border-radius: 16px;
             margin-bottom: 24px;
             text-align: left;
             width: 100%;
-            border: 1px solid #e2e8f0;
+            border: 2px dashed var(--leaf-green);
         }
 
         .ins-item {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
             margin-bottom: 12px;
             color: var(--text-muted);
@@ -123,7 +148,7 @@
         }
 
         .btn-action {
-            background: var(--primary);
+            background: var(--forest-bg);
             color: white;
             border: none;
             padding: 16px 32px;
@@ -133,11 +158,11 @@
             cursor: pointer;
             width: 100%;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 12px rgba(21, 128, 61, 0.3);
+            box-shadow: 0 4px 12px rgba(45, 106, 79, 0.3);
         }
 
         .btn-action:hover {
-            background: var(--primary-dark);
+            background: var(--text-main);
         }
 
         /* 3) Main Game Screen */
@@ -147,17 +172,17 @@
             align-items: center;
             margin-bottom: 12px;
             padding-bottom: 8px;
-            border-bottom: 2px solid #f1f5f9;
+            border-bottom: 2px solid #e8f5e9;
         }
 
         .competency-badge {
-            background: #f0fdf4;
-            color: #166534;
+            background: #e8f5e9;
+            color: var(--forest-bg);
             padding: 6px 12px;
             border-radius: 8px;
             font-size: 12px;
             font-weight: 700;
-            border: 1px solid #bbf7d0;
+            border: 1px solid var(--leaf-green);
             max-width: 65%;
             white-space: nowrap;
             overflow: hidden;
@@ -172,13 +197,13 @@
 
         .volume-slider {
             width: 60px;
-            accent-color: var(--primary);
+            accent-color: var(--forest-bg);
             cursor: pointer;
         }
 
         .mute-btn {
             background: none;
-            border: 1px solid var(--border);
+            border: 1px solid var(--leaf-green);
             padding: 4px 8px;
             border-radius: 8px;
             cursor: pointer;
@@ -188,16 +213,16 @@
         .stats-bar {
             display: flex;
             justify-content: space-between;
-            background: #f8fafc;
+            background: #f2fbf5;
             padding: 10px 14px;
             border-radius: 12px;
             margin-bottom: 14px;
             font-weight: 700;
             font-size: 14px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #d8f3dc;
         }
 
-        /* Drag Item (The Question Card) */
+        /* Drag Card (The Leaf Element) */
         .drag-area {
             display: flex;
             justify-content: center;
@@ -209,30 +234,38 @@
 
         .drag-card {
             background: #ffffff;
-            border: 3px dashed var(--primary);
+            border: 3px solid var(--leaf-green);
             border-radius: 16px;
             padding: 16px;
             font-size: 16px;
             font-weight: 700;
             text-align: center;
-            color: #0f172a;
+            color: var(--text-main);
             cursor: grab;
             width: 90%;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
-            touch-action: none; /* Prevents scrolling while dragging on mobile */
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            touch-action: none;
             position: absolute;
             transition: transform 0.1s ease, box-shadow 0.1s ease;
             z-index: 10;
             line-height: 1.5;
         }
 
+        .drag-card::before {
+            content: "🍁";
+            font-size: 20px;
+            position: absolute;
+            top: -12px;
+            left: 12px;
+        }
+
         .drag-card:active {
             cursor: grabbing;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.2);
             transform: scale(1.02);
         }
 
-        /* Drop Zones (The Targets) */
+        /* Drop Zones (The Basket/Containers) */
         .drop-zones-container {
             display: flex;
             flex-direction: column;
@@ -241,34 +274,33 @@
         }
 
         .drop-zone {
-            background: #f8fafc;
-            border: 2px solid var(--border);
+            background: #f4fbf7;
+            border: 2px dashed var(--leaf-green);
             border-radius: 16px;
             padding: 14px;
             text-align: center;
             font-weight: 700;
             font-size: 15px;
-            color: var(--text-muted);
+            color: var(--text-main);
             transition: all 0.2s ease;
             position: relative;
         }
 
         .drop-zone.hovered {
-            background: #ecfdf5;
-            border-color: var(--primary);
-            color: var(--primary);
+            background: var(--light-leaf);
+            border-color: var(--forest-bg);
             transform: scale(1.01);
         }
 
         .drop-zone.correct-flash {
-            background-color: var(--success-light) !important;
-            border-color: #16a34a !important;
-            color: #15803d !important;
+            background-color: var(--light-leaf) !important;
+            border-color: var(--success) !important;
+            color: var(--forest-bg) !important;
         }
 
         .drop-zone.wrong-flash {
-            background-color: var(--error-light) !important;
-            border-color: #dc2626 !important;
+            background-color: #ffe3e3 !important;
+            border-color: var(--error) !important;
             color: #b91c1c !important;
         }
 
@@ -306,16 +338,16 @@
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: #f0fdf4;
-            border: 4px solid var(--primary);
+            background: var(--light-leaf);
+            border: 4px solid var(--forest-bg);
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 30px;
             font-weight: 800;
-            color: var(--primary);
+            color: var(--forest-bg);
             margin: 16px 0;
-            box-shadow: 0 8px 16px -4px rgba(21, 128, 61, 0.2);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
 
         .result-msg-box {
@@ -328,7 +360,7 @@
             line-height: 1.5;
         }
 
-        /* Particle effect */
+        /* Confetti Particle effect */
         .particle {
             position: absolute;
             width: 8px;
@@ -356,12 +388,12 @@
         </div>
 
         <div id="instruction-screen" class="screen">
-            <div class="ins-title">कैसे खेलें? 🎮</div>
+            <div class="ins-title">प्रकृति रक्षक कैसे बनें? 🌲</div>
             <div class="ins-box">
-                <div class="ins-item">📄 <span>ऊपर एक मुख्य कार्ड (पत्ती) दिखाई देगा जिसपर स्थिति लिखी होगी।</span></div>
-                <div class="ins-item">👇 <span>उस कार्ड को उंगली या माउस से पकड़कर (Drag) नीचे दिए गए सही बक्से पर ले जाकर छोड़ें (Drop)।</span></div>
-                <div class="ins-item">🔄 <span>गलत बक्से पर छोड़ने पर आपको सुधार करने का 1 और अवसर मिलेगा।</span></div>
-                <div class="ins-item">🔊 <span>आप अपनी सुविधा के अनुसार आवाज़ को कम या ज्यादा कर सकते हैं।</span></div>
+                <div class="ins-item">📄 <span>ऊपर एक कार्ड (पत्ती) पर पर्यावरण की स्थिति लिखी होगी।</span></div>
+                <div class="ins-item">👇 <span>उसे माउस या उंगली से खींचकर (Drag) नीचे की सही श्रेणी में छोड़ें (Drop)।</span></div>
+                <div class="ins-item">🔄 <span>गलत श्रेणी चुनने पर सुधार के लिए 1 अंतिम अवसर मिलेगा।</span></div>
+                <div class="ins-item">🔊 <span>आप अपनी सुविधा से ध्वनि का वॉल्यूम बदल सकते हैं।</span></div>
             </div>
             <button class="btn-action" onclick="startQuiz()">खेल शुरू करें 🚀</button>
         </div>
@@ -395,7 +427,7 @@
 
         <div id="result-screen" class="screen">
             <div class="congrats-art" id="result-emoji">🎉</div>
-            <div class="ins-title" id="result-title">अद्भुत खेल!</div>
+            <div class="ins-title" id="result-title">शानदार खेल!</div>
             <div class="score-circle" id="final-score">0/10</div>
             <div class="result-msg-box" id="result-message">खेलने के लिए धन्यवाद!</div>
             <button class="btn-action" onclick="restartQuiz()">🔄 फिर से खेलें</button>
@@ -404,7 +436,7 @@
     </div>
 
     <script>
-        // Zones Mapping: 0 = Environment & Health, 1 = Responsibility & Society, 2 = Ecology & Animals
+        // Mapping: 0 = Environment & Health, 1 = Responsibility & Society, 2 = Ecology & Animals
         const questionsData = [
             {
                 q: "एक शहर में प्रदूषण बहुत तेजी से बढ़ रहा है। वहाँ की हवा को साफ़ और शुद्ध करने के लिए सबसे प्रभावी कदम क्या होगा?",
@@ -464,9 +496,8 @@
         let currentAttempts = 0; 
         let globalVolume = 0.8;
         let isMuted = false;
-        let isTransitioning = false; // Prevents double drops during automatic movement
+        let isTransitioning = false;
 
-        // Drag tracking positions
         let activeDrag = false;
         let startX, startY;
         let initialX = 0, initialY = 0;
@@ -508,7 +539,7 @@
 
         function playSound(audio) {
             audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio file loading handled safely."));
+            audio.play().catch(e => console.log("Audio handoff handled safely."));
         }
 
         function startQuiz() {
@@ -528,7 +559,6 @@
             document.getElementById('score-count').innerText = `अंक: ${score}/10`;
             document.getElementById('competency-box').innerText = currentQuestion.competency;
             
-            // Reset Card Style & Text
             dragCard.style.transition = 'none';
             dragCard.style.transform = 'translate(0px, 0px)';
             dragCard.innerText = currentQuestion.q;
@@ -537,20 +567,16 @@
             
             document.getElementById('feedback-box').style.display = 'none';
             
-            // Clear zone colors
             dropZones.forEach(zone => {
                 zone.className = 'drop-zone';
             });
         }
 
-        // Touch & Mouse Event Handling for Cross-Device Compatibility
         function setupDragAndDrop() {
-            // Mouse Listeners
             dragCard.addEventListener('mousedown', dragStart);
             document.addEventListener('mousemove', dragMove);
             document.addEventListener('mouseup', dragEnd);
 
-            // Touch Listeners
             dragCard.addEventListener('touchstart', dragStart, { passive: false });
             document.addEventListener('touchmove', dragMove, { passive: false });
             document.addEventListener('touchend', dragEnd);
@@ -572,7 +598,7 @@
 
         function dragMove(e) {
             if (!activeDrag) return;
-            if (e.type === 'touchmove') e.preventDefault(); // Prevents bounce scrolling on iOS
+            if (e.type === 'touchmove') e.preventDefault();
 
             let currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
             let currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
@@ -582,7 +608,6 @@
 
             dragCard.style.transform = `translate(${initialX}px, ${initialY}px)`;
 
-            // Visual indicator when hovering over drop targets
             let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
             let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
             
@@ -618,7 +643,6 @@
                 let zoneId = parseInt(droppedZone.getAttribute('data-zone-id'));
                 validateDrop(zoneId, droppedZone);
             } else {
-                // Snap back if dropped anywhere else
                 snapBack();
             }
         }
@@ -635,39 +659,34 @@
             const feedback = document.getElementById('feedback-box');
 
             if (zoneId === currentQuestion.zone) {
-                // Correct Drop Action
                 isTransitioning = true;
                 dragCard.style.pointerEvents = 'none';
                 targetZone.classList.add('correct-flash');
                 playSound(sndCorrect);
-                triggerSparkles();
+                triggerConfetti();
                 score++;
                 document.getElementById('score-count').innerText = `अंक: ${score}/10`;
                 
                 setTimeout(proceedNext, 1500);
             } else {
-                // Wrong Drop Action
                 currentAttempts++;
                 playSound(sndWrong);
                 targetZone.classList.add('wrong-flash');
 
                 if (currentAttempts === 1) {
-                    feedback.innerText = "गलत वर्गीकरण! कार्ड को ध्यान से समझें, आपके पास 1 आखिरी अवसर है।";
+                    feedback.innerText = "गलत बॉक्स! कार्ड की स्थिति को समझें, आपके पास 1 अंतिम अवसर है।";
                     feedback.style.display = 'block';
                     snapBack();
                     setTimeout(() => { targetZone.classList.remove('wrong-flash'); }, 1000);
                 } else {
-                    // Show right answer automatically after 2 failed attempts
                     isTransitioning = true;
                     dragCard.style.pointerEvents = 'none';
                     feedback.style.display = 'none';
                     
-                    // Clear target wrong visual, light up correct visual
                     setTimeout(() => { targetZone.classList.remove('wrong-flash'); }, 500);
                     const correctZone = document.querySelector(`[data-zone-id="${currentQuestion.zone}"]`);
                     correctZone.classList.add('correct-flash');
                     
-                    // Animate card fading out to show transition
                     dragCard.style.transition = 'opacity 0.5s ease';
                     dragCard.style.opacity = '0';
 
@@ -676,16 +695,16 @@
             }
         }
 
-        function triggerSparkles() {
+        function triggerConfetti() {
             const container = document.querySelector('.quiz-container');
-            for(let i = 0; i < 20; i++) {
+            for(let i = 0; i < 25; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = '50%';
                 p.style.top = '30%';
                 p.style.setProperty('--x', (Math.random() * 360 - 180) + 'px');
                 p.style.setProperty('--y', (Math.random() * 360 - 180) + 'px');
-                p.style.backgroundColor = ['#22c55e', '#16a34a', '#eab308', '#3b82f6', '#ec4899'][Math.floor(Math.random() * 5)];
+                p.style.backgroundColor = ['#2d6a4f', '#52b788', '#ffb703', '#4cc9f0', '#f72585'][Math.floor(Math.random() * 5)];
                 container.appendChild(p);
                 setTimeout(() => p.remove(), 800);
             }
@@ -713,22 +732,22 @@
 
             if (percent >= 80) {
                 emojiEl.innerText = "🏆";
-                titleEl.innerText = "असाधारण प्रदर्शन!";
-                msgBox.innerText = "शानदार! 🎉 आपने पेड़ों के महत्व, सामाजिक उत्तरदायित्व और हमारी पारिस्थितिकी को बहुत ही उत्तम तरीके से वर्गीकृत किया है। आप एक सच्चे पर्यावरण रक्षक हैं!";
-                msgBox.style.backgroundColor = "var(--success-light)";
-                msgBox.style.color = "var(--primary-dark)";
+                titleEl.innerText = "सर्वश्रेष्ठ प्रदर्शन!";
+                msgBox.innerText = "अद्भुत! 🎉 आपने पेड़ों की महिमा, सामाजिक जिम्मेदारी और पर्यावरण संतुलन को बहुत अच्छे से समझा है। आप एक सच्चे प्रकृति रक्षक हैं!";
+                msgBox.style.backgroundColor = "var(--light-leaf)";
+                msgBox.style.color = "var(--text-main)";
                 playSound(sndClapping);
             } else if (percent >= 50) {
                 emojiEl.innerText = "👍";
-                titleEl.innerText = "सराहनीय प्रयास!";
-                msgBox.innerText = "बहुत बढ़िया! 👍 पेड़ों की उपयोगिता और जिम्मेदार नागरिक व्यवहारों के प्रति आपकी समझ अच्छी है। प्रकृति की रक्षा के संकल्प को और दृढ़ बनाएं।";
-                msgBox.style.backgroundColor = "#ffedd5";
+                titleEl.innerText = "अच्छा प्रयास!";
+                msgBox.innerText = "सराहनीय! 👍 पर्यावरण संरक्षण और सामाजिक कर्तव्यों के प्रति आपकी समझ अच्छी है। इसे और बेहतर करने के लिए अभ्यास जारी रखें।";
+                msgBox.style.backgroundColor = "#fff7ed";
                 msgBox.style.color = "#c2410c";
             } else {
                 emojiEl.innerText = "🌿";
                 titleEl.innerText = "पुनः प्रयास करें!";
-                msgBox.innerText = "कोई बात नहीं! 🌿 पर्यावरण संरक्षण, हमारी जिम्मेदारियों और जीव-जंतुओं के लिए पेड़ों की उपयोगिता को फिर से सही ढंग से समझने के लिए एक बार फिर खेलें।";
-                msgBox.style.backgroundColor = "var(--error-light)";
+                msgBox.innerText = "कोई बात नहीं! 🌿 पेड़ों के महत्व, हमारी जिम्मेदारियों और जीव-जंतुओं के लिए उनकी आवश्यकता को फिर से समझने के लिए एक बार फिर खेलें।";
+                msgBox.style.backgroundColor = "#ffe3e3";
                 msgBox.style.color = "#b91c1c";
             }
         }
