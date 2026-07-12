@@ -49,6 +49,7 @@
             flex-direction: column;
         }
 
+        /* --- SCREEN VISIBILITY SYSTEM --- */
         .screen {
             position: absolute;
             top: 0;
@@ -70,7 +71,7 @@
             pointer-events: auto;
         }
 
-        /* Innovine Logo Styling */
+        /* --- INNOVINE BRANDING --- */
         .innovine-brand {
             display: flex;
             align-items: center;
@@ -83,7 +84,9 @@
             object-fit: contain;
         }
 
-        /* Screen 1: Splash Screen */
+        /* =========================================
+           SCREEN 1: LOGO / SPLASH SCREEN STYLES
+           ========================================= */
         #splash-screen {
             background: linear-gradient(135deg, #4caf50, #2e7d32);
             color: white;
@@ -106,7 +109,9 @@
             100% { transform: scale(1); }
         }
 
-        /* Screen 2: Welcome Screen */
+        /* =========================================
+           SCREEN 2: INSTRUCTION / WELCOME STYLES
+           ========================================= */
         #welcome-screen {
             background: linear-gradient(to bottom, #f1f8e9, #ded2a8);
             text-align: center;
@@ -147,7 +152,9 @@
             transform: translateY(0);
         }
 
-        /* Screen 3: Game Screen */
+        /* =========================================
+           SCREEN 3: GAME SCREEN STYLES
+           ========================================= */
         #game-screen {
             justify-content: flex-start;
             padding: 15px;
@@ -172,7 +179,6 @@
             color: var(--primary-dark);
         }
 
-        /* Visual Bridge Canvas Area */
         .stage-area {
             width: 100%;
             height: 220px;
@@ -217,7 +223,6 @@
             100% { background-position: 40px 0; }
         }
 
-        /* Bridge Planks */
         .bridge-container {
             position: absolute;
             bottom: 70px;
@@ -245,7 +250,6 @@
             transform: translateY(0);
         }
 
-        /* Player Character - Facing Right */
         .character {
             position: absolute;
             bottom: 85px;
@@ -264,7 +268,6 @@
             font-size: 2.8rem;
         }
 
-        /* Question Box */
         .question-card {
             background: white;
             width: 100%;
@@ -325,7 +328,9 @@
             color: #c62828 !important;
         }
 
-        /* Screen 4: End Screen */
+        /* =========================================
+           SCREEN 4: FINAL / END SCREEN STYLES
+           ========================================= */
         #end-screen {
             background: linear-gradient(to bottom, #e8f5e9, #c8e6c9);
             text-align: center;
@@ -384,12 +389,17 @@
 </head>
 <body>
 
-<!-- Audio Elements with asset paths -->
+<!-- =========================================
+     AUDIO ASSETS
+     ========================================= -->
 <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
 <div id="game-container">
-    <!-- Screen 1: Splash Screen -->
+
+    <!-- =========================================
+         SCREEN 1: LOGO / SPLASH SCREEN
+         ========================================= -->
     <div id="splash-screen" class="screen active">
         <div class="logo-box">
             <div class="innovine-brand" style="margin-bottom: 12px;">
@@ -401,7 +411,9 @@
         <h2>अध्यापकों एवं विद्यार्थियों के लिए प्रस्तुत</h2>
     </div>
 
-    <!-- Screen 2: Welcome Screen -->
+    <!-- =========================================
+         SCREEN 2: INSTRUCTION / WELCOME SCREEN
+         ========================================= -->
     <div id="welcome-screen" class="screen">
         <div class="innovine-brand" style="position: absolute; top: 15px; left: 20px;">
             <img src="assets/logo.png" alt="Innovine Logo" class="innovine-logo-img">
@@ -415,7 +427,9 @@
         <button class="btn" onclick="startGame()">खेल शुरू करें</button>
     </div>
 
-    <!-- Screen 3: Game Screen -->
+    <!-- =========================================
+         SCREEN 3: GAME SCREEN
+         ========================================= -->
     <div id="game-screen" class="screen">
         <div class="game-header">
             <div class="innovine-brand">
@@ -448,7 +462,9 @@
         </div>
     </div>
 
-    <!-- Screen 4: End Screen -->
+    <!-- =========================================
+         SCREEN 4: FINAL / END SCREEN
+         ========================================= -->
     <div id="end-screen" class="screen">
         <div class="end-card">
             <div class="innovine-brand" style="margin: 0 auto 15px auto;">
@@ -461,10 +477,11 @@
             <button class="btn" style="margin-top: 20px;" onclick="restartGame()">पुनः खेलें</button>
         </div>
     </div>
+
 </div>
 
 <script>
-    // Play Audio File from Assets
+    // --- 1. Audio Handler ---
     function playSound(type) {
         let sound;
         if (type === 'correct' || type === 'win') {
@@ -474,12 +491,12 @@
         }
 
         if (sound) {
-            sound.currentTime = 0; // Rewind to start if playing
-            sound.play().catch(e => console.log("Audio play deferred or blocked:", e));
+            sound.currentTime = 0; 
+            sound.play().catch(e => console.log("Audio play blocked by browser:", e));
         }
     }
 
-    // Question Bank based on Chapter 2 "लकड़हारा और पेड़"
+    // --- 2. Question Bank ---
     const questionBank = [
         {
             q: "हमें सोच-समझकर निर्णय लेना चाहिए - यह किस पेड़ ने कहा था?",
@@ -523,6 +540,7 @@
         }
     ];
 
+    // --- 3. Game Variables ---
     const TOTAL_PLANKS = 5;
     let currentQuestions = [];
     let currentQIndex = 0;
@@ -532,16 +550,18 @@
     let secondsElapsed = 0;
     let timerInterval = null;
 
-    // Splash timer (5 seconds)
-    setTimeout(() => {
-        switchScreen('splash-screen', 'welcome-screen');
-    }, 5000);
-
+    // --- 4. Screen Transition Logic ---
     function switchScreen(fromId, toId) {
         document.getElementById(fromId).classList.remove('active');
         document.getElementById(toId).classList.add('active');
     }
 
+    // Transition from Screen 1 to Screen 2 after 5 seconds
+    setTimeout(() => {
+        switchScreen('splash-screen', 'welcome-screen');
+    }, 5000);
+
+    // --- 5. Game Functions ---
     function updateChancesUI() {
         let hearts = "";
         for (let i = 0; i < attemptsLeft; i++) {
@@ -556,10 +576,8 @@
         builtPlanks = 0;
         secondsElapsed = 0;
 
-        // Shuffle questions
         currentQuestions = [...questionBank].sort(() => Math.random() - 0.5);
 
-        // Reset visual elements
         for (let i = 0; i < TOTAL_PLANKS; i++) {
             document.getElementById(`plank-${i}`).classList.remove('built');
         }
@@ -615,7 +633,6 @@
         const selectedBtn = document.getElementById(`opt-btn-${selectedIdx}`);
 
         if (selectedIdx === correctIdx) {
-            // Correct Answer
             playSound('correct');
             selectedBtn.classList.add('correct-reveal');
             disableAllOptions();
@@ -623,9 +640,7 @@
             score += (attemptsLeft === 2) ? 10 : 5;
             builtPlanks++;
 
-            // Update plank visually
             document.getElementById(`plank-${builtPlanks - 1}`).classList.add('built');
-
             document.getElementById('score-display').innerText = `अंक: ${score}`;
             document.getElementById('progress-display').innerText = `पूल: ${builtPlanks}/${TOTAL_PLANKS}`;
 
@@ -634,7 +649,6 @@
             currentQIndex++;
             setTimeout(loadNextQuestion, 1200);
         } else {
-            // Wrong Answer
             playSound('wrong');
             attemptsLeft--;
             updateChancesUI();
@@ -642,7 +656,6 @@
             selectedBtn.disabled = true;
 
             if (attemptsLeft === 0) {
-                // Out of chances - Reveal Correct Answer
                 disableAllOptions();
                 const correctBtn = document.getElementById(`opt-btn-${correctIdx}`);
                 correctBtn.classList.add('correct-reveal');
@@ -682,6 +695,7 @@
         document.getElementById('final-score').innerText = `कुल अंक: ${score}`;
         document.getElementById('final-time').innerText = `कुल समय: ${mins}:${secs}`;
 
+        // Move to Screen 4
         setTimeout(() => {
             switchScreen('game-screen', 'end-screen');
         }, 800);
@@ -689,6 +703,8 @@
 
     function restartGame() {
         currentQIndex = 0;
+        // From Screen 4 directly back to Screen 3 (New Game)
+        switchScreen('end-screen', 'game-screen');
         startGame();
     }
 </script>
