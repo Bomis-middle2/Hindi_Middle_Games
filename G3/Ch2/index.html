@@ -74,27 +74,13 @@
         .innovine-brand {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-weight: bold;
-            font-size: 1.1rem;
-            color: #1b5e20;
-            background: #e8f5e9;
-            padding: 4px 12px;
-            border-radius: 20px;
-            border: 1px solid #c8e6c9;
+            justify-content: center;
         }
 
-        .innovine-icon {
-            width: 22px;
-            height: 22px;
-            background: #2e7d32;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 900;
+        .innovine-logo-img {
+            max-height: 40px;
+            width: auto;
+            object-fit: contain;
         }
 
         /* Screen 1: Splash Screen */
@@ -267,7 +253,7 @@
             font-size: 2.5rem;
             transition: left 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
             z-index: 5;
-            transform: scaleX(-1); /* Flips the character emoji to face right */
+            transform: scaleX(-1);
             display: inline-block;
         }
 
@@ -390,17 +376,24 @@
             .tree-target {
                 right: 20px;
             }
+            .innovine-logo-img {
+                max-height: 30px;
+            }
         }
     </style>
 </head>
 <body>
 
+<!-- Audio Elements with asset paths -->
+<audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
 <div id="game-container">
+    <!-- Screen 1: Splash Screen -->
     <div id="splash-screen" class="screen active">
         <div class="logo-box">
-            <div class="innovine-brand" style="margin-bottom: 12px; justify-content: center;">
-                <span class="innovine-icon">I</span>
-                <span>INNOVINE</span>
+            <div class="innovine-brand" style="margin-bottom: 12px;">
+                <img src="assets/logo.png" alt="Innovine Logo" class="innovine-logo-img">
             </div>
             <h1>ज्ञान की यात्रा</h1>
             <p>शैक्षणिक खेल श्रृंखला</p>
@@ -408,26 +401,25 @@
         <h2>अध्यापकों एवं विद्यार्थियों के लिए प्रस्तुत</h2>
     </div>
 
+    <!-- Screen 2: Welcome Screen -->
     <div id="welcome-screen" class="screen">
         <div class="innovine-brand" style="position: absolute; top: 15px; left: 20px;">
-            <span class="innovine-icon">I</span>
-            <span>INNOVINE</span>
+            <img src="assets/logo.png" alt="Innovine Logo" class="innovine-logo-img">
         </div>
         <h1 class="title">सेतु निर्माण (Bridge Builder)</h1>
         <p class="subtitle">पाठ 2: लकड़हारा और पेड़ - व्याकरण एवं पाठ बोध</p>
-        <div style="font-size: 4rem; margin-bottom: 15px;">
-🌉🌳</div>
+        <div style="font-size: 4rem; margin-bottom: 15px;">🌉🌳</div>
         <p style="margin-bottom: 20px; max-width: 80%; color: #555;">
             सही उत्तर देकर पूल की लकड़ियाँ (Planks) बिछाइए और नदी पार करके हरे-भरे जंगल तक पहुँचिए!
         </p>
         <button class="btn" onclick="startGame()">खेल शुरू करें</button>
     </div>
 
+    <!-- Screen 3: Game Screen -->
     <div id="game-screen" class="screen">
         <div class="game-header">
             <div class="innovine-brand">
-                <span class="innovine-icon">I</span>
-                <span>INNOVINE</span>
+                <img src="assets/logo.png" alt="Innovine Logo" class="innovine-logo-img" style="max-height: 30px;">
             </div>
             <div class="stat-box" id="score-display">अंक: 0</div>
             <div class="stat-box" id="chances-display">प्रयास: ❤️ ❤️</div>
@@ -456,11 +448,11 @@
         </div>
     </div>
 
+    <!-- Screen 4: End Screen -->
     <div id="end-screen" class="screen">
         <div class="end-card">
-            <div class="innovine-brand" style="margin: 0 auto 15px auto; width: fit-content;">
-                <span class="innovine-icon">I</span>
-                <span>INNOVINE</span>
+            <div class="innovine-brand" style="margin: 0 auto 15px auto;">
+                <img src="assets/logo.png" alt="Innovine Logo" class="innovine-logo-img">
             </div>
             <h2>शानदार सफलता! 🎉</h2>
             <p style="font-size: 1.1rem; margin-bottom: 15px;">आपने सही उत्तर देकर सेतु का निर्माण पूरा कर लिया और जंगल पहुँच गए!</p>
@@ -472,49 +464,18 @@
 </div>
 
 <script>
-    // Audio Synthesizer
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    let audioCtx = null;
-
-    function initAudio() {
-        if (!audioCtx) audioCtx = new AudioCtx();
-    }
-
+    // Play Audio File from Assets
     function playSound(type) {
-        if (!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        const now = audioCtx.currentTime;
-
-        if (type === 'correct') {
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(440, now);
-            osc.frequency.setValueAtTime(554.37, now + 0.1);
-            osc.frequency.setValueAtTime(659.25, now + 0.2);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
-            osc.start(now);
-            osc.stop(now + 0.35);
+        let sound;
+        if (type === 'correct' || type === 'win') {
+            sound = document.getElementById('audio-correct');
         } else if (type === 'wrong') {
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(200, now);
-            osc.frequency.setValueAtTime(140, now + 0.15);
-            gain.gain.setValueAtTime(0.2, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
-            osc.start(now);
-            osc.stop(now + 0.3);
-        } else if (type === 'win') {
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25, now);
-            osc.frequency.setValueAtTime(659.25, now + 0.15);
-            osc.frequency.setValueAtTime(783.99, now + 0.3);
-            osc.frequency.setValueAtTime(1046.50, now + 0.45);
-            gain.gain.setValueAtTime(0.25, now);
-            gain.gain.linearRampToValueAtTime(0.01, now + 0.7);
-            osc.start(now);
-            osc.stop(now + 0.7);
+            sound = document.getElementById('audio-wrong');
+        }
+
+        if (sound) {
+            sound.currentTime = 0; // Rewind to start if playing
+            sound.play().catch(e => console.log("Audio play deferred or blocked:", e));
         }
     }
 
@@ -567,7 +528,7 @@
     let currentQIndex = 0;
     let builtPlanks = 0;
     let score = 0;
-    let attemptsLeft = 2; // 2 chances per question
+    let attemptsLeft = 2;
     let secondsElapsed = 0;
     let timerInterval = null;
 
@@ -591,7 +552,6 @@
     }
 
     function startGame() {
-        initAudio();
         score = 0;
         builtPlanks = 0;
         secondsElapsed = 0;
@@ -632,7 +592,7 @@
             currentQIndex = 0;
         }
 
-        attemptsLeft = 2; // Reset 2 chances for each new question
+        attemptsLeft = 2;
         updateChancesUI();
 
         const qData = currentQuestions[currentQIndex];
@@ -660,7 +620,6 @@
             selectedBtn.classList.add('correct-reveal');
             disableAllOptions();
 
-            // Give full points if first try, partial if second
             score += (attemptsLeft === 2) ? 10 : 5;
             builtPlanks++;
 
