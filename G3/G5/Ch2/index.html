@@ -3,19 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Learning Game - Pedon Ki Mahima</title>
+    <title>Interactive Drag & Drop Game - Pedon Ki Mahima</title>
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #bbf7d0 100%);
+            --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #bbf7d0 100%);
             --card-bg: #ffffff;
-            --text-main: #1e293b;
+            --text-main: #0f172a;
             --text-muted: #475569;
             --primary: #15803d;
             --primary-dark: #166534;
-            --accent: #eab308;
-            --success: #16a34a;
             --success-light: #dcfce7;
-            --error: #dc2626;
             --error-light: #fee2e2;
             --border: #cbd5e1;
         }
@@ -26,6 +23,7 @@
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            user-select: none;
         }
 
         body {
@@ -35,25 +33,25 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 16px;
+            padding: 12px;
+            overflow: hidden;
         }
 
         .quiz-container {
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
             background: var(--card-bg);
             border-radius: 24px;
             box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15);
-            padding: 24px;
+            padding: 20px;
             position: relative;
             overflow: hidden;
-            min-height: 500px;
+            min-height: 580px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        /* Screen Visibility Control */
         .screen {
             display: none;
             flex-direction: column;
@@ -66,7 +64,7 @@
             display: flex;
         }
 
-        /* 1) Splash Screen Container */
+        /* 1) Splash Screen */
         #splash-screen {
             align-items: center;
             background: #ffffff;
@@ -83,8 +81,6 @@
             max-width: 220px;
             width: 80%;
             height: auto;
-            object-fit: contain;
-            display: block;
             animation: pulseLogo 2s infinite ease-in-out;
         }
 
@@ -102,35 +98,30 @@
         .ins-title {
             font-size: 26px;
             font-weight: 800;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             color: var(--primary);
         }
 
         .ins-box {
             background: #f8fafc;
-            padding: 24px;
+            padding: 20px;
             border-radius: 16px;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             text-align: left;
             width: 100%;
             border: 1px solid #e2e8f0;
         }
 
         .ins-item {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             color: var(--text-muted);
             display: flex;
             align-items: center;
             gap: 12px;
         }
 
-        .ins-item:last-child {
-            margin-bottom: 0;
-        }
-
-        /* Action Buttons */
         .btn-action {
             background: var(--primary);
             color: white;
@@ -147,16 +138,15 @@
 
         .btn-action:hover {
             background: var(--primary-dark);
-            transform: translateY(-1px);
         }
 
-        /* 3) Main Quiz Screen */
+        /* 3) Main Game Screen */
         .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
             border-bottom: 2px solid #f1f5f9;
         }
 
@@ -165,19 +155,23 @@
             color: #166534;
             padding: 6px 12px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             border: 1px solid #bbf7d0;
+            max-width: 65%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .volume-control {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .volume-slider {
-            width: 70px;
+            width: 60px;
             accent-color: var(--primary);
             cursor: pointer;
         }
@@ -185,133 +179,156 @@
         .mute-btn {
             background: none;
             border: 1px solid var(--border);
-            padding: 6px 10px;
+            padding: 4px 8px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
-            font-weight: 600;
         }
 
         .stats-bar {
             display: flex;
             justify-content: space-between;
             background: #f8fafc;
-            padding: 12px 16px;
+            padding: 10px 14px;
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 14px;
             font-weight: 700;
-            font-size: 15px;
+            font-size: 14px;
             border: 1px solid #e2e8f0;
         }
 
-        .question-text {
-            font-size: 19px;
-            font-weight: 700;
-            line-height: 1.6;
-            margin-bottom: 24px;
-            color: #0f172a;
+        /* Drag Item (The Question Card) */
+        .drag-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 120px;
+            margin-bottom: 20px;
+            position: relative;
         }
 
-        /* Options Configuration */
-        .options-grid {
+        .drag-card {
+            background: #ffffff;
+            border: 3px dashed var(--primary);
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            text-align: center;
+            color: #0f172a;
+            cursor: grab;
+            width: 90%;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+            touch-action: none; /* Prevents scrolling while dragging on mobile */
+            position: absolute;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            z-index: 10;
+            line-height: 1.5;
+        }
+
+        .drag-card:active {
+            cursor: grabbing;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            transform: scale(1.02);
+        }
+
+        /* Drop Zones (The Targets) */
+        .drop-zones-container {
             display: flex;
             flex-direction: column;
             gap: 12px;
-            flex-grow: 1;
+            margin-top: auto;
         }
 
-        .option-card {
-            background: var(--card-bg);
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 16px;
-            font-size: 16px;
-            font-weight: 600;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            width: 100%;
-            color: var(--text-main);
-        }
-
-        .option-card:hover:not(.disabled) {
-            border-color: var(--primary);
-            background: #f0fdf4;
-        }
-
-        .option-card.correct {
-            background-color: var(--success-light) !important;
-            border-color: var(--success) !important;
-            color: #15803d !important;
+        .drop-zone {
+            background: #f8fafc;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 14px;
+            text-align: center;
             font-weight: 700;
+            font-size: 15px;
+            color: var(--text-muted);
+            transition: all 0.2s ease;
+            position: relative;
         }
 
-        .option-card.wrong {
+        .drop-zone.hovered {
+            background: #ecfdf5;
+            border-color: var(--primary);
+            color: var(--primary);
+            transform: scale(1.01);
+        }
+
+        .drop-zone.correct-flash {
+            background-color: var(--success-light) !important;
+            border-color: #16a34a !important;
+            color: #15803d !important;
+        }
+
+        .drop-zone.wrong-flash {
             background-color: var(--error-light) !important;
-            border-color: var(--error) !important;
+            border-color: #dc2626 !important;
             color: #b91c1c !important;
         }
 
-        .option-card.disabled {
-            cursor: not-allowed;
-        }
-
         .feedback-msg {
-            margin-top: 14px;
-            padding: 12px;
+            margin-top: 8px;
+            padding: 8px;
             border-radius: 10px;
             text-align: center;
             font-weight: 700;
+            font-size: 14px;
             background: #fff7ed;
             color: #c2410c;
             border: 1px solid #ffedd5;
             display: none;
         }
 
-        /* 4) End Screen Result Layout */
+        /* 4) End Screen */
         #result-screen {
             text-align: center;
             align-items: center;
         }
 
         .congrats-art {
-            font-size: 70px;
-            margin-bottom: 15px;
+            font-size: 64px;
+            margin-bottom: 10px;
             animation: joyBounce 1.5s infinite ease-in-out;
         }
 
         @keyframes joyBounce {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+            50% { transform: translateY(-10px); }
         }
 
         .score-circle {
-            width: 130px;
-            height: 130px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             background: #f0fdf4;
             border: 4px solid var(--primary);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 32px;
+            font-size: 30px;
             font-weight: 800;
             color: var(--primary);
-            margin: 20px 0;
+            margin: 16px 0;
             box-shadow: 0 8px 16px -4px rgba(21, 128, 61, 0.2);
         }
 
         .result-msg-box {
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 600;
-            margin-bottom: 30px;
-            padding: 18px;
+            margin-bottom: 24px;
+            padding: 16px;
             border-radius: 16px;
             width: 100%;
-            line-height: 1.6;
+            line-height: 1.5;
         }
 
-        /* Sparkle/Confetti Particles */
+        /* Particle effect */
         .particle {
             position: absolute;
             width: 8px;
@@ -339,14 +356,14 @@
         </div>
 
         <div id="instruction-screen" class="screen">
-            <div class="ins-title">खेल के नियम</div>
+            <div class="ins-title">कैसे खेलें? 🎮</div>
             <div class="ins-box">
-                <div class="ins-item">🌲 <span>यह खेल पेड़ों के महत्व और पर्यावरण संरक्षण पर आधारित है।</span></div>
-                <div class="ins-item">🔄 <span>प्रत्येक प्रश्न का सही उत्तर देने के लिए आपको 2 प्रयास मिलेंगे।</span></div>
-                <div class="ins-item">🔊 <span>आप ऊपर दिए गए बटन से आवाज़ और वॉल्यूम नियंत्रित कर सकते हैं।</span></div>
-                <div class="ins-item">🎯 <span>सभी प्रश्नों को पूरा करके अपनी पर्यावरण जागरूकता की जाँच करें!</span></div>
+                <div class="ins-item">📄 <span>ऊपर एक मुख्य कार्ड (पत्ती) दिखाई देगा जिसपर स्थिति लिखी होगी।</span></div>
+                <div class="ins-item">👇 <span>उस कार्ड को उंगली या माउस से पकड़कर (Drag) नीचे दिए गए सही बक्से पर ले जाकर छोड़ें (Drop)।</span></div>
+                <div class="ins-item">🔄 <span>गलत बक्से पर छोड़ने पर आपको सुधार करने का 1 और अवसर मिलेगा।</span></div>
+                <div class="ins-item">🔊 <span>आप अपनी सुविधा के अनुसार आवाज़ को कम या ज्यादा कर सकते हैं।</span></div>
             </div>
-            <button class="btn-action" onclick="startQuiz()">शुरू करें 🚀</button>
+            <button class="btn-action" onclick="startQuiz()">खेल शुरू करें 🚀</button>
         </div>
 
         <div id="quiz-screen" class="screen">
@@ -363,11 +380,17 @@
                 <div id="score-count">अंक: 0/10</div>
             </div>
 
-            <div class="question-text" id="question-box">प्रश्न लोड हो रहा है...</div>
-
-            <div class="options-grid" id="options-container"></div>
+            <div class="drag-area" id="drag-container">
+                <div class="drag-card" id="draggable-card">कार्ड लोड हो रहा है...</div>
+            </div>
 
             <div class="feedback-msg" id="feedback-box"></div>
+
+            <div class="drop-zones-container">
+                <div class="drop-zone" data-zone-id="0">🟢 पर्यावरण और स्वास्थ्य (Environment & Health)</div>
+                <div class="drop-zone" data-zone-id="1">🔵 जिम्मेदारी और समाज (Responsibility & Society)</div>
+                <div class="drop-zone" data-zone-id="2">🐾 पारिस्थितिकी और जीव-जंतु (Ecology & Animals)</div>
+            </div>
         </div>
 
         <div id="result-screen" class="screen">
@@ -381,66 +404,57 @@
     </div>
 
     <script>
+        // Zones Mapping: 0 = Environment & Health, 1 = Responsibility & Society, 2 = Ecology & Animals
         const questionsData = [
             {
-                q: "विद्यालय के मैदान में गर्मियों के समय बहुत अधिक गर्मी होती है। पेड़ों के महत्व को समझते हुए विद्यालय को क्या करना चाहिए?",
-                options: ["मैदान में और अधिक सीमेंट लगवाना", "अधिक पेड़ लगाकर उनकी देखभाल करना", "सभी पेड़ों को काट देना", "केवल पंखों की संख्या बढ़ाना"],
-                answer: 1,
-                competency: "पर्यावरण संरक्षण के ज्ञान का वास्तविक जीवन में प्रयोग"
+                q: "एक शहर में प्रदूषण बहुत तेजी से बढ़ रहा है। वहाँ की हवा को साफ़ और शुद्ध करने के लिए सबसे प्रभावी कदम क्या होगा?",
+                zone: 0,
+                competency: "पर्यावरण की समस्या का समाधान"
             },
             {
-                q: "रिया अपने मित्र को जन्मदिन पर ऐसा उपहार देना चाहती है जो लंबे समय तक उपयोगी रहे। वह क्या दे सकती है?",
-                options: ["प्लास्टिक से बना खिलौना", "एक पौधा जिसे वह बड़ा कर सके", "केवल सजावटी वस्तु", "कागज की बनी वस्तु"],
-                answer: 1,
-                competency: "पर्यावरण के प्रति जिम्मेदार निर्णय लेना"
+                q: "विद्यालय के मैदान में गर्मियों के समय बहुत तेज़ धूप होती है। मैदान को ठंडा रखने के लिए विद्यालय को क्या करना चाहिए?",
+                zone: 0,
+                competency: "वास्तविक जीवन में पेड़ों का प्रयोग"
             },
             {
-                q: "एक व्यक्ति कहता है, “पेड़ों का महत्व केवल लकड़ी प्राप्त करने तक ही सीमित है।” इस विचार के बारे में सही विकल्प चुनिए।",
-                options: ["यह सही है क्योंकि पेड़ केवल लकड़ी देते हैं।", "यह गलत है क्योंकि पेड़ जीवन के लिए आवश्यक कई सुविधाएँ प्रदान करते हैं।", "यह सही है क्योंकि पेड़ केवल जंगलों में उपयोगी होते हैं।", "यह गलत है क्योंकि पेड़ों का कोई उपयोग नहीं होता।"],
-                answer: 1,
-                competency: "तर्क के आधार पर विचारों का मूल्यांकन"
-            },
-            {
-                q: "एक शहर में प्रदूषण बढ़ रहा है। पेड़ों की भूमिका को ध्यान में रखते हुए सबसे प्रभावी उपाय क्या होगा?",
-                options: ["अधिक वाहनों का प्रयोग करना", "पेड़ों की कटाई बढ़ाना", "अधिक पौधे लगाना और उनकी रक्षा करना", "कूड़ा खुले में फेंकना"],
-                answer: 2,
-                competency: "पर्यावरण की समस्या का समाधान करना"
-            },
-            {
-                q: "पेड़ों को “हरा सोना” कहना किस बात को दर्शाता है?",
-                options: ["पेड़ों का रंग सोने जैसा होता है।", "पेड़ बहुत मूल्यवान और जीवन उपयोगी होते हैं।", "पेड़ केवल व्यापार के लिए उपयोगी हैं।", "पेड़ों से सोना प्राप्त होता है।"],
-                answer: 1,
-                competency: "भाषा में छिपे भाव को समझना और व्याख्या करना"
-            },
-            {
-                q: "आपके मोहल्ले में लोग पेड़ों की शाखाएँ काट रहे हैं। आप क्या करेंगे?",
-                options: ["उन्हें रोककर पेड़ों की सुरक्षा के लिए जागरूक करेंगे।", "उन्हें और पेड़ काटने के लिए कहेंगे।", "इस बात को अनदेखा कर देंगे।", "पेड़ों को नुकसान पहुँचाएँगे।"],
-                answer: 0,
-                competency: "जिम्मेदार नागरिक व्यवहार अपनाना"
-            },
-            {
-                q: "यदि पृथ्वी पर पेड़ों की संख्या बहुत कम हो जाए, तो सबसे संभावित परिणाम क्या होगा?",
-                options: ["वायु शुद्धता बढ़ जाएगी।", "जीव-जंतुओं को अधिक स्थान मिलेगा।", "प्रदूषण और तापमान बढ़ सकता है।", "वर्षा हमेशा समान रहेगी।"],
-                answer: 2,
+                q: "पृथ्वी पर पेड़ों की संख्या अत्यधिक कम हो जाने पर मानव स्वास्थ्य और प्रकृति का तापमान बिगड़ने का सबसे बड़ा कारण क्या है?",
+                zone: 0,
                 competency: "कारण और परिणाम का विश्लेषण"
             },
             {
-                q: "कक्षा के विद्यार्थी “पेड़ बचाओ अभियान” शुरू करना चाहते हैं। इनमें से कौन-सा कार्य सबसे प्रभावी होगा?",
-                options: ["पेड़ों पर चित्र बनाना", "पौधे लगाना और उनकी देखभाल करना", "पेड़ों के आसपास कचरा डालना", "पेड़ों की शाखाएँ तोड़ना"],
-                answer: 1,
-                competency: "सकारात्मक पर्यावरणीय कार्यों का चयन"
+                q: "रिया अपने मित्र को जन्मदिन पर एक छोटा पौधा उपहार में देती है जिसे वह बड़ा कर सके। यह क्रिया क्या दर्शाती है?",
+                zone: 1,
+                competency: "पर्यावरण के प्रति जिम्मेदार निर्णय"
             },
             {
-                q: "पेड़ पक्षियों और जानवरों के लिए क्यों महत्वपूर्ण हैं?",
-                options: ["क्योंकि वे केवल सुंदर दिखाई देते हैं।", "क्योंकि वे उन्हें भोजन और रहने का स्थान देते हैं।", "क्योंकि वे केवल मनुष्यों के लिए उपयोगी हैं।", "क्योंकि वे चल सकते हैं।"],
-                answer: 1,
+                q: "आपके मोहल्ले में कुछ लोग बिना वजह हरे-भरे पेड़ों को काट रहे हैं। एक अच्छे नागरिक के रूप में आपका कर्तव्य क्या होगा?",
+                zone: 1,
+                competency: "जिम्मेदार नागरिक व्यवहार अपनाना"
+            },
+            {
+                q: "कक्षा के विद्यार्थियों द्वारा 'पेड़ बचाओ अभियान' के तहत नए पौधे लगाना और नियमित पानी देना किस गुण को दर्शाता है?",
+                zone: 1,
+                competency: "सकारात्मक पर्यावरणीय कार्य"
+            },
+            {
+                q: "एक विद्यार्थी कहता है, 'मेरे अकेले एक पेड़ लगाने से पूरी पृथ्वी पर कोई बड़ा बदलाव नहीं आएगा।' इस विचार का खंडन कौन सा तर्क करता है?",
+                zone: 1,
+                competency: "सामूहिक प्रयासों के महत्व की समझ"
+            },
+            {
+                q: "पेड़ों को 'हरा सोना' कहना और उन्हें बहुत मूल्यवान समझना इंसानी समाज के लिए किस बात का परिचायक है?",
+                zone: 0,
+                competency: "भाषा में छिपे गहरे भाव की व्याख्या"
+            },
+            {
+                q: "घने जंगल और बड़े पेड़ विभिन्न प्रकार के पक्षियों और जानवरों को भोजन के साथ-साथ रहने का सुरक्षित स्थान (आश्रय) देते हैं। यह क्या है?",
+                zone: 2,
                 competency: "पारिस्थितिकी संबंधों का विश्लेषण"
             },
             {
-                q: "एक विद्यार्थी कहता है, “मेरे अकेले पेड़ लगाने से कोई बड़ा बदलाव नहीं आएगा।” सही उत्तर क्या होगा?",
-                options: ["वह सही है, क्योंकि एक व्यक्ति कुछ नहीं कर सकता।", "पेड़ लगाना व्यर्थ है।", "छोटे-छोटे प्रयास मिलकर बड़ा परिवर्तन ला सकते हैं।", "केवल सरकार ही पेड़ लगा सकती है।"],
-                answer: 2,
-                competency: "सामूहिक प्रयासों के महत्व को समझना"
+                q: "व्यक्ति का यह सोचना कि पेड़ केवल इंसानों की लकड़ी की ज़रूरतें पूरी करते हैं, उनके किस पहलू को अनदेखा करता है?",
+                zone: 2,
+                competency: "तर्क के आधार पर विचारों का मूल्यांकन"
             }
         ];
 
@@ -450,18 +464,26 @@
         let currentAttempts = 0; 
         let globalVolume = 0.8;
         let isMuted = false;
+        let isTransitioning = false; // Prevents double drops during automatic movement
 
-        // Sound configuration
+        // Drag tracking positions
+        let activeDrag = false;
+        let startX, startY;
+        let initialX = 0, initialY = 0;
+
         const sndCorrect = new Audio('./assets/correct.mp3');
         const sndWrong = new Audio('./assets/wrong.mp3');
         const sndClapping = new Audio('./assets/clapping.mp3');
 
+        const dragCard = document.getElementById('draggable-card');
+        const dropZones = document.querySelectorAll('.drop-zone');
+
         window.onload = () => {
-            // Automatically switch from splash screen to instructions after 5 seconds
             setTimeout(() => {
                 switchScreen('instruction-screen');
             }, 5000);
             updateVolume();
+            setupDragAndDrop();
         };
 
         function switchScreen(screenId) {
@@ -471,18 +493,10 @@
 
         function toggleMute() {
             isMuted = !isMuted;
-            const muteBtn = document.getElementById('muteBtn');
-            if (isMuted) {
-                muteBtn.innerText = "🔇";
-                sndCorrect.muted = true;
-                sndWrong.muted = true;
-                sndClapping.muted = true;
-            } else {
-                muteBtn.innerText = "🔊";
-                sndCorrect.muted = false;
-                sndWrong.muted = false;
-                sndClapping.muted = false;
-            }
+            document.getElementById('muteBtn').innerText = isMuted ? "🔇" : "🔊";
+            sndCorrect.muted = isMuted;
+            sndWrong.muted = isMuted;
+            sndClapping.muted = isMuted;
         }
 
         function updateVolume() {
@@ -494,11 +508,10 @@
 
         function playSound(audio) {
             audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio play prevented or file not loaded yet."));
+            audio.play().catch(e => console.log("Audio file loading handled safely."));
         }
 
         function startQuiz() {
-            // Randomize and select 10 unique questions
             gameQuestions = [...questionsData].sort(() => Math.random() - 0.5);
             currentIndex = 0;
             score = 0;
@@ -508,71 +521,158 @@
 
         function loadQuestion() {
             currentAttempts = 0;
+            isTransitioning = false;
             const currentQuestion = gameQuestions[currentIndex];
             
             document.getElementById('q-count').innerText = `प्रश्न: ${currentIndex + 1}/10`;
             document.getElementById('score-count').innerText = `अंक: ${score}/10`;
             document.getElementById('competency-box').innerText = currentQuestion.competency;
-            document.getElementById('question-box').innerText = currentQuestion.q;
             
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
+            // Reset Card Style & Text
+            dragCard.style.transition = 'none';
+            dragCard.style.transform = 'translate(0px, 0px)';
+            dragCard.innerText = currentQuestion.q;
+            dragCard.style.pointerEvents = 'auto';
+            dragCard.style.opacity = '1';
+            
             document.getElementById('feedback-box').style.display = 'none';
-
-            currentQuestion.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-card';
-                btn.innerText = opt;
-                btn.onclick = () => selectOption(idx, btn);
-                container.appendChild(btn);
+            
+            // Clear zone colors
+            dropZones.forEach(zone => {
+                zone.className = 'drop-zone';
             });
         }
 
-        function selectOption(selectedIndex, selectedBtn) {
+        // Touch & Mouse Event Handling for Cross-Device Compatibility
+        function setupDragAndDrop() {
+            // Mouse Listeners
+            dragCard.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', dragMove);
+            document.addEventListener('mouseup', dragEnd);
+
+            // Touch Listeners
+            dragCard.addEventListener('touchstart', dragStart, { passive: false });
+            document.addEventListener('touchmove', dragMove, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+        }
+
+        function dragStart(e) {
+            if (isTransitioning) return;
+            activeDrag = true;
+            
+            if (e.type === 'touchstart') {
+                startX = e.touches[0].clientX - initialX;
+                startY = e.touches[0].clientY - initialY;
+            } else {
+                startX = e.clientX - initialX;
+                startY = e.clientY - initialY;
+            }
+            dragCard.style.transition = 'none';
+        }
+
+        function dragMove(e) {
+            if (!activeDrag) return;
+            if (e.type === 'touchmove') e.preventDefault(); // Prevents bounce scrolling on iOS
+
+            let currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            let currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+
+            initialX = currentX - startX;
+            initialY = currentY - startY;
+
+            dragCard.style.transform = `translate(${initialX}px, ${initialY}px)`;
+
+            // Visual indicator when hovering over drop targets
+            let clientX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            let clientY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+            
+            dropZones.forEach(zone => {
+                let rect = zone.getBoundingClientRect();
+                if (clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom) {
+                    zone.classList.add('hovered');
+                } else {
+                    zone.classList.remove('hovered');
+                }
+            });
+        }
+
+        function dragEnd(e) {
+            if (!activeDrag) return;
+            activeDrag = false;
+
+            let cardRect = dragCard.getBoundingClientRect();
+            let centerX = cardRect.left + cardRect.width / 2;
+            let centerY = cardRect.top + cardRect.height / 2;
+
+            let droppedZone = null;
+
+            dropZones.forEach(zone => {
+                let rect = zone.getBoundingClientRect();
+                if (centerX >= rect.left && centerX <= rect.right && centerY >= rect.top && centerY <= rect.bottom) {
+                    droppedZone = zone;
+                }
+                zone.classList.remove('hovered');
+            });
+
+            if (droppedZone) {
+                let zoneId = parseInt(droppedZone.getAttribute('data-zone-id'));
+                validateDrop(zoneId, droppedZone);
+            } else {
+                // Snap back if dropped anywhere else
+                snapBack();
+            }
+        }
+
+        function snapBack() {
+            dragCard.style.transition = 'transform 0.3s ease';
+            dragCard.style.transform = 'translate(0px, 0px)';
+            initialX = 0;
+            initialY = 0;
+        }
+
+        function validateDrop(zoneId, targetZone) {
             const currentQuestion = gameQuestions[currentIndex];
-            const container = document.getElementById('options-container');
             const feedback = document.getElementById('feedback-box');
 
-            if (selectedIndex === currentQuestion.answer) {
-                selectedBtn.classList.add('correct');
+            if (zoneId === currentQuestion.zone) {
+                // Correct Drop Action
+                isTransitioning = true;
+                dragCard.style.pointerEvents = 'none';
+                targetZone.classList.add('correct-flash');
                 playSound(sndCorrect);
                 triggerSparkles();
                 score++;
                 document.getElementById('score-count').innerText = `अंक: ${score}/10`;
-                disableAllOptions();
                 
-                // Automatically proceed to next question after a brief delay
-                setTimeout(() => {
-                    proceedNext();
-                }, 1500);
+                setTimeout(proceedNext, 1500);
             } else {
+                // Wrong Drop Action
                 currentAttempts++;
-                selectedBtn.classList.add('wrong');
-                selectedBtn.onclick = null; // Disable clicking this wrong option again
                 playSound(sndWrong);
+                targetZone.classList.add('wrong-flash');
 
                 if (currentAttempts === 1) {
-                    feedback.innerText = "गलत उत्तर! आपके पास 1 अंतिम प्रयास शेष है।";
+                    feedback.innerText = "गलत वर्गीकरण! कार्ड को ध्यान से समझें, आपके पास 1 आखिरी अवसर है।";
                     feedback.style.display = 'block';
+                    snapBack();
+                    setTimeout(() => { targetZone.classList.remove('wrong-flash'); }, 1000);
                 } else {
+                    // Show right answer automatically after 2 failed attempts
+                    isTransitioning = true;
+                    dragCard.style.pointerEvents = 'none';
                     feedback.style.display = 'none';
-                    disableAllOptions();
-                    // Highlight the correct answer
-                    container.children[currentQuestion.answer].classList.add('correct');
                     
-                    // Automatically proceed to next question after showing correct answer
-                    setTimeout(() => {
-                        proceedNext();
-                    }, 2000);
-                }
-            }
-        }
+                    // Clear target wrong visual, light up correct visual
+                    setTimeout(() => { targetZone.classList.remove('wrong-flash'); }, 500);
+                    const correctZone = document.querySelector(`[data-zone-id="${currentQuestion.zone}"]`);
+                    correctZone.classList.add('correct-flash');
+                    
+                    // Animate card fading out to show transition
+                    dragCard.style.transition = 'opacity 0.5s ease';
+                    dragCard.style.opacity = '0';
 
-        function disableAllOptions() {
-            const options = document.getElementById('options-container').children;
-            for (let opt of options) {
-                opt.classList.add('disabled');
-                opt.onclick = null;
+                    setTimeout(proceedNext, 2000);
+                }
             }
         }
 
@@ -582,7 +682,7 @@
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = '50%';
-                p.style.top = '50%';
+                p.style.top = '30%';
                 p.style.setProperty('--x', (Math.random() * 360 - 180) + 'px');
                 p.style.setProperty('--y', (Math.random() * 360 - 180) + 'px');
                 p.style.backgroundColor = ['#22c55e', '#16a34a', '#eab308', '#3b82f6', '#ec4899'][Math.floor(Math.random() * 5)];
@@ -592,6 +692,8 @@
         }
 
         function proceedNext() {
+            initialX = 0;
+            initialY = 0;
             currentIndex++;
             if (currentIndex < gameQuestions.length) {
                 loadQuestion();
@@ -612,20 +714,20 @@
             if (percent >= 80) {
                 emojiEl.innerText = "🏆";
                 titleEl.innerText = "असाधारण प्रदर्शन!";
-                msgBox.innerText = "शानदार! 🎉 आपने पेड़ों के महत्व और पर्यावरण संरक्षण को बहुत ही गहराई से समझा है। आप एक सच्चे प्रकृति रक्षक हैं!";
+                msgBox.innerText = "शानदार! 🎉 आपने पेड़ों के महत्व, सामाजिक उत्तरदायित्व और हमारी पारिस्थितिकी को बहुत ही उत्तम तरीके से वर्गीकृत किया है। आप एक सच्चे पर्यावरण रक्षक हैं!";
                 msgBox.style.backgroundColor = "var(--success-light)";
                 msgBox.style.color = "var(--primary-dark)";
                 playSound(sndClapping);
             } else if (percent >= 50) {
                 emojiEl.innerText = "👍";
-                titleEl.innerText = "अच्छा प्रयास!";
-                msgBox.innerText = "बहुत बढ़िया! 👍 पेड़ों की उपयोगिता और जिम्मेदार निर्णयों के बारे में आपकी समझ अच्छी है। पर्यावरण को हरा-भरा रखने का प्रयास जारी रखें।";
+                titleEl.innerText = "सराहनीय प्रयास!";
+                msgBox.innerText = "बहुत बढ़िया! 👍 पेड़ों की उपयोगिता और जिम्मेदार नागरिक व्यवहारों के प्रति आपकी समझ अच्छी है। प्रकृति की रक्षा के संकल्प को और दृढ़ बनाएं।";
                 msgBox.style.backgroundColor = "#ffedd5";
                 msgBox.style.color = "#c2410c";
             } else {
                 emojiEl.innerText = "🌿";
                 titleEl.innerText = "पुनः प्रयास करें!";
-                msgBox.innerText = "कोई बात नहीं! 🌿 पेड़ों को 'हरा सोना' क्यों कहा जाता है और वे हमारे जीवन के लिए क्यों आवश्यक हैं, इसे समझने के लिए एक बार फिर से खेलें।";
+                msgBox.innerText = "कोई बात नहीं! 🌿 पर्यावरण संरक्षण, हमारी जिम्मेदारियों और जीव-जंतुओं के लिए पेड़ों की उपयोगिता को फिर से सही ढंग से समझने के लिए एक बार फिर खेलें।";
                 msgBox.style.backgroundColor = "var(--error-light)";
                 msgBox.style.color = "#b91c1c";
             }
