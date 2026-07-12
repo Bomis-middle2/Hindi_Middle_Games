@@ -91,26 +91,21 @@
         /* 1) Splash Screen (5 Seconds) */
         #splash-screen {
             align-items: center;
+            justify-content: center;
             background: #ffffff;
         }
 
-        .logo-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .innovine-logo-img {
-            max-width: 220px;
-            width: 80%;
-            height: auto;
+        .splash-title {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--forest-bg);
+            text-align: center;
             animation: pulseLogo 2s infinite ease-in-out;
         }
 
         @keyframes pulseLogo {
-            0%, 100% { transform: scale(0.97); opacity: 0.95; }
-            50% { transform: scale(1.03); opacity: 1; }
+            0%, 100% { transform: scale(0.95); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 1; }
         }
 
         /* 2) Instruction Screen */
@@ -221,7 +216,7 @@
             border: 1px solid var(--light-leaf);
         }
 
-        /* Drop Zone Area (The Static Statement Card) */
+        /* Statement Card Container */
         .statement-container {
             display: flex;
             justify-content: center;
@@ -254,7 +249,7 @@
             font-size: 20px;
         }
 
-        /* Drop target states */
+        /* Dynamic Flashing Background Colors */
         .drop-target-card.hovered {
             background: #f0fdf4;
             border-color: #16a34a;
@@ -263,17 +258,17 @@
 
         .drop-target-card.correct-flash {
             background-color: #d8f3dc !important;
-            border-color: #1b4332 !important;
+            border-color: #2a9d8f !important;
             color: #1b4332 !important;
         }
 
         .drop-target-card.wrong-flash {
             background-color: #ffe3e3 !important;
-            border-color: #b91c1c !important;
+            border-color: #e63946 !important;
             color: #b91c1c !important;
         }
 
-        /* Drag Items Container (Blinking Buttons Area) */
+        /* Blinking Buttons Wrapper */
         .drag-items-container {
             display: flex;
             gap: 16px;
@@ -298,15 +293,14 @@
             box-shadow: 0 6px 15px rgba(0,0,0,0.1);
             touch-action: none;
             z-index: 10;
-            /* Blinking Animation Setup */
-            animation: pulseBlink 2s infinite ease-in-out;
+            animation: pulseBlink 1.8s infinite ease-in-out;
         }
 
         .drag-btn:active {
             cursor: grabbing;
             z-index: 99;
             box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            animation: none; /* Stop blinking while holding */
+            animation: none; 
         }
 
         .drag-btn[data-choice="agree"] {
@@ -321,7 +315,6 @@
             color: var(--disagree-color);
         }
 
-        /* Smooth Blinking Animation Effect */
         @keyframes pulseBlink {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.75; transform: scale(0.96); }
@@ -387,7 +380,7 @@
             line-height: 1.5;
         }
 
-        /* Confetti Burst Particle */
+        /* Confetti Particles */
         .particle {
             position: absolute;
             width: 8px;
@@ -409,18 +402,16 @@
     <div class="quiz-container">
         
         <div id="splash-screen" class="screen active">
-            <div class="logo-container">
-                <img src="./assets/innovine-logo.png" alt="Innovine Logo" class="innovine-logo-img">
-            </div>
+            <div class="splash-title">🌿 पेड़ों की महिमा 🌿<br><span style="font-size: 18px; font-weight: 600;">पर्यावरण जागरूकता खेल</span></div>
         </div>
 
         <div id="instruction-screen" class="screen">
             <div class="ins-title">सही बटन को पहचानें! 🤔</div>
             <div class="ins-box">
                 <div class="ins-item">📄 <span>ऊपर बीच में पर्यावरण से जुड़ा एक वास्तविक जीवन का कथन दिखाई देगा।</span></div>
-                <div class="ins-item">👇 <span>नीचे चमकते हुए (Blinking) 'सहमत' या 'असहमत' बटनों में से सही बटन को चुनें।</span></div>
-                <div class="ins-item">🎯 <span>उस बटन को खींचकर (Drag) ऊपर दिए गए मुख्य कथन कार्ड पर ले जाकर छोड़ें (Drop)।</span></div>
-                <div class="ins-item">🔄 <span>गलत चुनाव करने पर सुधार के लिए आपको 1 और अंतिम अवसर मिलेगा।</span></div>
+                <div class="ins-item">👇 <span>नीचे चमकते हुए 'सहमत' या 'असहमत' बटनों में से सही बटन को चुनें।</span></div>
+                <div class="ins-item">🎯 <span>उस बटन को खींचकर (Drag) ऊपर दिए गए कथन कार्ड पर छोड़ें (Drop)।</span></div>
+                <div class="ins-item">🔄 <span>गलत चुनाव करने पर सुधार के लिए 1 और अंतिम अवसर मिलेगा।</span></div>
             </div>
             <button class="btn-action" onclick="startQuiz()">खेल शुरू करें 🚀</button>
         </div>
@@ -468,7 +459,6 @@
     </div>
 
     <script>
-        // Game Dataset from the provided text resource
         const statementsData = [
             {
                 q: "बढ़ते वायु प्रदूषण को रोकने के लिए हमें शहरों में और अधिक सीमेंट की इमारतों के बजाय पेड़ों की संख्या बढ़ानी चाहिए।",
@@ -530,14 +520,51 @@
         let isMuted = false;
         let isTransitioning = false;
 
-        // Multi-drag coordinate tracking setup
         let activeDragElement = null;
         let startX, startY;
         let initialTransforms = { 'btn-agree': { x: 0, y: 0 }, 'btn-disagree': { x: 0, y: 0 } };
 
-        const sndCorrect = new Audio('./assets/correct.mp3');
-        const sndWrong = new Audio('./assets/wrong.mp3');
-        const sndClapping = new Audio('./assets/clapping.mp3');
+        // Web Audio API Synthesizer (No external file needed)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSynthesizedSound(type) {
+            if (isMuted) return;
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            gain.gain.setValueAtTime(globalVolume * 0.3, audioCtx.currentTime);
+
+            if (type === 'correct') {
+                // Happy high pitch chime sound
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'wrong') {
+                // Low harsh buzzer sound
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(130.81, audioCtx.currentTime); // C3
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'victory') {
+                // Short fanfare celebration sound
+                osc.type = 'sine';
+                const now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(392.00, now); // G4
+                osc.frequency.setValueAtTime(523.25, now + 0.15); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.3); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.45); // G5
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
+                osc.start();
+                osc.stop(now + 0.8);
+            }
+        }
 
         const targetCard = document.getElementById('main-statement-card');
         const dragBtns = document.querySelectorAll('.drag-btn');
@@ -546,7 +573,6 @@
             setTimeout(() => {
                 switchScreen('instruction-screen');
             }, 5000);
-            updateVolume();
             setupDragAndDrop();
         };
 
@@ -558,24 +584,17 @@
         function toggleMute() {
             isMuted = !isMuted;
             document.getElementById('muteBtn').innerText = isMuted ? "🔇" : "🔊";
-            sndCorrect.muted = isMuted;
-            sndWrong.muted = isMuted;
-            sndClapping.muted = isMuted;
         }
 
         function updateVolume() {
             globalVolume = document.getElementById('volumeSlider').value;
-            sndCorrect.volume = globalVolume;
-            sndWrong.volume = globalVolume;
-            sndClapping.volume = globalVolume;
-        }
-
-        function playSound(audio) {
-            audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio safe fallback execution."));
         }
 
         function startQuiz() {
+            // Context activation for modern browsers audio policy
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
             gameQuestions = [...statementsData].sort(() => Math.random() - 0.5);
             currentIndex = 0;
             score = 0;
@@ -588,17 +607,15 @@
             isTransitioning = false;
             const currentQuestion = gameQuestions[currentIndex];
             
-            document.getElementById('q-count').innerText = `कठन: ${currentIndex + 1}/10`;
+            document.getElementById('q-count').innerText = `कथन: ${currentIndex + 1}/10`;
             document.getElementById('score-count').innerText = `अंक: ${score}/10`;
             document.getElementById('competency-box').innerText = currentQuestion.competency;
             
-            // Set Static Question Text
             targetCard.innerText = currentQuestion.q;
             targetCard.className = 'drop-target-card';
             
             document.getElementById('feedback-box').style.display = 'none';
             
-            // Reset both buttons to original styles and positions
             dragBtns.forEach(btn => {
                 btn.style.transition = 'none';
                 btn.style.transform = 'translate(0px, 0px)';
@@ -638,7 +655,7 @@
 
         function dragMove(e) {
             if (!activeDragElement) return;
-            if (e.type === 'touchmove') e.preventDefault(); // Stop mobile scroll bounce
+            if (e.type === 'touchmove') e.preventDefault(); 
 
             let id = activeDragElement.id;
             let currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
@@ -649,7 +666,6 @@
 
             activeDragElement.style.transform = `translate(${initialTransforms[id].x}px, ${initialTransforms[id].y}px)`;
 
-            // Detect if button center is hovering over the statement drop card
             let btnRect = activeDragElement.getBoundingClientRect();
             let bCenterX = btnRect.left + btnRect.width / 2;
             let bCenterY = btnRect.top + btnRect.height / 2;
@@ -693,21 +709,24 @@
             const feedback = document.getElementById('feedback-box');
 
             if (choiceType === currentQuestion.expected) {
-                // Correct match
                 isTransitioning = true;
-                draggedBtn.style.pointerEvents = 'none';
+                dragBtns.forEach(b => b.style.pointerEvents = 'none');
+                
+                // Active Flashing UI Colors
+                targetCard.classList.remove('wrong-flash', 'hovered');
                 targetCard.classList.add('correct-flash');
-                playSound(sndCorrect);
+                
+                playSynthesizedSound('correct');
                 triggerConfetti();
+                
                 score++;
                 document.getElementById('score-count').innerText = `अंक: ${score}/10`;
-                
                 setTimeout(proceedNext, 1500);
             } else {
-                // Incorrect match
                 currentAttempts++;
-                playSound(sndWrong);
+                targetCard.classList.remove('correct-flash', 'hovered');
                 targetCard.classList.add('wrong-flash');
+                playSynthesizedSound('wrong');
 
                 if (currentAttempts === 1) {
                     feedback.innerText = "गलत विकल्प! कथन को फिर से पढ़कर सही बटन ड्रैग करें, आपके पास 1 आखिरी अवसर है।";
@@ -715,9 +734,8 @@
                     snapBack(draggedBtn);
                     setTimeout(() => { targetCard.classList.remove('wrong-flash'); }, 1000);
                 } else {
-                    // Fail state action (reveal system auto response)
                     isTransitioning = true;
-                    draggedBtn.style.pointerEvents = 'none';
+                    dragBtns.forEach(b => b.style.pointerEvents = 'none');
                     feedback.style.display = 'none';
                     
                     setTimeout(() => { 
@@ -725,7 +743,6 @@
                         targetCard.classList.add('correct-flash');
                     }, 500);
                     
-                    // Hide the active wrong button smoothly to denote change
                     draggedBtn.style.transition = 'opacity 0.5s ease';
                     draggedBtn.style.opacity = '0';
 
@@ -736,7 +753,7 @@
 
         function triggerConfetti() {
             const container = document.querySelector('.quiz-container');
-            for(let i = 0; i < 25; i++) {
+            for(let i = 0; i < 30; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = '50%';
@@ -773,13 +790,14 @@
                 msgBox.innerText = "शानदार! 🎉 आपने सही बटन का सही चयन करके पेड़ों की उपयोगिता और पर्यावरण संरक्षण का बेहतरीन मूल्यांकन किया है। आपकी तार्किक क्षमता लाजवाब है!";
                 msgBox.style.backgroundColor = "var(--light-leaf)";
                 msgBox.style.color = "var(--text-main)";
-                playSound(sndClapping);
+                playSynthesizedSound('victory');
             } else if (percent >= 50) {
                 emojiEl.innerText = "👍";
                 titleEl.innerText = "सराहनीय प्रयास!";
                 msgBox.innerText = "बहुत बढ़िया! 👍 पर्यावरण संतुलन और सामाजिक जिम्मेदारियों के प्रति आपकी समझ अच्छी है। अपनी सोच को और बेहतर बनाने के लिए अभ्यास जारी रखें।";
                 msgBox.style.backgroundColor = "#fff7ed";
                 msgBox.style.color = "#c2410c";
+                playSynthesizedSound('victory');
             } else {
                 emojiEl.innerText = "🌿";
                 titleEl.innerText = "पुनः प्रयास करें!";
