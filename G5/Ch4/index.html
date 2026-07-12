@@ -1,1 +1,698 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>होली - फॉलिंग वर्ड्स</title>
+    <style>
+        :root {
+            --sky-blue: #e0f2fe;
+            --pink-accent: #f43f5e;
+            --holi-orange: #f97316;
+            --card-bg: rgba(255, 255, 255, 0.98);
+            --success: #16a34a;
+            --danger: #dc2626;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #fbcfe8 0%, #e0f2fe 100%);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 600px;
+            height: 94vh;
+            min-height: 560px;
+            max-height: 760px;
+            background: #f8fafc;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border: 5px solid var(--pink-accent);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            padding: 16px;
+            position: relative;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* 1) Splash Screen (Strictly 5 Seconds) */
+        #splash-screen {
+            background: #ffffff;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .brand-logo {
+            font-size: 40px;
+            font-weight: 900;
+            color: var(--pink-accent);
+            letter-spacing: 2px;
+            animation: bounceLogo 2s infinite ease-in-out;
+        }
+
+        .brand-sub {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 6px;
+            margin-top: 5px;
+            text-transform: uppercase;
+        }
+
+        @keyframes bounceLogo {
+            0%, 100% { transform: translateY(0); opacity: 0.9; }
+            50% { transform: translateY(-5px); opacity: 1; }
+        }
+
+        /* 2) Instruction Screen */
+        #instruction-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-header {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--pink-accent);
+            margin-bottom: 20px;
+        }
+
+        .ins-box {
+            background: var(--card-bg);
+            border: 3px dashed #f43f5e;
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 460px;
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .ins-item {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            line-height: 1.4;
+        }
+
+        .btn-start {
+            background: var(--pink-accent);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(244, 63, 94, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-start:hover {
+            transform: scale(1.03);
+        }
+
+        /* 3) Game Play Screen */
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+            z-index: 10;
+        }
+
+        .stats-hud {
+            background: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 2px solid var(--pink-accent);
+            display: flex;
+            gap: 15px;
+        }
+
+        .audio-btn {
+            background: #fff;
+            border: 2px solid var(--pink-accent);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Fixed Question Card */
+        .fixed-question-card {
+            background: var(--card-bg);
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin-top: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            z-index: 10;
+        }
+
+        .comp-tag {
+            display: inline-block;
+            background: #fce7f3;
+            color: var(--pink-accent);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .question-lbl {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+
+        /* Falling Area Container */
+        .falling-zone-area {
+            flex-grow: 1;
+            position: relative;
+            background: linear-gradient(to bottom, #fff5f5 0%, #e0f2fe 100%);
+            margin: 12px 0;
+            border-radius: 14px;
+            border: 1px solid #cbd5e1;
+            overflow: hidden;
+        }
+
+        /* Falling Words Style */
+        .falling-word-btn {
+            position: absolute;
+            background: #ffffff;
+            border: 2px solid #94a3b8;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            white-space: nowrap;
+            transition: background 0.2s, border-color 0.2s, transform 0.1s;
+            transform: translateX(-50%);
+            left: 50%;
+            top: -50px;
+        }
+
+        .falling-word-btn:hover {
+            border-color: var(--pink-accent);
+            background: #f8fafc;
+        }
+
+        .falling-word-btn.correct {
+            background: #d8f3dc !important;
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+        }
+
+        .falling-word-btn.wrong {
+            background: #ffe3e3 !important;
+            border-color: var(--danger) !important;
+            color: #b91c1c !important;
+        }
+
+        .hint-toast {
+            position: absolute;
+            bottom: 8px;
+            left: 12px;
+            right: 12px;
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 13px;
+            display: none;
+            z-index: 12;
+        }
+
+        /* 4) End Screen */
+        #result-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .finish-art {
+            font-size: 60px;
+            margin-bottom: 10px;
+            animation: sunPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes sunPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .final-score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--holi-orange);
+            border: 4px solid #fff;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 900;
+            color: #fff;
+            margin: 15px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .congrats-msg {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-muted);
+            max-width: 440px;
+            line-height: 1.5;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        /* Confetti Burst Sparkles */
+        .confetti-spark {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: flySpark 0.7s ease-out forwards;
+            pointer-events: none;
+            z-index: 99;
+        }
+
+        @keyframes flySpark {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--sx), var(--sy)) scale(0.3); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+
+        <div id="splash-screen" class="screen active">
+            <div class="brand-logo">Innovine</div>
+            <div class="brand-sub">Edutech Games</div>
+        </div>
+
+        <div id="instruction-screen" class="screen">
+            <div class="title-header">🎨 होली: फॉलिंग वर्ड्स खेल</div>
+            <div class="ins-box">
+                <div class="ins-item">📄 <span>ऊपर 'होली' कविता व पाठ से संबंधित महत्वपूर्ण प्रश्न दिखाई देगा।</span></div>
+                <div class="ins-item">☁️ <span>आसमान से तैरते हुए छोटे विकल्प (Words) धीरे-धीरे नीचे गिरेंगे।</span></div>
+                <div class="ins-item">🎯 <span>विकल्प के नीचे गायब होने से पहले सही उत्तर वाले विकल्प पर क्लिक करें।</span></div>
+                <div class="ins-item">🔄 <span>गलत जवाब देने पर वह विकल्प दोबारा गिरेगा। आपके पास कुल 2 प्रयास हैं।</span></div>
+            </div>
+            <button class="btn-start" onclick="initiateFallingGame()">खेल शुरू करें 🚀</button>
+        </div>
+
+        <div id="gameplay-screen" class="screen">
+            <div class="top-navbar">
+                <div class="stats-hud">
+                    <span id="hud-q">प्रश्न: 1/10</span>
+                    <span id="hud-score">अंक: 0/10</span>
+                </div>
+                <div class="audio-btn" id="audio-toggle-btn" onclick="toggleMuteState()">🔊</div>
+            </div>
+
+            <div class="fixed-question-card">
+                <div class="comp-tag" id="lbl-competency">योग्यता</div>
+                <div class="question-lbl" id="lbl-question">लोड हो रहा है...</div>
+            </div>
+
+            <div class="falling-zone-area" id="falling-zone">
+                </div>
+
+            <div class="hint-toast" id="lbl-hint"></div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <div class="finish-art">🎉🎨🌈</div>
+            <div class="title-header" style="color:var(--success);">उत्सव पूर्ण हुआ!</div>
+            <div class="final-score-circle" id="lbl-final-score">0/10</div>
+            <div class="congrats-msg" id="lbl-final-msg">बधाई हो! आपने होली के सांस्कृतिक महत्व, प्राकृतिक रंगों और विभिन्न देशों की परंपराओं से जुड़े सभी शब्दों को सही समय पर पहचान लिया है।</div>
+            <button class="btn-start" onclick="restartWholeGame()">🔄 दोबारा खेलें</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Concise and Pointed Options based on Chapter 4: होली
+        const quizPool = [
+            {
+                q: "कविता के अनुसार, होली का पावन त्योहार हमें मुख्य रूप से क्या पाठ पढ़ाता है?",
+                options: ["लड़ाई", "एकता", "दिखावा", "उदासी"],
+                correct: "एकता",
+                comp: "कविता के मुख्य भाव की समझ"
+            },
+            {
+                q: "होली के पारंपरिक रंग प्राचीन समय में किन प्राकृतिक चीज़ों से बनाए जाते थे?",
+                options: ["प्लास्टिक", "केमिकल", "नीम-हल्दी", "सीमेंट"],
+                correct: "नीम-हल्दी",
+                comp: "तथ्यात्मक ज्ञान"
+            },
+            {
+                q: "प्राकृतिक रंगों (नीम, हल्दी, कुमकुम) का हमारी त्वचा पर क्या प्रभाव पड़ता है?",
+                options: ["त्वचा खराब", "कीटाणु नाश", "कोई लाभ नहीं", "जलन होना"],
+                correct: "कीटाणु नाश",
+                comp: "वैज्ञानिक दृष्टिकोण"
+            },
+            {
+                q: "भारत के बरसाना और नंदगाँव में खेली जाने वाली विश्व प्रसिद्ध होली का क्या नाम है?",
+                options: ["कीचड़ होली", "लठमार होली", "पानी होली", "सूखी होली"],
+                correct: "लठमार होली",
+                comp: "सांस्कृतिक विविधता की पहचान"
+            },
+            {
+                q: "श्रीलंका में होली जैसे सामूहिक त्योहार बच्चों को क्या मुख्य सीख देते हैं?",
+                options: ["अकेले रहना", "मित्रता", "झगड़ा करना", "दौड़ना"],
+                correct: "मित्रता",
+                comp: "मूल्यों का विकास"
+            },
+            {
+                q: "जर्मनी में मनाए जाने वाले 'रंग डांस फेस्टिवल' में पानी की जगह किसका प्रयोग होता है?",
+                options: ["तेल का", "सूखे गुलाल", "कीचड़ का", "रसायन का"],
+                correct: "सूखे गुलाल",
+                comp: "वैश्विक संस्कृतियों की समझ"
+            },
+            {
+                q: "मॉरीशस और ऑस्ट्रेलिया में होली मनाते समय विशेष रूप से किस चीज़ की बचत की जाती है?",
+                options: ["पैसों की", "कपड़ों की", "जल-बचत", "समय की"],
+                correct: "जल-बचत",
+                comp: "पर्यावरणीय जिम्मेदारी"
+            },
+            {
+                q: "यूरोप और अमेरिका के स्कूल बच्चों को होली पर किस प्रकार के खेलों के लिए प्रेरित करते हैं?",
+                options: ["वीडियो गेम", "सामुदायिक खेल", "अकेले खेल", "डरावने खेल"],
+                correct: "सामुदायिक खेल",
+                comp: "सामूहिक सहभागिता"
+            },
+            {
+                q: "यदि होली पर कोई जबरदस्ती किसी जानवर (पशु-पक्षी) पर पक्का केमिकल रंग लगाए, तो आप क्या करेंगे?",
+                options: ["उन्हें रोकेंगे", "हँसेंगे", "मदद करेंगे", "अनदेखा करेंगे"],
+                correct: "उन्हें रोकेंगे",
+                comp: "संवेदनशीलता और नागरिक कर्तव्य"
+            },
+            {
+                q: "केमिकल रंगों से पानी प्रदूषित होता है। पर्यावरण संरक्षण के लिए सबसे सही निर्णय क्या होगा?",
+                options: ["त्योहार छोड़ें", "प्राकृतिक रंग", "अधिक पानी बहें", "कचरा फैलाएँ"],
+                correct: "प्राकृतिक रंग",
+                comp: "पर्यावरण अनुकूल निर्णय"
+            }
+        ];
+
+        let activeQuestions = [];
+        let questionIndex = 0;
+        let scoreTrack = 0;
+        let attemptsLeft = 0;
+        let soundMuted = false;
+        let blockInteraction = false;
+        
+        // Game Engine Loops & Mechanics Variables
+        let fallingInterval = null;
+        let currentActiveWords = [];
+        let animationSpeed = 1.8; // Falling Step Pixels
+
+        // In-built Browser Web Audio API Synthesizer (Zero asset file failure rate)
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSynthesizedSound(variant) {
+            if (soundMuted) return;
+            
+            const osc = audioCtx.createOscillator();
+            const volume = audioCtx.createGain();
+            osc.connect(volume);
+            volume.connect(audioCtx.destination);
+            
+            volume.gain.setValueAtTime(0.15, audioCtx.currentTime);
+
+            if (variant === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
+                volume.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (variant === 'clapping') {
+                osc.type = 'sine';
+                const now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(659.25, now);
+                osc.frequency.setValueAtTime(783.99, now + 0.08);
+                osc.frequency.setValueAtTime(987.77, now + 0.16);
+                volume.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.start();
+                osc.stop(now + 0.35);
+            } else if (variant === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(130.81, audioCtx.currentTime); 
+                volume.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (variant === 'victory') {
+                osc.type = 'sine';
+                const now = audioCtx.currentTime;
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.12);
+                osc.frequency.setValueAtTime(783.99, now + 0.24);
+                osc.frequency.setValueAtTime(1046.50, now + 0.36);
+                volume.gain.exponentialRampToValueAtTime(0.01, now + 0.7);
+                osc.start();
+                osc.stop(now + 0.7);
+            }
+        }
+
+        window.onload = () => {
+            setTimeout(() => {
+                changeActiveScreen('instruction-screen');
+            }, 5000); // Strict 5 seconds splash display
+        };
+
+        function changeActiveScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        function toggleMuteState() {
+            soundMuted = !soundMuted;
+            document.getElementById('audio-toggle-btn').innerText = soundMuted ? "🔇" : "🔊";
+        }
+
+        function initiateFallingGame() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            activeQuestions = [...quizPool].sort(() => Math.random() - 0.5);
+            questionIndex = 0;
+            scoreTrack = 0;
+            
+            changeActiveScreen('gameplay-screen');
+            setupNextChallenge();
+        }
+
+        function setupNextChallenge() {
+            clearInterval(fallingInterval);
+            const zone = document.getElementById('falling-zone');
+            zone.innerHTML = '';
+            currentActiveWords = [];
+            attemptsLeft = 0;
+            blockInteraction = false;
+
+            const item = activeQuestions[questionIndex];
+            document.getElementById('hud-q').innerText = `प्रश्न: ${questionIndex + 1}/10`;
+            document.getElementById('hud-score').innerText = `अंक: ${scoreTrack}/10`;
+            document.getElementById('lbl-competency').innerText = item.comp;
+            document.getElementById('lbl-question').innerText = item.q;
+            document.getElementById('lbl-hint').style.display = 'none';
+
+            const shuffleOptions = [...item.options].sort(() => Math.random() - 0.5);
+            const positionsX = [20, 40, 60, 80]; 
+            
+            shuffleOptions.forEach((wordText, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'falling-word-btn';
+                btn.innerText = wordText;
+                
+                btn.style.left = `${positionsX[i % positionsX.length]}%`;
+                let initialTop = -40 - (i * 55); 
+                btn.style.top = `${initialTop}px`;
+                
+                btn.onclick = () => evaluateSelectedWord(btn, wordText);
+                zone.appendChild(btn);
+
+                currentActiveWords.push({
+                    element: btn,
+                    currentY: initialTop,
+                    text: wordText
+                });
+            });
+
+            fallingInterval = setInterval(updateFallingPhysicsLoop, 20);
+        }
+
+        function updateFallingPhysicsLoop() {
+            if (blockInteraction) return;
+            const zone = document.getElementById('falling-zone');
+            const heightBoundary = zone.clientHeight;
+
+            let resetTriggered = false;
+
+            currentActiveWords.forEach((wordObj) => {
+                wordObj.currentY += animationSpeed;
+                wordObj.element.style.top = `${wordObj.currentY}px`;
+
+                if (wordObj.currentY > heightBoundary - 10) {
+                    resetTriggered = true;
+                }
+            });
+
+            if (resetTriggered) {
+                currentActiveWords.forEach((wordObj, idx) => {
+                    wordObj.currentY = -40 - (idx * 55);
+                    wordObj.element.style.top = `${wordObj.currentY}px`;
+                });
+            }
+        }
+
+        function evaluateSelectedWord(selectedBtn, chosenText) {
+            if (blockInteraction) return;
+            const item = activeQuestions[questionIndex];
+            const toast = document.getElementById('lbl-hint');
+
+            if (chosenText === item.correct) {
+                blockInteraction = true;
+                clearInterval(fallingInterval);
+                selectedBtn.classList.add('correct');
+                
+                playSynthesizedSound('correct');
+                playSynthesizedSound('clapping');
+                generateVisualSparkles();
+
+                scoreTrack++;
+                document.getElementById('hud-score').innerText = `अंक: ${scoreTrack}/10`;
+                setTimeout(progressToNextItem, 1400);
+            } else {
+                attemptsLeft++;
+                selectedBtn.classList.add('wrong');
+                selectedBtn.disabled = true;
+                playSynthesizedSound('wrong');
+
+                if (attemptsLeft === 1) {
+                    toast.innerText = "गलत विकल्प! ध्यान से देखकर सही रंगीन शब्द को चुनें, आपके पास 1 आखिरी अवसर है।";
+                    toast.style.display = 'block';
+                    
+                    currentActiveWords.forEach((wordObj, idx) => {
+                        if (!wordObj.element.disabled) {
+                            wordObj.currentY = -40 - (idx * 45);
+                        }
+                    });
+                } else {
+                    blockInteraction = true;
+                    clearInterval(fallingInterval);
+                    toast.style.display = 'none';
+
+                    currentActiveWords.forEach(w => {
+                        if (w.text === item.correct) {
+                            w.element.classList.add('correct');
+                        }
+                    });
+
+                    setTimeout(progressToNextItem, 2000);
+                }
+            }
+        }
+
+        function generateVisualSparkles() {
+            const container = document.getElementById('falling-zone');
+            for (let i = 0; i < 22; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'confetti-spark';
+                spark.style.left = '50%';
+                spark.style.top = '40%';
+                spark.style.setProperty('--sx', (Math.random() * 260 - 130) + 'px');
+                spark.style.setProperty('--sy', (Math.random() * 260 - 130) + 'px');
+                spark.style.backgroundColor = ['#f43f5e', '#f97316', '#16a34a', '#3b82f6', '#eab308'][Math.floor(Math.random() * 5)];
+                container.appendChild(spark);
+                setTimeout(() => spark.remove(), 700);
+            }
+        }
+
+        function progressToNextItem() {
+            questionIndex++;
+            if (questionIndex < activeQuestions.length) {
+                setupNextChallenge();
+            } else {
+                wrapUpGameSession();
+            }
+        }
+
+        function wrapUpGameSession() {
+            clearInterval(fallingInterval);
+            changeActiveScreen('result-screen');
+            document.getElementById('lbl-final-score').innerText = `${scoreTrack}/10`;
+            playSynthesizedSound('victory');
+
+            const msgEl = document.getElementById('lbl-final-msg');
+            if (scoreTrack >= 8) {
+                msgEl.innerText = "अद्भुत प्रदर्शन! 🎉 आपने होली के उत्सव, इसके सामाजिक मूल्यों और वैश्विक परंपराओं से जुड़े सभी प्रश्नों को सही समय पर हल कर लिया है। आपकी तार्किक क्षमता श्रेष्ठ है!";
+            } else if (scoreTrack >= 5) {
+                msgEl.innerText = "अच्छा प्रयास! 👍 आपने अधिकांश सही विकल्पों को समय रहते पहचान लिया। प्राकृतिक रंगों के महत्व और वैश्विक होली को और बेहतर समझने के लिए फिर से खेलें।";
+            } else {
+                msgEl.innerText = "कोई बात नहीं! 🌿 होली के सांस्कृतिक, सामाजिक और पर्यावरणीय महत्व को गहराई से समझने के लिए एक बार फिर से इस खेल को खेलें। प्रयास से ही सुधार होगा!";
+            }
+        }
+
+        function restartWholeGame() {
+            changeActiveScreen('instruction-screen');
+        }
+    </script>
+</body>
+</html>
