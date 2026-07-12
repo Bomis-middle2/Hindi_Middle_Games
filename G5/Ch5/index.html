@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>गुल्लक की खोज - खेल</title>
+    <title>गुल्लक - बिन्दुओं को मिलाएँ</title>
     <style>
         :root {
             --clay-brown: #b45309;
@@ -12,7 +12,6 @@
             --success-green: #22c55e;
             --danger-red: #ef4444;
             --bg-light: #f0f9ff;
-            --card-bg: #ffffff;
             --text-dark: #0f172a;
             --text-gray: #64748b;
         }
@@ -40,9 +39,9 @@
         .game-container {
             width: 100%;
             max-width: 550px;
-            height: 92vh;
-            min-height: 550px;
-            max-height: 720px;
+            height: 94vh;
+            min-height: 580px;
+            max-height: 750px;
             background: #ffffff;
             border-radius: 20px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -66,7 +65,7 @@
             display: flex;
         }
 
-        /* 1) Splash Screen (Strictly 5 Seconds) */
+        /* 1) Splash Screen (Strictly 5 Seconds with Local Asset Image) */
         #splash-screen {
             background: #ffffff;
             justify-content: center;
@@ -74,25 +73,15 @@
             text-align: center;
         }
 
-        .brand-logo {
-            font-size: 38px;
-            font-weight: 800;
-            color: var(--clay-brown);
-            letter-spacing: 1px;
+        .splash-logo-img {
+            max-width: 180px;
+            height: auto;
             animation: pulseLogo 2s infinite ease-in-out;
         }
 
-        .brand-sub {
-            font-size: 11px;
-            color: var(--text-gray);
-            letter-spacing: 4px;
-            margin-top: 5px;
-            text-transform: uppercase;
-        }
-
         @keyframes pulseLogo {
-            0%, 100% { transform: scale(0.98); opacity: 0.9; }
-            50% { transform: scale(1.02); opacity: 1; }
+            0%, 100% { transform: scale(0.97); opacity: 0.95; }
+            50% { transform: scale(1.03); opacity: 1; }
         }
 
         /* 2) Instruction Screen */
@@ -181,70 +170,66 @@
             font-size: 13px;
         }
 
-        /* Simple Road Progress Visual Area */
-        .road-hud-zone {
-            height: 60px;
-            margin: 12px 0;
-            background: #e2e8f0;
-            border-radius: 10px;
+        /* Dot Connecting Area */
+        .canvas-container {
+            height: 200px;
+            margin: 10px 0;
+            background: #fafafa;
+            border-radius: 12px;
+            border: 2px dashed #cbd5e1;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 12px;
-            border: 2px solid #cbd5e1;
         }
 
-        .road-line {
+        #dot-canvas {
             position: absolute;
-            left: 30px;
-            right: 30px;
-            height: 4px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .dot-node {
+            position: absolute;
+            width: 12px;
+            height: 12px;
             background: #94a3b8;
-            z-index: 1;
-        }
-
-        .gate-node {
-            width: 22px;
-            height: 22px;
-            background: #64748b;
-            border: 2px solid #fff;
             border-radius: 50%;
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 9px;
-            color: white;
-            font-weight: bold;
-            transition: all 0.3s;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+            transition: background 0.3s, transform 0.3s;
         }
 
-        .gate-node.unlocked {
+        .dot-node.active {
             background: var(--gold-coin);
-            transform: scale(1.1);
-            box-shadow: 0 0 6px var(--gold-coin);
+            transform: translate(-50%, -50%) scale(1.3);
+            box-shadow: 0 0 8px var(--gold-coin);
         }
 
-        .player-token {
+        .dot-label {
             position: absolute;
-            font-size: 20px;
-            top: 18px;
-            left: 10px;
-            transition: left 0.4s ease-out;
-            z-index: 3;
+            font-size: 11px;
+            font-weight: bold;
+            color: #64748b;
+            transform: translate(-50%, -100%);
+            margin-top: -6px;
         }
 
-        /* Question Card Area */
+        .dot-node.active + .dot-label {
+            color: var(--clay-brown);
+            font-size: 13px;
+        }
+
+        /* Question Box Layout */
         .question-box-card {
             background: #fff;
             border-radius: 12px;
-            padding: 14px;
+            padding: 12px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
         }
 
         .competency-tag {
@@ -263,7 +248,7 @@
             font-weight: 700;
             line-height: 1.4;
             color: var(--text-dark);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .options-stack {
@@ -307,7 +292,7 @@
             text-align: center;
             font-weight: 700;
             font-size: 12px;
-            margin-top: 8px;
+            margin-top: 6px;
             display: none;
             background: #fff7ed;
             color: #c2410c;
@@ -351,22 +336,6 @@
             margin-bottom: 20px;
             padding: 0 10px;
         }
-
-        /* Sparkles */
-        .sparkle-dot {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            animation: burstOut 0.6s ease-out forwards;
-            pointer-events: none;
-            z-index: 99;
-        }
-
-        @keyframes burstOut {
-            0% { transform: translate(0, 0) scale(1); opacity: 1; }
-            100% { transform: translate(var(--mx), var(--my)) scale(0.3); opacity: 0; }
-        }
     </style>
 </head>
 <body>
@@ -374,17 +343,16 @@
     <div class="game-container">
 
         <div id="splash-screen" class="screen active">
-            <div class="brand-logo">Innovine</div>
-            <div class="brand-sub">Edutech Games</div>
+            <img src="assets/image_9d321f.png" alt="Innovine Logo" class="splash-logo-img">
         </div>
 
         <div id="instruction-screen" class="screen">
-            <div class="title-header">💰 गुल्लक की खोज: खेल</div>
+            <div class="title-header">✏️ गुल्लक: बिन्दुओं को मिलाएँ</div>
             <div class="ins-box">
-                <div class="ins-item">🪙 <span>आपको रास्ते में आगे बढ़ते हुए 10 आसान फाटकों को पार करना है।</span></div>
-                <div class="ins-item">🔑 <span>'गुल्लक' कविता के प्रश्नों का सही उत्तर देकर ताला खोलें।</span></div>
-                <div class="ins-item">🎯 <span>गलत उत्तर देने पर आपको 1 और मौका (दूसरा प्रयास) मिलेगा।</span></div>
-                <div class="ins-item">🔓 <span>सभी सही जवाब देकर अपनी भरी हुई गुल्लक तक पहुँचें!</span></div>
+                <div class="ins-item">📍 <span>स्क्रीन पर आपको 1 से 10 तक के बिंदु (Dots) दिखाई देंगे।</span></div>
+                <div class="ins-item">❓ <span>'गुल्लक' कविता के कुल 10 आसान प्रश्नों के उत्तर एक-एक करके दें।</span></div>
+                <div class="ins-item">🔄 <span>गलत जवाब देने पर आपको 1 और मौका (दूसरा प्रयास) मिलेगा।</span></div>
+                <div class="ins-item">🐷 <span>हर सही जवाब पर बिंदु जुड़ेंगे और अंत में एक सुंदर गुल्लक बनेगी!</span></div>
             </div>
             <button class="btn-start" onclick="startGame()">खेल शुरू करें 🚀</button>
         </div>
@@ -392,20 +360,14 @@
         <div id="gameplay-screen" class="screen">
             <div class="top-navbar">
                 <div class="stats-hud">
-                    <span id="hud-gate">फाटक: 1/10</span>
+                    <span id="hud-question">प्रश्न: 1/10</span>
                     <span id="hud-score">अंक: 0/10</span>
                 </div>
                 <div class="audio-btn" id="audio-toggle" onclick="toggleMute()">🔊</div>
             </div>
 
-            <div class="road-hud-zone">
-                <div class="road-line"></div>
-                <div class="gate-node" id="gn-1">1</div>
-                <div class="gate-node" id="gn-3">3</div>
-                <div class="gate-node" id="gn-5">5</div>
-                <div class="gate-node" id="gn-7">7</div>
-                <div class="gate-node" id="gn-10">10</div>
-                <div class="player-token" id="hero-token">🏃</div>
+            <div class="canvas-container" id="canvas-box">
+                <canvas id="dot-canvas"></canvas>
             </div>
 
             <div class="question-box-card">
@@ -421,25 +383,25 @@
 
         <div id="result-screen" class="screen">
             <div class="victory-art">🐷🪙🎉</div>
-            <div class="title-header" style="color:var(--success-green);">खोज पूरी हुई!</div>
+            <div class="title-header" style="color:var(--success-green);">गुल्लक तैयार है!</div>
             <div class="score-circle" id="lbl-final-score">0/10</div>
-            <div class="end-msg" id="lbl-final-msg">बधाई हो! आपने पैसे बचाने की अच्छी आदत से जुड़े सभी सही उत्तर देकर अपनी सुंदर गुल्लक खोज ली है।</div>
+            <div class="end-msg" id="lbl-final-msg">बधाई हो! आपने बचत की आदतों से जुड़े सभी सही उत्तर देकर सारे बिंदुओं को सही तरीके से जोड़ लिया है और गुल्लक का चित्र पूरा कर लिया है।</div>
             <button class="btn-start" onclick="resetGame()">🔄 फिर से खेलें</button>
         </div>
 
     </div>
 
     <script>
-        // Concise and Pointed Options in Easy Grade 5 Hindi - Chapter 5: गुल्लक
+        // Concise and Authentic Dataset based on Chapter 5: गुल्लक
         const chapterDataset = [
             {
-                q: "कविता में जब बच्चे की मिट्टी की गुल्लक पूरी भर जाती है, तो उसे कैसा लगता है?",
+                q: "जब बच्चे की मिट्टी की गुल्लक पूरी पैसों से भर जाती है, तो उसे कैसा लगता है?",
                 options: ["वह उदास होता है", "वह बहुत खुश होता है", "वह गुस्सा होता है", "वह डर जाता है"],
                 correct: 1,
                 comp: "कविता के मुख्य भाव की समझ"
             },
             {
-                q: "गुल्लक भर जाने के बाद बच्चा अपनी गुल्लक के पैसों से क्या खरीदना चाहता है?",
+                q: "गुल्लक भर जाने के बाद बच्चा अपने पैसों से इनमें से क्या खरीदना चाहता है?",
                 options: ["नया मकान", "गेंद और किताब", "बड़ी गाड़ी", "बड़ी दुकान"],
                 correct: 1,
                 comp: "तथ्यात्मक ज्ञान"
@@ -481,7 +443,7 @@
                 comp: "व्यावहारिक शिक्षा का महत्व"
             },
             {
-                q: "इतिहासकारों के अनुसार, दुनिया का सबसे पुराना सिक्का किस देश में मिला था?",
+                q: "इतिहासिक खोजों के अनुसार, दुनिया का सबसे पुराना सिक्का किस देश में मिला था?",
                 options: ["भारत", "तुर्की", "चीन", "जापान"],
                 correct: 1,
                 comp: "इतिहास की सामान्य जानकारी"
@@ -494,12 +456,26 @@
             }
         ];
 
+        const dotCoordinates = [
+            {x: 50, y: 20},  
+            {x: 75, y: 30},  
+            {x: 85, y: 55},  
+            {x: 70, y: 80},  
+            {x: 65, y: 92},  
+            {x: 45, y: 92},  
+            {x: 40, y: 80},  
+            {x: 18, y: 60},  
+            {x: 20, y: 40},  
+            {x: 38, y: 25}   
+        ];
+
         let challengePool = [];
         let activeIndex = 0;
         let runningScore = 0;
         let currentAttempts = 0;
         let muted = false;
         let actionLocked = false;
+        let connectedCount = 0;
 
         const audioEngine = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -509,7 +485,7 @@
             const gainNode = audioEngine.createGain();
             osc.connect(gainNode);
             gainNode.connect(audioEngine.destination);
-            gainNode.gain.setValueAtTime(0.1, audioEngine.currentTime);
+            gainNode.gain.setValueAtTime(0.08, audioEngine.currentTime);
 
             if (actionType === 'correct') {
                 osc.type = 'triangle';
@@ -521,7 +497,7 @@
                 osc.stop(audioEngine.currentTime + 0.3);
             } else if (actionType === 'wrong') {
                 osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(140, audioEngine.currentTime); 
+                osc.frequency.setValueAtTime(135, audioEngine.currentTime); 
                 gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.35);
                 osc.start();
                 osc.stop(audioEngine.currentTime + 0.35);
@@ -548,20 +524,81 @@
         }
 
         window.onload = () => {
-            setTimeout(() => { showScreen('instruction-screen'); }, 5000); // Strict 5-sec Splash
+            setTimeout(() => { showScreen('instruction-screen'); }, 5000); 
         };
 
         function startGame() {
             if (audioEngine.state === 'suspended') { audioEngine.resume(); }
-            challengePool = [...chapterDataset].sort(() => Math.random() - 0.5);
+            challengePool = [...chapterDataset];
             activeIndex = 0;
             runningScore = 0;
-
-            document.querySelectorAll('.gate-node').forEach(n => n.classList.remove('unlocked'));
-            document.getElementById('hero-token').style.left = "10px";
+            connectedCount = 0;
 
             showScreen('gameplay-screen');
+            setupDotNodes();
             loadNextQuestion();
+            
+            window.addEventListener('resize', drawConnectingLines);
+        }
+
+        function setupDotNodes() {
+            const container = document.getElementById('canvas-box');
+            document.querySelectorAll('.dot-node, .dot-label').forEach(el => el.remove());
+
+            dotCoordinates.forEach((coord, idx) => {
+                const node = document.createElement('div');
+                node.className = 'dot-node';
+                node.id = `dot-${idx + 1}`;
+                node.style.left = `${coord.x}%`;
+                node.style.top = `${coord.y}%`;
+
+                const label = document.createElement('div');
+                label.className = 'dot-label';
+                label.innerText = idx + 1;
+                label.style.left = `${coord.x}%`;
+                label.style.top = `${coord.y}%`;
+
+                container.appendChild(node);
+                container.appendChild(label);
+            });
+
+            document.getElementById('dot-1').classList.add('active');
+            drawConnectingLines();
+        }
+
+        function drawConnectingLines() {
+            const canvas = document.getElementById('dot-canvas');
+            const container = document.getElementById('canvas-box');
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#b45309';
+            ctx.lineCap = 'round';
+
+            if (connectedCount < 1) return;
+
+            ctx.beginPath();
+            for (let i = 0; i <= connectedCount; i++) {
+                if (i >= dotCoordinates.length) break;
+                const realX = (dotCoordinates[i].x / 100) * canvas.width;
+                const realY = (dotCoordinates[i].y / 100) * canvas.height;
+
+                if (i === 0) {
+                    ctx.moveTo(realX, realY);
+                } else {
+                    ctx.lineTo(realX, realY);
+                }
+            }
+
+            if (connectedCount >= 10) {
+                const startX = (dotCoordinates[0].x / 100) * canvas.width;
+                const startY = (dotCoordinates[0].y / 100) * canvas.height;
+                ctx.lineTo(startX, startY);
+            }
+            ctx.stroke();
         }
 
         function loadNextQuestion() {
@@ -569,7 +606,7 @@
             actionLocked = false;
             const currentItem = challengePool[activeIndex];
 
-            document.getElementById('hud-gate').innerText = `फाटक: ${activeIndex + 1}/10`;
+            document.getElementById('hud-question').innerText = `प्रश्न: ${activeIndex + 1}/10`;
             document.getElementById('hud-score').innerText = `अंक: ${runningScore}/10`;
             document.getElementById('lbl-comp').innerText = currentItem.comp;
             document.getElementById('lbl-question').innerText = currentItem.q;
@@ -585,11 +622,6 @@
                 btn.onclick = () => evaluateChoice(idx, btn);
                 optionsContainer.appendChild(btn);
             });
-
-            if (activeIndex > 0) {
-                const leftOffset = 10 + (activeIndex * (80 / 10));
-                document.getElementById('hero-token').style.left = `${leftOffset}%`;
-            }
         }
 
         function evaluateChoice(selectedIndex, selectedBtn) {
@@ -601,15 +633,16 @@
                 actionLocked = true;
                 selectedBtn.classList.add('correct');
                 playSoundTone('correct');
-                triggerSparkles();
-
-                if (activeIndex === 0) document.getElementById('gn-1').classList.add('unlocked');
-                if (activeIndex === 2) document.getElementById('gn-3').classList.add('unlocked');
-                if (activeIndex === 4) document.getElementById('gn-5').classList.add('unlocked');
-                if (activeIndex === 6) document.getElementById('gn-7').classList.add('unlocked');
-                if (activeIndex === 9) document.getElementById('gn-10').classList.add('unlocked');
 
                 runningScore++;
+                connectedCount++;
+
+                if (connectedCount < 10) {
+                    const nextNode = document.getElementById(`dot-${connectedCount + 1}`);
+                    if (nextNode) nextNode.classList.add('active');
+                }
+
+                drawConnectingLines();
                 setTimeout(proceedForward, 1200);
             } else {
                 currentAttempts++;
@@ -625,23 +658,16 @@
                     hintBox.style.display = 'none';
                     const allButtons = document.querySelectorAll('.option-btn');
                     allButtons[item.correct].classList.add('correct');
+                    
+                    connectedCount++;
+                    if (connectedCount < 10) {
+                        const nextNode = document.getElementById(`dot-${connectedCount + 1}`);
+                        if (nextNode) nextNode.classList.add('active');
+                    }
+                    drawConnectingLines();
+                    
                     setTimeout(proceedForward, 1800);
                 }
-            }
-        }
-
-        function triggerSparkles() {
-            const container = document.getElementById('gameplay-screen');
-            for (let i = 0; i < 15; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'sparkle-dot';
-                dot.style.left = '50%';
-                dot.style.top = '30%';
-                dot.style.setProperty('--mx', (Math.random() * 200 - 100) + 'px');
-                dot.style.setProperty('--my', (Math.random() * 200 - 100) + 'px');
-                dot.style.backgroundColor = ['#f59e0b', '#b45309', '#22c55e', '#38bdf8'][Math.floor(Math.random() * 4)];
-                container.appendChild(dot);
-                setTimeout(() => dot.remove(), 600);
             }
         }
 
@@ -650,8 +676,7 @@
             if (activeIndex < challengePool.length) {
                 loadNextQuestion();
             } else {
-                document.getElementById('hero-token').style.left = "85%";
-                setTimeout(endGame, 500);
+                setTimeout(endGame, 400);
             }
         }
 
@@ -662,11 +687,11 @@
 
             const messageBox = document.getElementById('lbl-final-msg');
             if (runningScore >= 8) {
-                messageBox.innerText = "बहुत बढ़िया! 🎉 आपने बचत करने की अच्छी आदतों से जुड़े सभी फाटकों को पार कर लिया है और अपनी गुल्लक तक पहुँच गए हैं।";
+                messageBox.innerText = "अद्भुत! 🎉 आपने सभी प्रश्नों के सही उत्तर देकर सारे बिंदुओं को सही तरीके से जोड़ लिया है और आपकी सुंदर मिट्टी की गुल्लक तैयार हो गई है!";
             } else if (runningScore >= 5) {
-                messageBox.innerText = "अच्छा प्रयास! 👍 आप अपनी गुल्लक तक तो पहुँच गए हैं, लेकिन कुछ फाटकों पर उत्तर गलत हुए। पैसे बचाने की समझ को और अच्छा करने के लिए फिर से खेलें।";
+                messageBox.innerText = "अच्छा प्रयास! 👍 आपने गुल्लक का चित्र पूरा तो कर लिया, लेकिन कुछ उत्तरों में भूल हुई। अपनी बचत की समझ को और पक्का करने के लिए फिर से खेलें।";
             } else {
-                messageBox.innerText = "कोई बात नहीं! 🌿 गुल्लक की कविता और अच्छी बातों को एक बार फिर से समझने के लिए दोबारा खेलें। कोशिश करने से ही आप जीतेंगे!";
+                messageBox.innerText = "कोई बात नहीं! 🌿 गुल्लक की अच्छी आदतों और समझदारी की सीख को एक बार फिर से याद करने के लिए दोबारा खेलें। अभ्यास से ही सुधार होगा!";
             }
         }
 
