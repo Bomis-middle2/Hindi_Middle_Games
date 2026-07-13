@@ -1,1 +1,631 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>गिरते शब्द - हमारी मातृभूमि</title>
+    <style>
+        :root {
+            --sky-blue: #0ea5e9;
+            --ocean-blue: #0284c7;
+            --saffron: #f97316;
+            --success-green: #22c55e;
+            --danger-red: #ef4444;
+            --bg-light: #f0f9ff;
+            --text-dark: #0f172a;
+            --text-gray: #64748b;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 100%);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 550px;
+            height: 94vh;
+            min-height: 580px;
+            max-height: 750px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(2, 132, 199, 0.15);
+            border: 4px solid var(--ocean-blue);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            padding: 16px;
+            position: relative;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* 1) Splash Screen (Logo Only - 5 Seconds) */
+        #splash-screen {
+            background: #ffffff;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .splash-logo-img {
+            max-width: 180px;
+            height: auto;
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(0.97); opacity: 0.95; }
+            50% { transform: scale(1.03); opacity: 1; }
+        }
+
+        /* 2) Instruction Screen */
+        #instruction-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-header {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--ocean-blue);
+            margin-bottom: 15px;
+        }
+
+        .ins-box {
+            background: var(--bg-light);
+            border: 2px dashed var(--ocean-blue);
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            max-width: 440px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .ins-item {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .btn-start {
+            background: var(--ocean-blue);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-start:hover {
+            transform: scale(1.02);
+        }
+
+        /* 3) Game Play Screen */
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+            z-index: 10;
+        }
+
+        .stats-hud {
+            background: #fff;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 13px;
+            border: 2px solid var(--ocean-blue);
+            display: flex;
+            gap: 12px;
+        }
+
+        .audio-btn {
+            background: #fff;
+            border: 2px solid var(--ocean-blue);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* Falling Words Container Area */
+        .falling-zone {
+            flex-grow: 1;
+            background: #f8fafc;
+            margin: 10px 0;
+            border-radius: 12px;
+            border: 2px dashed #cbd5e1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .falling-word-item {
+            position: absolute;
+            background: #ffffff;
+            border: 2px solid var(--ocean-blue);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            white-space: nowrap;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .falling-word-item:active {
+            transform: scale(0.95);
+        }
+
+        .falling-word-item.success-pop {
+            background: var(--success-green) !important;
+            color: white !important;
+            border-color: var(--success-green) !important;
+        }
+
+        .falling-word-item.danger-pop {
+            background: var(--danger-red) !important;
+            color: white !important;
+            border-color: var(--danger-red) !important;
+        }
+
+        /* Bottom Fixed Question Box Layout */
+        .bottom-question-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 -4px 10px rgba(0,0,0,0.02);
+            min-height: 110px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .competency-tag {
+            align-self: flex-start;
+            background: #e0f2fe;
+            color: var(--ocean-blue);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .main-question-text {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--text-dark);
+        }
+
+        .hint-banner {
+            padding: 4px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 11px;
+            margin-top: 6px;
+            display: none;
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+        }
+
+        /* 4) End Screen */
+        #result-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .victory-art {
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        .score-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--ocean-blue);
+            border: 3px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            margin: 12px 0;
+        }
+
+        .end-msg {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-gray);
+            max-width: 400px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+
+        <div id="splash-screen" class="screen active">
+            <img src="assets/image_9d321f.png" alt="Innovine Logo" class="splash-logo-img">
+        </div>
+
+        <div id="instruction-screen" class="screen">
+            <div class="title-header">🎈 गिरते शब्द: हमारी मातृभूमि</div>
+            <div class="ins-box">
+                <div class="ins-item">☁️ <span>आसमान से कविता के महत्वपूर्ण शब्द धीरे-धीरे नीचे गिरेंगे।</span></div>
+                <div class="ins-item">❓ <span>नीचे दिए गए प्रश्न को पढ़ें और उसके सही उत्तर वाले शब्द पर क्लिक करें।</span></div>
+                <div class="ins-item">🔄 <span>गलत शब्द चुनने पर घबराएँ नहीं, आपको सुधारने का 1 और मौका मिलेगा।</span></div>
+                <div class="ins-item">🇮🇳 <span>सभी 10 सही शब्द चुनकर अपनी मातृभूमि के खेल को पूरा करें!</span></div>
+            </div>
+            <button class="btn-start" onclick="startGame()">खेल शुरू करें 🚀</button>
+        </div>
+
+        <div id="gameplay-screen" class="screen">
+            <div class="top-navbar">
+                <div class="stats-hud">
+                    <span id="hud-question">प्रश्न: 1/10</span>
+                    <span id="hud-score">अंक: 0/10</span>
+                </div>
+                <div class="audio-btn" id="audio-toggle" onclick="toggleMute()">🔊</div>
+            </div>
+
+            <div class="falling-zone" id="word-arena">
+                </div>
+
+            <div class="bottom-question-card">
+                <div class="competency-tag" id="lbl-comp">कविता की समझ</div>
+                <div class="main-question-text" id="lbl-question">लोड हो रहा है...</div>
+                <div class="hint-banner" id="lbl-hint"></div>
+            </div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <div class="victory-art">🌄🇮🇳🎉</div>
+            <div class="title-header" style="color:var(--ocean-blue);">अद्भुत ज्ञान!</div>
+            <div class="score-circle" id="lbl-final-score">0/10</div>
+            <div class="end-msg" id="lbl-final-msg">बधाई हो! आपने गिरते हुए सही शब्दों को पहचानकर कविता 'मातृभूमि' के सभी प्रश्नों के बिल्कुल सही उत्तर दिए हैं।</div>
+            <button class="btn-start" onclick="resetGame()">🔄 फिर से खेलें</button>
+        </div>
+
+    </div>
+
+    <script>
+        // High Quality Concise Dataset mapped directly from Chapter 7: मातृभूमि
+        const chapterDataset = [
+            {
+                q: "कविता के अनुसार, उत्तर दिशा में कौन-सा विशाल पर्वत राजा की तरह ऊँचा खड़ा है?",
+                answer: "हिमालय",
+                distractors: ["अरावली", "नीलगिरी", "सतपुड़ा"],
+                comp: "तथ्यात्मक ज्ञान"
+            },
+            {
+                q: "भारत की कौन-सी सबसे पवित्र नदी गोमुख से निकलकर बांग्लादेश तक बहती है?",
+                answer: "गंगा",
+                distractors: ["नर्मदा", "कावेरी", "गोदावरी"],
+                comp: "भौगोलिक समझ"
+            },
+            {
+                q: "गंगा, यमुना और सरस्वती नदियों के पवित्र मेल के स्थान को क्या कहा जाता है?",
+                answer: "त्रिवेणी",
+                distractors: ["संगम घाट", "समुद्र तट", "झरना"],
+                comp: "कविता की पंक्तियों की समझ"
+            },
+            {
+                q: "सात देशों की सीमाओं में फैले हिमालय पर्वत को और किस नाम से जाना जाता है?",
+                answer: "एशिया की छत",
+                distractors: ["बादलों का घर", "बड़ा पहाड़", "बर्फ का राजा"],
+                comp: "सामान्य ज्ञान जुड़ाव"
+            },
+            {
+                q: "भारत की भूमि को माता के समान आदर देने के कारण हम इसे क्या कहते हैं?",
+                answer: "मातृभूमि",
+                distractors: ["परदेश", "मरुभूमि", "वनभूमि"],
+                comp: "नैतिक मूल्य"
+            },
+            {
+                q: "यूनेस्को (UNESCO) द्वारा विश्व धरोहर घोषित 'नंदा देवी राष्ट्रीय उद्यान' किस क्षेत्र में है?",
+                answer: "हिमालय क्षेत्र",
+                distractors: ["रेगिस्तान", "समुद्र तट", "दक्षिण भारत"],
+                comp: "अंतरराष्ट्रीय जुड़ाव"
+            },
+            {
+                q: "पवित्र गंगा नदी को पड़ोसी देश बांग्लादेश में किस सुंदर नाम से पुकारा जाता है?",
+                answer: "पद्मा",
+                distractors: ["यमुना", "सिंधु", "कृष्णा"],
+                comp: "पाठ की गहरी समझ"
+            },
+            {
+                q: "पहाड़ों से कल-कल बहकर नीचे आने वाले जल के सुंदर स्रोतों को क्या कहा गया है?",
+                answer: "झरने",
+                distractors: ["तालाब", "कुएँ", "नहरें"],
+                comp: "प्राकृतिक सुंदरता"
+            },
+            {
+                q: "विश्व स्तर पर भारत अपनी किस अनोखी खूबी के कारण विशेष माना जाता है?",
+                answer: "प्राकृतिक विविधता",
+                distractors: ["केवल मरुस्थल", "बड़ी मशीनें", "घने शहर"],
+                comp: "वैश्विक स्तर पर भारत"
+            },
+            {
+                q: "देश के महापुरुषों के विचारों और गौरव को याद रखने के लिए हमें क्या करना चाहिए?",
+                answer: "उनके नारे और सीख अपनाना",
+                distractors: ["उन्हें भूल जाना", "नियम तोड़ना", "कचरा फैलाना"],
+                comp: "जिम्मेदार नागरिक व्यवहार"
+            }
+        ];
+
+        let activeIndex = 0;
+        let runningScore = 0;
+        let currentAttempts = 0;
+        let muted = false;
+        let actionLocked = false;
+        let wordSpawnInterval = null;
+        let wordFallAnimation = null;
+        let activeWordsArray = [];
+
+        const audioEngine = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSoundTone(actionType) {
+            if (muted) return;
+            const osc = audioEngine.createOscillator();
+            const gainNode = audioEngine.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioEngine.destination);
+            gainNode.gain.setValueAtTime(0.08, audioEngine.currentTime);
+
+            if (actionType === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioEngine.currentTime); 
+                osc.frequency.setValueAtTime(659.25, audioEngine.currentTime + 0.1); 
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioEngine.currentTime + 0.3);
+            } else if (actionType === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, audioEngine.currentTime); 
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.35);
+                osc.start();
+                osc.stop(audioEngine.currentTime + 0.35);
+            } else if (actionType === 'win') {
+                osc.type = 'sine';
+                const t = audioEngine.currentTime;
+                osc.frequency.setValueAtTime(523.25, t);
+                osc.frequency.setValueAtTime(587.33, t + 0.1);
+                osc.frequency.setValueAtTime(659.25, t + 0.2);
+                osc.frequency.setValueAtTime(783.99, t + 0.3);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.6);
+                osc.start();
+                osc.stop(t + 0.6);
+            }
+        }
+
+        function toggleMute() {
+            muted = !muted;
+            document.getElementById('audio-toggle').innerText = muted ? "🔇" : "🔊";
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        window.onload = () => {
+            setTimeout(() => { showScreen('instruction-screen'); }, 5000); // Strict 5 Seconds Splash Screen Loop
+        };
+
+        function startGame() {
+            if (audioEngine.state === 'suspended') { audioEngine.resume(); }
+            activeIndex = 0;
+            runningScore = 0;
+            clearTimers();
+
+            showScreen('gameplay-screen');
+            loadChallengeRound();
+            startLoopTimers();
+        }
+
+        function clearTimers() {
+            clearInterval(wordSpawnInterval);
+            cancelAnimationFrame(wordFallAnimation);
+            const arena = document.getElementById('word-arena');
+            arena.innerHTML = '';
+            activeWordsArray = [];
+        }
+
+        function startLoopTimers() {
+            // Spawns a word block roughly every 1.4 seconds
+            wordSpawnInterval = setInterval(() => {
+                if (!actionLocked) { spawnWordElement(); }
+            }, 1400);
+
+            // Frame animation engine for smooth falling words
+            function frameUpdate() {
+                updateWordsPositions();
+                wordFallAnimation = requestAnimationFrame(frameUpdate);
+            }
+            wordFallAnimation = requestAnimationFrame(frameUpdate);
+        }
+
+        function loadChallengeRound() {
+            currentAttempts = 0;
+            actionLocked = false;
+            const currentItem = chapterDataset[activeIndex];
+
+            document.getElementById('hud-question').innerText = `प्रश्न: ${activeIndex + 1}/10`;
+            document.getElementById('hud-score').innerText = `अंक: ${runningScore}/10`;
+            document.getElementById('lbl-comp').innerText = currentItem.comp;
+            document.getElementById('lbl-question').innerText = currentItem.q;
+            document.getElementById('lbl-hint').style.display = 'none';
+        }
+
+        function spawnWordElement() {
+            const currentItem = chapterDataset[activeIndex];
+            const pool = [currentItem.answer, ...currentItem.distractors];
+            // Randomly select one word to spawn
+            const chosenText = pool[Math.floor(Math.random() * pool.length)];
+
+            const arena = document.getElementById('word-arena');
+            const el = document.createElement('div');
+            el.className = 'falling-word-item';
+            el.innerText = chosenText;
+            
+            // Random horizontal placement ensuring text fits within limits
+            const maxLeft = arena.clientWidth - 130; 
+            const randomLeft = Math.max(10, Math.floor(Math.random() * maxLeft));
+            el.style.left = `${randomLeft}px`;
+            el.style.top = `-40px`;
+
+            arena.appendChild(el);
+
+            activeWordsArray.push({
+                element: el,
+                text: chosenText,
+                topY: -40,
+                speed: 1.2 + Math.random() * 0.8 // Dynamic falling speeds for excitement
+            });
+
+            el.onclick = () => handleWordClick(chosenText, el);
+        }
+
+        function updateWordsPositions() {
+            const arena = document.getElementById('word-arena');
+            const bottomBoundary = arena.clientHeight;
+
+            for (let i = activeWordsArray.length - 1; i >= 0; i--) {
+                const w = activeWordsArray[i];
+                w.topY += w.speed;
+                w.element.style.top = `${w.topY}px`;
+
+                // If word falls below the visible boundary box, clean it up
+                if (w.topY > bottomBoundary) {
+                    w.element.remove();
+                    activeWordsArray.splice(i, 1);
+                }
+            }
+        }
+
+        function handleWordClick(clickedText, elementNode) {
+            if (actionLocked) return;
+            const item = chapterDataset[activeIndex];
+            const hintBox = document.getElementById('lbl-hint');
+
+            if (clickedText === item.answer) {
+                actionLocked = true;
+                elementNode.classList.add('success-pop');
+                playSoundTone('correct');
+
+                runningScore++;
+                setTimeout(advanceNextRound, 1000);
+            } else {
+                currentAttempts++;
+                elementNode.classList.add('danger-pop');
+                playSoundTone('wrong');
+
+                if (currentAttempts === 1) {
+                    hintBox.innerText = "गलत शब्द! गिरते हुए बादलों में सही उत्तर वाला शब्द ढूँढें, 1 और प्रयास बाकी है।";
+                    hintBox.style.display = 'block';
+                } else {
+                    actionLocked = true;
+                    hintBox.style.display = 'none';
+                    
+                    // Visually flash the correct answer among currently active words
+                    activeWordsArray.forEach(w => {
+                        if (w.text === item.answer) w.element.classList.add('success-pop');
+                    });
+
+                    setTimeout(advanceNextRound, 1600);
+                }
+            }
+        }
+
+        function advanceNextRound() {
+            // Clean screen words before next round
+            const arena = document.getElementById('word-arena');
+            arena.innerHTML = '';
+            activeWordsArray = [];
+
+            activeIndex++;
+            if (activeIndex < chapterDataset.length) {
+                loadChallengeRound();
+            } else {
+                clearTimers();
+                showEndSummary();
+            }
+        }
+
+        function showEndSummary() {
+            showScreen('result-screen');
+            document.getElementById('lbl-final-score').innerText = `${runningScore}/10`;
+            playSoundTone('win');
+
+            const messageBox = document.getElementById('lbl-final-msg');
+            if (runningScore >= 8) {
+                messageBox.innerText = "अद्भुत प्रदर्शन! 🌟 आपने आसमान से गिरते हुए सभी सही राष्ट्रीय और प्राकृतिक शब्दों को बिल्कुल सही पहचाना। आपकी मातृभूमि का ज्ञान सर्वश्रेष्ठ है!";
+            } else if (runningScore >= 5) {
+                messageBox.innerText = "अच्छा प्रयास! 🇮🇳 आपने कई सही शब्दों को पकड़ा, लेकिन कुछ जवाबों में चूक हुई। अपनी समझ को और मजबूत करने के लिए एक बार फिर से खेलें।";
+            } else {
+                messageBox.innerText = "कोई बात नहीं! 🌿 कविता 'मातृभूमि' की सुंदरता और गरिमा को फिर से सीखने के लिए खेल को दोबारा खेलें। अभ्यास से ही अंक सुधरेंगे!";
+            }
+        }
+
+        function resetGame() {
+            showScreen('instruction-screen');
+        }
+    </script>
+</body>
+</html>
