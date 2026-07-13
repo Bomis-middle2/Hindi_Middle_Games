@@ -1,1 +1,621 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>सहमत या असहमत - हिंदवी स्वराज्य</title>
+    <style>
+        :root {
+            --saffron-orange: #ea580c;
+            --royal-gold: #ca8a04;
+            --success-green: #16a34a;
+            --danger-red: #dc2626;
+            --bg-light: #fff7ed;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background: linear-gradient(to bottom, #ffedd5 0%, #fed7aa 100%);
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 550px;
+            height: 94vh;
+            min-height: 580px;
+            max-height: 750px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(234, 88, 12, 0.15);
+            border: 4px solid var(--saffron-orange);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            padding: 16px;
+            position: relative;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* 1) Splash Screen (Logo Only - 5 Seconds) */
+        #splash-screen {
+            background: #ffffff;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .splash-logo-img {
+            max-width: 180px;
+            height: auto;
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseLogo {
+            0%, 100% { transform: scale(0.97); opacity: 0.95; }
+            50% { transform: scale(1.03); opacity: 1; }
+        }
+
+        /* 2) Instruction Screen */
+        #instruction-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .title-header {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--saffron-orange);
+            margin-bottom: 15px;
+        }
+
+        .ins-box {
+            background: var(--bg-light);
+            border: 2px dashed var(--saffron-orange);
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            max-width: 440px;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .ins-item {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .btn-start {
+            background: var(--saffron-orange);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(234, 88, 12, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .btn-start:hover {
+            transform: scale(1.02);
+        }
+
+        /* 3) Game Play Screen */
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .stats-hud {
+            background: #fff;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 13px;
+            border: 2px solid var(--saffron-orange);
+            display: flex;
+            gap: 12px;
+        }
+
+        .audio-btn {
+            background: #fff;
+            border: 2px solid var(--saffron-orange);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* Draggable Statement Container */
+        .drag-source-zone {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 10px;
+            flex-grow: 1;
+        }
+
+        .draggable-card {
+            background: #ffffff;
+            border: 3px solid var(--royal-gold);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 440px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .draggable-card:active {
+            cursor: grabbing;
+            transform: scale(0.98);
+        }
+
+        .competency-tag {
+            display: inline-block;
+            background: #ffedd5;
+            color: var(--saffron-orange);
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .statement-text {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.5;
+            color: var(--text-dark);
+        }
+
+        .mobile-tip {
+            font-size: 11px;
+            color: var(--text-gray);
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        /* Drop Target Zones Grid */
+        .drop-targets-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: auto;
+            padding-bottom: 10px;
+        }
+
+        .drop-box {
+            border: 3px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 25px 10px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            background: #f8fafc;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .drop-box.box-agree {
+            color: var(--success-green);
+        }
+        .drop-box.box-agree.drag-over {
+            background: #dcfce7;
+            border-color: var(--success-green);
+        }
+
+        .drop-box.box-disagree {
+            color: var(--danger-red);
+        }
+        .drop-box.box-disagree.drag-over {
+            background: #fee2e2;
+            border-color: var(--danger-red);
+        }
+
+        .drop-box .box-emoji {
+            font-size: 30px;
+        }
+
+        .hint-banner {
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 10px;
+            display: none;
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #ffedd5;
+        }
+
+        /* 4) End Screen */
+        #result-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .victory-art {
+            font-size: 55px;
+            margin-bottom: 10px;
+        }
+
+        .score-circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: var(--saffron-orange);
+            border: 3px solid #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: #fff;
+            margin: 12px 0;
+        }
+
+        .end-msg {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-gray);
+            max-width: 400px;
+            line-height: 1.4;
+            margin-bottom: 20px;
+            padding: 0 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container">
+
+        <div id="splash-screen" class="screen active">
+            <img src="assets/image_9d321f.png" alt="Innovine Logo" class="splash-logo-img">
+        </div>
+
+        <div id="instruction-screen" class="screen">
+            <div class="title-header">🛡️ सहमत या असहमत: हिंदवी स्वराज्य</div>
+            <div class="ins-box">
+                <div class="ins-item">📜 <span>स्क्रीन पर छत्रपति शिवाजी महाराज के इतिहास से जुड़ा एक कथन आएगा।</span></div>
+                <div class="ins-item">🤝 <span>यदि कथन 'सही' है तो उसे खींचकर (Drag करके) "सहमत" वाले बॉक्स में डालें।</span></div>
+                <div class="ins-item">❌ <span>यदि कथन 'गलत' है तो उसे खींचकर "असहमत" वाले बॉक्स में डालें।</span></div>
+                <div class="ins-item">📱 <span>आप सीधे बॉक्स पर क्लिक/टैप करके भी अपना उत्तर चुन सकते हैं!</span></div>
+            </div>
+            <button class="btn-start" onclick="startGame()">स्वराज्य खेल शुरू करें 🚀</button>
+        </div>
+
+        <div id="gameplay-screen" class="screen">
+            <div class="top-navbar">
+                <div class="stats-hud">
+                    <span id="hud-step">कथन: 1/10</span>
+                    <span id="hud-score">अंक: 0/10</span>
+                </div>
+                <div class="audio-btn" id="audio-toggle" onclick="toggleMute()">🔊</div>
+            </div>
+
+            <div class="drag-source-zone">
+                <div class="draggable-card" id="source-card" draggable="true">
+                    <div class="competency-tag" id="lbl-comp">ऐतिहासिक समझ</div>
+                    <div class="statement-text" id="lbl-statement">लोड हो रहा है...</div>
+                    <div class="mobile-tip">💡 इसे खींचें या नीचे सीधे टैप करें</div>
+                </div>
+            </div>
+
+            <div class="hint-banner" id="lbl-hint"></div>
+
+            <div class="drop-targets-grid">
+                <div class="drop-box box-agree" id="target-agree">
+                    <span class="box-emoji">👍</span>
+                    <span>सहमत (Agree)</span>
+                </div>
+                <div class="drop-box box-disagree" id="target-disagree">
+                    <span class="box-emoji">👎</span>
+                    <span>असहमत (Disagree)</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <div class="victory-art">🚩🛡️🏆</div>
+            <div class="title-header" style="color:var(--saffron-orange);">जय भवानी, जय शिवाजी!</div>
+            <div class="score-circle" id="lbl-final-score">0/10</div>
+            <div class="end-msg" id="lbl-final-msg">बधाई हो! आपने इतिहास की सही समझ का परिचय देते हुए 'हिंदवी स्वराज्य' के सभी पड़ावों को सफलतापूर्वक पार कर लिया है।</div>
+            <button class="btn-start" onclick="resetGame()">🔄 फिर से परखें</button>
+        </div>
+
+    </div>
+
+    <script>
+        // High Quality Concise Dataset mapped directly from Chapter 8: हिंदवी स्वराज्य
+        // Mapped to Grade 5 levels - True statements require 'Agree', False statements require 'Disagree'
+        const chapterDataset = [
+            {
+                statement: "छत्रपति शिवाजी महाराज का जन्म 19 फरवरी 1630 को महाराष्ट्र के शिवनेरी क़िले में हुआ था।",
+                expected: "agree", // True statement
+                comp: "तथ्यात्मक ज्ञान"
+            },
+            {
+                statement: "शिवाजी महाराज की माता जीजाबाई उन्हें बचपन में अन्याय से डरकर चुपचाप रहने की सीख देती थीं।",
+                expected: "disagree", // False - she taught them to fight injustice
+                comp: "पात्रों की सीख और मूल्य"
+            },
+            {
+                statement: "युवा शिवाजी ने अपने बहादुर मावले दोस्तों के साथ मिलकर रायरेश्वर मंदिर में स्वराज्य की शपथ ली थी।",
+                expected: "agree", // True statement
+                comp: "ऐतिहासिक घटनाक्रम"
+            },
+            {
+                statement: "शिवाजी महाराज ने सुचारू राज-काज चलाने और जनता के कल्याण के लिए 'अष्टप्रधान मंत्रिपरिषद' बनाई थी।",
+                expected: "agree", // True statement
+                comp: "प्रशासनिक नीतियां"
+            },
+            {
+                statement: "शिवाजी महाराज द्वारा जारी की गई सोने की स्वतंत्र मुद्रा (सिक्के) को 'शिवराई' कहा जाता था।",
+                expected: "disagree", // False - gold was 'Hon', copper was 'Shivrai'
+                comp: "बारीक पाठ विश्लेषण"
+            },
+            {
+                statement: "शिवाजी महाराज ने चार अलग प्रकार के युद्धपोत बनवाए, इसलिए उन्हें 'भारतीय नौसेना के पिता' के रूप में सम्मानित किया जाता है।",
+                expected: "agree", // True statement
+                comp: "ऐतिहासिक महत्व"
+            },
+            {
+                statement: "ब्रिटिश इतिहासकार जेम्स ग्रांट के अनुसार, शिवाजी महाराज की 'छापामार युद्ध' पद्धति आज भी दुनिया की कई सेनाओं को प्रेरणा देती है।",
+                expected: "agree", // True statement
+                comp: "अंतरराष्ट्रीय जुड़ाव"
+            },
+            {
+                statement: "शिवाजी महाराज केवल एक धर्म के लोगों का आदर करते थे और बाकी संस्कृतियों का सम्मान नहीं करते थे।",
+                expected: "disagree", // False - he was a just and secular leader who respected all
+                comp: "नैतिक और सामाजिक मूल्य"
+            },
+            {
+                statement: "एक अच्छे और आदर्श नेता के रूप में शिवाजी महाराज हमेशा अपनी प्रजा के कल्याण को सबसे ऊपर रखते थे।",
+                expected: "agree", // True statement
+                comp: "नेतृत्व क्षमता का विश्लेषण"
+            },
+            {
+                statement: "हमें ऐतिहासिक स्मारकों और पूर्वजों के इतिहास को भूल जाना चाहिए क्योंकि आज के समय में उनका कोई महत्व नहीं है।",
+                expected: "disagree", // False - values-based learning
+                comp: "इतिहास और संस्कृति का मूल्य"
+            }
+        ];
+
+        let activeIndex = 0;
+        let runningScore = 0;
+        let currentAttempts = 0;
+        let muted = false;
+        let actionLocked = false;
+
+        const audioEngine = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSoundTone(actionType) {
+            if (muted) return;
+            const osc = audioEngine.createOscillator();
+            const gainNode = audioEngine.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioEngine.destination);
+            gainNode.gain.setValueAtTime(0.08, audioEngine.currentTime);
+
+            if (actionType === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(440, audioEngine.currentTime); 
+                osc.frequency.setValueAtTime(554.37, audioEngine.currentTime + 0.08); 
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.25);
+                osc.start();
+                osc.stop(audioEngine.currentTime + 0.25);
+            } else if (actionType === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(130, audioEngine.currentTime); 
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioEngine.currentTime + 0.3);
+            } else if (actionType === 'win') {
+                osc.type = 'sine';
+                const t = audioEngine.currentTime;
+                osc.frequency.setValueAtTime(523.25, t);
+                osc.frequency.setValueAtTime(659.25, t + 0.1);
+                osc.frequency.setValueAtTime(783.99, t + 0.2);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+                osc.start();
+                osc.stop(t + 0.5);
+            }
+        }
+
+        function toggleMute() {
+            muted = !muted;
+            document.getElementById('audio-toggle').innerText = muted ? "🔇" : "🔊";
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        window.onload = () => {
+            setTimeout(() => { showScreen('instruction-screen'); }, 5000); // 5 Seconds Splash Screen Loop
+            setupDragAndDrop();
+        };
+
+        function startGame() {
+            if (audioEngine.state === 'suspended') { audioEngine.resume(); }
+            activeIndex = 0;
+            runningScore = 0;
+            showScreen('gameplay-screen');
+            loadNextStatement();
+        }
+
+        function loadNextStatement() {
+            currentAttempts = 0;
+            actionLocked = false;
+            const currentItem = chapterDataset[activeIndex];
+
+            document.getElementById('hud-step').innerText = `कथन: ${activeIndex + 1}/10`;
+            document.getElementById('hud-score').innerText = `अंक: ${runningScore}/10`;
+            document.getElementById('lbl-comp').innerText = currentItem.comp;
+            document.getElementById('lbl-statement').innerText = currentItem.statement;
+            document.getElementById('lbl-hint').style.display = 'none';
+
+            // Reset visual boxes state
+            document.getElementById('target-agree').style.opacity = '1';
+            document.getElementById('target-disagree').style.opacity = '1';
+        }
+
+        function setupDragAndDrop() {
+            const card = document.getElementById('source-card');
+            const agreeBox = document.getElementById('target-agree');
+            const disagreeBox = document.getElementById('target-disagree');
+
+            card.addEventListener('dragstart', (e) => {
+                if (actionLocked) { e.preventDefault(); return; }
+                e.dataTransfer.setData('text/plain', 'statement');
+            });
+
+            // Target Agree Box events
+            agreeBox.addEventListener('dragover', (e) => { e.preventDefault(); agreeBox.classList.add('drag-over'); });
+            agreeBox.addEventListener('dragleave', () => { agreeBox.classList.remove('drag-over'); });
+            agreeBox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                agreeBox.classList.remove('drag-over');
+                processUserSelection('agree');
+            });
+            agreeBox.addEventListener('click', () => { processUserSelection('agree'); });
+
+            // Target Disagree Box events
+            disagreeBox.addEventListener('dragover', (e) => { e.preventDefault(); disagreeBox.classList.add('drag-over'); });
+            disagreeBox.addEventListener('dragleave', () => { disagreeBox.classList.remove('drag-over'); });
+            disagreeBox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                disagreeBox.classList.remove('drag-over');
+                processUserSelection('disagree');
+            });
+            disagreeBox.addEventListener('click', () => { processUserSelection('disagree'); });
+        }
+
+        function processUserSelection(userChoice) {
+            if (actionLocked) return;
+            const item = chapterDataset[activeIndex];
+            const hintBox = document.getElementById('lbl-hint');
+
+            if (userChoice === item.expected) {
+                actionLocked = true;
+                playSoundTone('correct');
+                runningScore++;
+                
+                // Dim the non-selected box temporarily for aesthetic confirmation
+                if(userChoice === 'agree') {
+                    document.getElementById('target-disagree').style.opacity = '0.3';
+                } else {
+                    document.getElementById('target-agree').style.opacity = '0.3';
+                }
+
+                setTimeout(advanceForward, 1200);
+            } else {
+                currentAttempts++;
+                playSoundTone('wrong');
+
+                if (currentAttempts === 1) {
+                    hintBox.innerText = "गलत निर्णय! इतिहास के इस कथन को दोबारा ध्यान से पढ़ें, आपके पास 1 मौका और है।";
+                    hintBox.style.display = 'block';
+                    
+                    // Dim the wrong chosen box to guide user
+                    if (userChoice === 'agree') document.getElementById('target-agree').style.opacity = '0.3';
+                    if (userChoice === 'disagree') document.getElementById('target-disagree').style.opacity = '0.3';
+                } else {
+                    actionLocked = true;
+                    hintBox.style.display = 'none';
+                    
+                    // Show correct option visually before advancing
+                    if (item.expected === 'agree') document.getElementById('target-disagree').style.opacity = '0.2';
+                    if (item.expected === 'disagree') document.getElementById('target-agree').style.opacity = '0.2';
+
+                    setTimeout(advanceForward, 1600);
+                }
+            }
+        }
+
+        function advanceForward() {
+            activeIndex++;
+            if (activeIndex < chapterDataset.length) {
+                loadNextStatement();
+            } else {
+                showFinalSummary();
+            }
+        }
+
+        function showFinalSummary() {
+            showScreen('result-screen');
+            document.getElementById('lbl-final-score').innerText = `${runningScore}/10`;
+            playSoundTone('win');
+
+            const messageBox = document.getElementById('lbl-final-msg');
+            if (runningScore >= 8) {
+                messageBox.innerText = "अद्भुत ज्ञान! 🚩 आपने स्वराज्य और छत्रपति शिवाजी महाराज के स्वर्णिम इतिहास के सभी कथनों को बिल्कुल सही परखा। आपकी समझ अनुकरणीय है।";
+            } else if (runningScore >= 5) {
+                messageBox.innerText = "अच्छा प्रयास! 🛡️ आपने कई सही ऐतिहासिक तथ्यों की पहचान की, लेकिन कुछ जगहों पर चूक हुई। इतिहास को और गहराई से जानने के लिए दोबारा खेलें।";
+            } else {
+                messageBox.innerText = "कोई बात नहीं! 🌿 'हिंदवी स्वराज्य' की गौरवशाली गाथा को एक बार फिर से अच्छी तरह समझने के लिए खेल को पुनः खेलें। अभ्यास ही बेहतर बनाएगा!";
+            }
+        }
+
+        function resetGame() {
+            showScreen('instruction-screen');
+        }
+    </script>
+</body>
+</html>
