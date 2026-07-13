@@ -1,1 +1,583 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>योग मास्टर - असंगत की खोज!</title>
+    <style>
+        :root {
+            --arcade-bg: #0f172a;
+            --neon-purple: #a855f7;
+            --neon-green: #22c55e;
+            --neon-red: #ef4444;
+            --neon-gold: #eab308;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Impact', 'Segoe UI', Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background: #020617;
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        /* Game Console Frame */
+        .game-container {
+            width: 100%;
+            max-width: 480px;
+            height: 95vh;
+            min-height: 600px;
+            max-height: 780px;
+            background: var(--arcade-bg);
+            border-radius: 28px;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.4), inset 0 0 15px rgba(255,255,255,0.1);
+            border: 4px solid var(--neon-purple);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            padding: 20px;
+            position: relative;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* 1) Splash Screen (Strictly Logo - 5s) */
+        #splash-screen {
+            background: #ffffff;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .splash-logo-img {
+            max-width: 200px;
+            height: auto;
+            animation: glitch 1.5s infinite alternate;
+        }
+
+        /* 2) Instruction/Start Screen */
+        #instruction-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+        }
+
+        .game-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--neon-gold);
+            text-shadow: 0 0 10px var(--neon-gold);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ins-card-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--neon-purple);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .ins-row {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            line-height: 1.5;
+        }
+
+        .btn-action {
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            font-size: 18px;
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(124, 58, 237, 0.4);
+            text-transform: uppercase;
+            transition: all 0.2s;
+            border-bottom: 4px solid #5b21b6;
+        }
+
+        .btn-action:active {
+            transform: translateY(3px);
+            border-bottom-width: 1px;
+        }
+
+        /* 3) Live Arcade Gameplay Screen */
+        .game-hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .score-badge {
+            color: var(--neon-green);
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+
+        .lives-container {
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+
+        .level-indicator {
+            color: var(--neon-gold);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .question-panel {
+            margin: 20px 0;
+            background: var(--card-bg);
+            border-left: 6px solid var(--neon-purple);
+            padding: 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .comp-tag {
+            font-size: 11px;
+            color: var(--neon-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 1.5;
+            color: #f1f5f9;
+        }
+
+        /* Grid Options Mapped as Big Arcade Buttons */
+        .arcade-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .arcade-card-btn {
+            background: #1e293b;
+            border: 2px solid #475569;
+            border-radius: 16px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 0px #0f172a;
+        }
+
+        .arcade-card-btn:active:not(:disabled) {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0px #0f172a;
+        }
+
+        .btn-index-sphere {
+            width: 26px;
+            height: 26px;
+            background: #334155;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: var(--text-light);
+            flex-shrink: 0;
+        }
+
+        /* Success & Failure States */
+        .arcade-card-btn.correct-glow {
+            background: #064e3b !important;
+            border-color: var(--neon-green) !important;
+            color: #a7f3d0 !important;
+            box-shadow: 0 0 15px var(--neon-green) !important;
+        }
+
+        .arcade-card-btn.wrong-glow {
+            background: #7f1d1d !important;
+            border-color: var(--neon-red) !important;
+            color: #fca5a5 !important;
+            box-shadow: 0 0 15px var(--neon-red) !important;
+            animation: shake 0.3s ease-in-out;
+        }
+
+        .game-hint-toast {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid var(--neon-red);
+            color: #fca5a5;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 12px;
+            margin-top: auto;
+            font-weight: 600;
+            display: none;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+
+        /* 4) Game Over / Victory Screen */
+        #result-screen {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: #020617;
+        }
+
+        .giant-badge {
+            font-size: 70px;
+            margin-bottom: 15px;
+            animation: bounce 1s infinite alternate;
+        }
+
+        .neon-score-board {
+            font-size: 40px;
+            font-weight: 900;
+            color: var(--neon-green);
+            text-shadow: 0 0 15px var(--neon-green);
+            margin: 15px 0;
+        }
+
+        .status-msg {
+            font-size: 14px;
+            color: #94a3b8;
+            line-height: 1.5;
+            max-width: 380px;
+            margin-bottom: 30px;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-container" id="console-frame">
+
+        <div id="splash-screen" class="screen active">
+            <img src="assets/image_9d321f.png" alt="Brand Logo" class="splash-logo-img">
+        </div>
+
+        <div id="instruction-screen" class="screen">
+            <div class="game-title">🧘‍♂️ योग मास्टर <br><span style="font-size:18px; color:var(--neon-purple);">असंगत की खोज</span></div>
+            <div class="ins-card-box">
+                <div class="ins-row">⚡ <span>हर राउंड में 4 बक्से आएंगे। 3 बक्से योग पाठ से जुड़े हैं।</span></div>
+                <div class="ins-row">🎯 <span>जो शब्द सबसे अलग (असंगत / Odd) है, उसे ढूंढकर ब्लास्ट करें!</span></div>
+                <div class="ins-row">❤️ <span>आपके पास कुल 3 लाइफलाइन हैं। गलत जवाब पर लाइफ घटेगी।</span></div>
+            </div>
+            <button class="btn-action" onclick="launchGame()">प्ले गेम 🎮</button>
+        </div>
+
+        <div id="gameplay-screen" class="screen">
+            <div class="game-hud">
+                <div class="level-indicator" id="hud-level">राउंड: 1/10</div>
+                <div class="score-badge" id="hud-score">स्कोर: 000</div>
+                <div class="lives-container" id="hud-lives">❤️❤️❤️</div>
+            </div>
+
+            <div class="question-panel">
+                <div class="comp-tag" id="lbl-comp">चित्त एकाग्रता</div>
+                <div class="question-text" id="lbl-question">लोड हो रहा है...</div>
+            </div>
+
+            <div class="arcade-grid" id="box-options">
+                </div>
+
+            <div class="game-hint-toast" id="lbl-hint"></div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <div class="giant-badge" id="end-emoji">🏆</div>
+            <div class="game-title" id="end-title" style="margin-bottom:5px;">गेम ओवर</div>
+            <div class="neon-score-board" id="lbl-final-score">SCORE: 0</div>
+            <div class="status-msg" id="lbl-final-msg">शानदार खेल! आपने योगासनों की सही परख की।</div>
+            <button class="btn-action" onclick="resetConsole()">री-स्टार्ट 🔄</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Mapped high-quality interactive dataset based on Chapter 9: योग दिवस
+        const arcadeDataset = [
+            {
+                q: "इनमें से कौन-सा शब्द 'योग करने के फायदों' से मेल नहीं खाता है? (असंगत ढूंढें)",
+                choices: ["शरीर में फुर्ती आना", "मन शांत होना", "दिन भर आलस रहना", "ऊर्जा बढ़ना"],
+                oddIdx: 2,
+                comp: "योग के शारीरिक लाभ"
+            },
+            {
+                q: "संयुक्त राष्ट्र द्वारा घोषित 'अंतर्राष्ट्रीय योग दिवस' से जुड़ी कड़ियों में कौन-सा विकल्प गलत है?",
+                words: [],
+                choices: ["21 जून को मनाना", "साल का सबसे बड़ा दिन", "क्रिसमस का त्योहार", "उत्तरी गोलार्ध का विशेष दिन"],
+                oddIdx: 2,
+                comp: "सामान्य ज्ञान"
+            },
+            {
+                q: "महर्षि पतंजलि के 'अष्टांग योग' के अंगों में से कौन-सा नाम यहाँ बिल्कुल बेमेल है?",
+                choices: ["यम और नियम", "आसन और प्राणायाम", "वीडियो गेम खेलना", "ध्यान और समाधि"],
+                oddIdx: 2,
+                comp: "अष्टांग योग का ज्ञान"
+            },
+            {
+                q: "पाठ के आधार पर योगासनों के सही नामों की सूची में से असंगत शब्द का चयन करें:",
+                choices: ["शीर्षासन", "भुजंगासन", "ताड़ासन", "सोफ़ासन (सोफे पर लेटना)"],
+                oddIdx: 3,
+                comp: "आसनों का वर्गीकरण"
+            },
+            {
+                q: "योग के प्राचीन इतिहास से जुड़े तथ्यों में कौन-सा कथन बिल्कुल अलग और गलत है?",
+                choices: ["5,000 वर्ष पुरानी विद्या", "संस्कृत के 'युज' शब्द से बना", "ऋग्वेद में पहला उल्लेख", "इसका आविष्कार कल ही हुआ था"],
+                oddIdx: 3,
+                comp: "ऐतिहासिक कड़ियाँ"
+            },
+            {
+                q: "योग का मुख्य उद्देश्य 'मन के भटकाव को रोकना' है। इसमें असंगत आदत कौन-सी है?",
+                choices: ["मन एकाग्र करना", "चित्त शांत करना", "तनाव दूर करना", "बात-बात पर गुस्सा करना"],
+                oddIdx: 3,
+                comp: "योग दर्शन"
+            },
+            {
+                q: "स्कूल में 'अंतर्राष्ट्रीय योग दिवस' मनाने के दृश्यों में कौन-सा तत्व असंगत है?",
+                choices: ["रंग-बिरंगे योग मैट", "सुबह की खिली ताज़ी धूप", "अंधेरे कमरे में सोए रहना", "अनुशासन में बैठे बच्चे"],
+                oddIdx: 2,
+                comp: "व्यावहारिक समझ"
+            },
+            {
+                q: "शरीर और मन को निरोग रखने वाली भारतीय प्रणालियों में क्या शामिल नहीं है?",
+                choices: ["योग अभ्यास", "आयुर्वेद", "ध्यान लगाना", "रोज जंक फूड खाना"],
+                oddIdx: 3,
+                comp: "स्वस्थ जीवनशैली"
+            },
+            {
+                q: "योग दिवस को मिली वैश्विक (Global) पहचान में कौन-सा वाक्य असंगत या गलत है?",
+                choices: ["177 देशों ने समर्थन दिया", "यूएन (UN) में प्रस्ताव पास हुआ", "यह सिर्फ एक शहर का खेल है", "पूरी दुनिया में मनाया जाता है"],
+                oddIdx: 2,
+                comp: "वैश्विक स्तर पर भारत"
+            },
+            {
+                q: "शारीरिक अंगों पर आसनों के वैज्ञानिक प्रभावों में कौन-सा मिलान गलत है?",
+                choices: ["ताड़ासन से लंबाई बढ़ना", "भुजंगासन से रीढ़ मजबूत होना", "शवासन से बहुत ज्यादा थक जाना", "प्राणायाम से श्वास संतुलित होना"],
+                oddIdx: 2,
+                comp: "वैज्ञानिक प्रभाव"
+            }
+        ];
+
+        let roundIndex = 0;
+        let gameScore = 0;
+        let playerLives = 3;
+        let roundAttempts = 0;
+        let blockControls = false;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playArcadeSound(type) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+
+            if (type === 'hit_correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.08); // A5
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.25);
+            } else if (type === 'hit_wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(120, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'game_over') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.2);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            }
+        }
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+        window.onload = () => {
+            setTimeout(() => { showScreen('instruction-screen'); }, 5000); // Strict 5-Second Brand Window
+        };
+
+        function launchGame() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            roundIndex = 0;
+            gameScore = 0;
+            playerLives = 3;
+            showScreen('gameplay-screen');
+            loadArcadeRound();
+        }
+
+        function loadArcadeRound() {
+            roundAttempts = 0;
+            blockControls = false;
+            const currentItem = arcadeDataset[roundIndex];
+
+            document.getElementById('hud-level').innerText = `राउंड: ${roundIndex + 1}/10`;
+            document.getElementById('hud-score').innerText = `स्कोर: ${String(gameScore).padStart(3, '0')}`;
+            document.getElementById('hud-lives').innerText = '❤️'.repeat(playerLives);
+            document.getElementById('lbl-comp').innerText = currentItem.comp;
+            document.getElementById('lbl-question').innerText = currentItem.q;
+            document.getElementById('lbl-hint').style.display = 'none';
+
+            const grid = document.getElementById('box-options');
+            grid.innerHTML = '';
+
+            const alphabets = ['A', 'B', 'C', 'D'];
+            currentItem.choices.forEach((text, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'arcade-card-btn';
+                btn.innerHTML = `<span class="btn-index-sphere">${alphabets[idx]}</span> <span>${text}</span>`;
+                btn.onclick = () => checkArcadeChoice(idx, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function checkArcadeChoice(chosenIdx, element) {
+            if (blockControls) return;
+            const data = arcadeDataset[roundIndex];
+            const toast = document.getElementById('lbl-hint');
+
+            if (chosenIdx === data.oddIdx) {
+                blockControls = true;
+                element.classList.add('correct-glow');
+                playArcadeSound('hit_correct');
+                gameScore += 10;
+                setTimeout(nextRound, 1000);
+            } else {
+                roundAttempts++;
+                playerLives--;
+                element.classList.add('wrong-glow');
+                document.getElementById('hud-lives').innerText = '❤️'.repeat(playerLives > 0 ? playerLives : 0);
+                playArcadeSound('hit_wrong');
+
+                // Animate screen shake for core gaming effect
+                const consoleFrame = document.getElementById('console-frame');
+                consoleFrame.style.animation = 'shake 0.3s ease-out';
+                setTimeout(() => consoleFrame.style.animation = '', 300);
+
+                if (playerLives <= 0) {
+                    blockControls = true;
+                    setTimeout(() => triggerGameOver(false), 1000);
+                    return;
+                }
+
+                if (roundAttempts === 1) {
+                    toast.innerText = "💥 गलत धमाका! यह शब्द तो योग से जुड़ा है। दोबारा सोचें, 1 लाइफ बची है!";
+                    toast.style.display = 'block';
+                    element.disabled = true;
+                } else {
+                    blockControls = true;
+                    toast.style.display = 'none';
+                    document.querySelectorAll('.arcade-card-btn')[data.oddIdx].classList.add('correct-glow');
+                    setTimeout(nextRound, 1500);
+                }
+            }
+        }
+
+        function nextRound() {
+            roundIndex++;
+            if (roundIndex < arcadeDataset.length) {
+                loadArcadeRound();
+            } else {
+                triggerGameOver(true);
+            }
+        }
+
+        function triggerGameOver(isVictory) {
+            showScreen('result-screen');
+            playArcadeSound('game_over');
+            document.getElementById('lbl-final-score').innerText = `SCORE: ${gameScore}`;
+
+            const emoji = document.getElementById('end-emoji');
+            const title = document.getElementById('end-title');
+            const msg = document.getElementById('lbl-final-msg');
+
+            if (isVictory && gameScore >= 80) {
+                emoji.innerText = "🏆👑🥇";
+                title.innerText = "योग सम्राट!";
+                title.style.color = "var(--neon-gold)";
+                msg.innerText = "अविश्वसनीय! आपने अपनी तीक्ष्ण बुद्धि और एकाग्रता से सभी असंगत शब्दों को खोज निकाला। आप योग के असली मास्टर हैं!";
+            } else if (playerLives > 0) {
+                emoji.innerText = "⚡🎯✨";
+                title.innerText = "मिशन कम्प्लीट!";
+                title.style.color = "var(--neon-green)";
+                msg.innerText = "अच्छा प्रयास! आपने गेम को सफलतापूर्वक पूरा किया, लेकिन कुछ जीवन रेखाएँ खो दीं। परफेक्ट स्कोर के लिए फिर से खेलें।";
+            } else {
+                emoji.innerText = "👾💔💀";
+                title.innerText = "गेम ओवर";
+                title.style.color = "var(--neon-red)";
+                msg.innerText = "आपकी सभी लाइफलाइन समाप्त हो गईं! घबराएं नहीं, योग का अर्थ है निरंतर अभ्यास। चलिए एक बार फिर कोशिश करते हैं!";
+            }
+        }
+
+        function resetConsole() {
+            showScreen('instruction-screen');
+        }
+    </script>
+</body>
+</html>
