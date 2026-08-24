@@ -1,352 +1,580 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>जागो प्यारे - कविता खेल</title>
-<style>
-  :root {
-    --primary: #d97706;
-    --primary-hover: #b45309;
-    --success: #16a34a;
-    --danger: #dc2626;
-    --bg: #fffbeb;
-    --card: #ffffff;
-    --text: #1e293b;
-    --border: #fde68a;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secret Code Breaker - जागो प्यारे</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --primary-color: #38bdf8;
+      --accent-color: #f59e0b;
+      --success-color: #22c55e;
+      --error-color: #ef4444;
+      --text-color: #f8fafc;
+    }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-  body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  
-  .screen { display: none; width: 100%; max-width: 650px; background: var(--card); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(217, 119, 6, 0.15); border: 2px solid var(--border); text-align: center; }
-  .screen.active { display: block; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
 
-  /* 1. Logo Screen */
-  #logo-screen { 
-    display: none; 
-    min-height: 320px;
-  }
-  #logo-screen.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .app-logo {
-    max-width: 280px;
-    max-height: 160px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
-    margin: 0 auto;
-  }
+    .game-container {
+      background: var(--card-bg);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 650px;
+      text-align: center;
+      border: 1px solid #334155;
+      box-sizing: border-box;
+    }
 
-  /* Intro & End Screen */
-  .meta-card { background: #fef3c7; padding: 20px; border-radius: 12px; margin: 20px 0; text-align: left; line-height: 1.6; }
-  .meta-card ul { margin-left: 20px; margin-top: 10px; }
-  button.btn-action { background: var(--primary); color: white; border: none; padding: 12px 28px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; }
-  button.btn-action:hover { background: var(--primary-hover); }
+    .screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
 
-  /* Game Area */
-  .game-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; font-weight: bold; }
-  .attempts-badge { background: #fed7aa; color: #9a3412; padding: 4px 10px; border-radius: 12px; font-size: 0.9rem; }
-  
-  .poem-box { background: #fffdf5; border: 2px dashed #f59e0b; padding: 20px; border-radius: 12px; font-size: 1.3rem; margin-bottom: 25px; line-height: 1.8; color: #78350f; font-weight: bold; }
-  .blank-space { display: inline-block; min-width: 100px; border-bottom: 3px solid var(--primary); color: var(--primary); text-align: center; padding: 0 8px; }
+    .hidden {
+      display: none !important;
+    }
 
-  .words-container { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 25px; }
-  .word-chip { background: #ffffff; border: 2px solid #cbd5e1; padding: 10px 20px; border-radius: 25px; font-size: 1.1rem; cursor: pointer; transition: all 0.2s; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
-  .word-chip:hover:not(:disabled) { border-color: var(--primary); background: #fef3c7; transform: translateY(-2px); }
-  .word-chip:disabled { cursor: not-allowed; opacity: 0.6; }
-  .word-chip.correct { background: #dcfce7; border-color: var(--success); color: #14532d; }
-  .word-chip.incorrect { background: #fee2e2; border-color: var(--danger); color: #7f1d1d; }
+    /* Logo Screen */
+    .logo-img {
+      max-width: 240px;
+      height: auto;
+      margin-bottom: 20px;
+    }
 
-  .feedback-msg { min-height: 30px; font-size: 1.05rem; font-weight: bold; margin-bottom: 15px; }
-  .feedback-msg.correct-text { color: var(--success); }
-  .feedback-msg.wrong-text { color: var(--danger); }
+    /* Instruction Screen */
+    .instruction-list {
+      text-align: left;
+      margin: 20px 0;
+      line-height: 1.8;
+      background: #0f172a;
+      padding: 20px 30px;
+      border-radius: 8px;
+    }
 
-  .score-display { font-size: 2.8rem; font-weight: bold; color: var(--primary); margin: 15px 0; }
-</style>
+    /* Gameplay Screen */
+    .header {
+      margin-bottom: 15px;
+      width: 100%;
+    }
+
+    .level-badge {
+      display: inline-block;
+      background: var(--primary-color);
+      color: #0f172a;
+      font-weight: bold;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+
+    .chances-tracker {
+      font-size: 0.95em;
+      color: #94a3b8;
+    }
+
+    .mission-box {
+      background: #0f172a;
+      border: 1px dashed var(--primary-color);
+      padding: 15px;
+      border-radius: 8px;
+      width: 100%;
+      margin: 15px 0;
+      box-sizing: border-box;
+    }
+
+    .target-word {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: var(--accent-color);
+      letter-spacing: 2px;
+    }
+
+    /* Code Breaker Displays */
+    .slots-container {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .slot {
+      width: 45px;
+      height: 50px;
+      border: 2px solid var(--primary-color);
+      border-radius: 8px;
+      font-size: 1.4em;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0f172a;
+      text-transform: uppercase;
+    }
+
+    .letter-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .letter-btn {
+      background: #334155;
+      color: white;
+      border: 1px solid #475569;
+      width: 45px;
+      height: 45px;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .letter-btn:hover:not(:disabled) {
+      background: var(--primary-color);
+      color: #0f172a;
+    }
+
+    /* Odd One Out Grid */
+    .pattern-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      margin: 20px 0;
+    }
+
+    .pattern-btn {
+      background: #334155;
+      border: 2px solid #475569;
+      color: white;
+      border-radius: 8px;
+      padding: 18px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pattern-btn:hover:not(:disabled) {
+      border-color: var(--primary-color);
+    }
+
+    /* Feedback Styles */
+    .correct {
+      background: var(--success-color) !important;
+      border-color: var(--success-color) !important;
+      color: white !important;
+    }
+
+    .wrong {
+      background: var(--error-color) !important;
+      border-color: var(--error-color) !important;
+      color: white !important;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    /* Shared Buttons */
+    .btn {
+      background: var(--primary-color);
+      color: #0f172a;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1em;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #0284c7;
+      color: white;
+    }
+
+    .appreciation-box {
+      font-size: 1.2em;
+      color: var(--success-color);
+      margin: 15px 0;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Audio Elements Updated with assets/ path -->
-  <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
-  <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
-
-  <!-- 1. Logo Screen -->
-  <div id="logo-screen" class="screen active">
-    <img src="assets/logo.png" alt="Logo" class="app-logo" onerror="this.src='https://via.placeholder.com/280x160?text=Logo+Image'">
+<div class="game-container">
+  <!-- 1. LOGO SCREEN -->
+  <div id="logo-screen" class="screen">
+    <img src="assets/logo.png" alt="Innovine Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/250x100/1e293b/38bdf8?text=Innovine+Logo'">
+    <h2>Chapter 1: Code Breaker Quest</h2>
+    <p style="color: #94a3b8;">"जागो प्यारे" (Jago Pyaare)</p>
+    <button class="btn" onclick="showInstructionScreen()">Access Mission</button>
   </div>
 
-  <!-- 2. Instruction Screen -->
-  <div id="intro-screen" class="screen">
-    <h1 style="color: var(--primary); margin-bottom: 10px;">जागो प्यारे - शब्द जोड़ो खेल</h1>
-    <div class="meta-card">
-      <h3>खेल के नियम:</h3>
-      <ul>
-        <li>कविता की पंक्तियों को ध्यान से पढ़ें और सही शब्द चुनकर खाली स्थान भरें।</li>
-        <li>प्रत्येक प्रश्न के लिए आपको <strong>2 अवसर (2 Chances)</strong> मिलेंगे।</li>
-        <li>पहला प्रयास सही होने पर <strong>10 अंक</strong> मिलेंगे।</li>
-        <li>दूसरे प्रयास में सही होने पर <strong>5 अंक</strong> मिलेंगे।</li>
-        <li>दो गलत प्रयासों के बाद सही शब्द अपने आप प्रकट (Reveal) हो जाएगा।</li>
-      </ul>
-    </div>
-    <button class="btn-action" onclick="startGame()">खेल शुरू करें</button>
+  <!-- 2. INSTRUCTION SCREEN -->
+  <div id="instruction-screen" class="screen hidden">
+    <h2>Mission Briefing</h2>
+    <ul class="instruction-list">
+      <li><strong>Level 1 (Secret Code Breaker):</strong> Decrypt the hidden English meaning of Hindi vocabulary by assembling the correct letters.</li>
+      <li><strong>Level 2 (Pattern Finder - Odd One Out):</strong> Analyze word patterns to identify the grammatical outlier.</li>
+      <li><strong>Rules:</strong> You have <strong>2 attempts</strong> per question.</li>
+      <li>Sound effects will guide your security clearances!</li>
+    </ul>
+    <button class="btn" onclick="startGame()">Start Operation</button>
   </div>
 
-  <!-- 3. Game Screen -->
-  <div id="game-screen" class="screen">
-    <div class="game-header">
-      <span>अंक: <span id="current-score">0</span></span>
-      <span class="attempts-badge">अवसर शेष: <span id="attempts-left">2</span></span>
-      <span>प्रश्न: <span id="question-number">1</span>/<span id="total-questions">0</span></span>
+  <!-- 3. GAMEPLAY SCREEN -->
+  <div id="game-screen" class="screen hidden">
+    <div class="header">
+      <span class="level-badge" id="level-indicator">Level 1: Secret Code Breaker</span>
+      <div class="chances-tracker">Attempts Left: <span id="chances-left">2</span>/2</div>
     </div>
 
-    <div class="poem-box" id="poemBox">
-      <!-- Poem sentence with blank space will load here -->
+    <!-- Level 1 Code Breaker UI -->
+    <div id="level1-ui" class="width-full">
+      <div class="mission-box">
+        <div style="font-size: 0.9em; color: #94a3b8;">DECRYPT HINDI WORD:</div>
+        <div class="target-word" id="target-hindi">--</div>
+      </div>
+      <div class="slots-container" id="slots-container"></div>
+      <div class="letter-bank" id="letter-bank"></div>
     </div>
 
-    <div class="feedback-msg" id="feedbackMsg"></div>
-
-    <div class="words-container" id="wordsContainer">
-      <!-- Word Chips will load here -->
+    <!-- Level 2 Pattern Finder UI -->
+    <div id="level2-ui" class="hidden width-full">
+      <div class="mission-box">
+        <div id="grammar-prompt" style="font-size: 1.1em; font-weight: bold;">Find the Odd One Out:</div>
+      </div>
+      <div class="pattern-grid" id="pattern-container"></div>
     </div>
 
-    <button class="btn-action" id="nextBtn" onclick="nextQuestion()" style="display: none;">अगला प्रश्न ➔</button>
+    <div class="status-bar">
+      <span>Score: <span id="score">0</span></span>
+      <button id="next-btn" class="btn hidden" onclick="nextQuestion()">Next Decryption</button>
+    </div>
   </div>
 
-  <!-- 4. End Screen -->
-  <div id="end-screen" class="screen">
-    <h1 style="color: var(--primary);">शाबाश! खेल पूरा हुआ</h1>
-    <div class="meta-card" style="text-align: center;">
-      <p>आपका कुल स्कोर</p>
-      <div class="score-display" id="finalScore">0 / 0</div>
-      <p id="performanceMsg"></p>
+  <!-- 4. END GAME SCREEN -->
+  <div id="end-screen" class="screen hidden">
+    <h2>🔒 Mission Accomplished!</h2>
+    <div class="appreciation-box">
+      Master Codebreaker Status Achieved!
     </div>
-    <button class="btn-action" onclick="restartGame()">पुनः खेलें</button>
+    <p>You decrypted Chapter 1 vocabulary and mastered its grammar patterns successfully.</p>
+    <p>Final Score: <strong id="final-score">0</strong></p>
+    <button class="btn" onclick="restartGame()">Re-initialize Mission</button>
   </div>
+</div>
 
-  <script>
-    const originalQuestions = [
-      {
-        lineBefore: "उठो लाल अब आँखें खोलो, पानी लाई हूँ",
-        lineAfter: "धो लो।",
-        correctWord: "मुँह",
-        options: ["मुँह", "हाथ", "पैर", "सिर"],
-        hint: "माँ बच्चे का चेहरा धोने के लिए पानी लाई है।"
+<script>
+  // Audio Assets
+  const soundCorrect = new Audio('assets/correct.mp3');
+  const soundWrong = new Audio('assets/wrong.mp3');
+
+  // Chapter 1 Data (Jago Pyaare)
+  const gameData = {
+    level1: [
+      { hindi: "नभ", answer: "SKY", bank: ["S", "K", "Y", "A", "O", "R"] },
+      { hindi: "भोर", answer: "MORNING", bank: ["M", "O", "R", "N", "I", "N", "G", "E", "T"] },
+      { hindi: "छवि", answer: "FORM", bank: ["F", "O", "R", "M", "S", "H", "A", "P"] },
+      { hindi: "न्यारी", answer: "UNIQUE", bank: ["U", "N", "I", "Q", "U", "E", "R", "A", "S"] }
+    ],
+    level2: [
+      { 
+        prompt: "Find the word that does NOT use Anusvaar (ं):", 
+        options: ["गंगा", "चंचल", "आँख", "कंपन"], 
+        answer: "आँख", // Uses Anunasik (ँ)
+        reason: "'आँख' uses Anunasik (ँ), whereas others use Anusvaar (ं)."
       },
-      {
-        lineBefore: "बीती रात कमल दल फूले, उनके ऊपर",
-        lineAfter: "डोले।",
-        correctWord: "भँवरे",
-        options: ["भँवरे", "तितली", "पक्षी", "हंस"],
-        hint: "कमल के फूलों पर कौन मँडरा रहे हैं?"
+      { 
+        prompt: "Find the word that does NOT use Anunasik (ँ):", 
+        options: ["मुँह", "धुँधला", "सुंदर", "कुआँ"], 
+        answer: "सुंदर", // Uses Anusvaar (ं)
+        reason: "'सुंदर' uses Anusvaar (ं), whereas others use Anunasik (ँ)."
       },
-      {
-        lineBefore: "चिड़िया चहक उठी",
-        lineAfter: "पर, बहने लगी हवा अति सुंदर।",
-        correctWord: "पेड़",
-        options: ["पेड़", "छत", "नभ", "घर"],
-        hint: "सुबह-सुबह पक्षी कहाँ चहक रहे हैं?"
-      },
-      {
-        lineBefore: "नभ में न्यारी लाली छाई, धरती ने प्यारी",
-        lineAfter: "पाई।",
-        correctWord: "छवि",
-        options: ["छवि", "छाया", "रोशनी", "किरण"],
-        hint: "सुबह धरती की सूरत (रूप) बहुत सुंदर लग रही है।"
-      },
-      {
-        lineBefore: "भोर हुआ सूरज उग आया, जल में पड़ी",
-        lineAfter: "छाया।",
-        correctWord: "सुनहरी",
-        options: ["सुनहरी", "नीली", "काली", "रूपेरी"],
-        hint: "सूरज की पहली धूप की किरणें सोने जैसी होती हैं।"
-      },
-      {
-        lineBefore: "ऐसा सुंदर समय न खोओ, मेरे",
-        lineAfter: "अब मत सोओ।",
-        correctWord: "प्यारे",
-        options: ["प्यारे", "राजा", "लाला", "भैया"],
-        hint: "माँ अपने प्रिय बच्चे को क्या कहकर पुकारती है?"
-      },
-      {
-        lineBefore: "कविता के अनुसार सुबह की हवा बहुत",
-        lineAfter: "होती है।",
-        correctWord: "सुंदर",
-        options: ["सुंदर", "गरम", "तेज", "धीमी"],
-        hint: "प्रातःकाल की ठंडी और ताजी पवन कैसी लगती है?"
-      },
-      {
-        lineBefore: "'नभ' शब्द का सही पर्यायवाची शब्द",
-        lineAfter: "है।",
-        correctWord: "आकाश",
-        options: ["आकाश", "जल", "धरती", "पवन"],
-        hint: "जहाँ सूरज उगता है और लाली छाती है।"
+      { 
+        prompt: "Identify the word that is NOT a Noun (संज्ञा) from the chapter:", 
+        options: ["चिड़िया", "सूरज", "कमल", "सुंदर"], 
+        answer: "सुंदर", // Adjective (विशेषण)
+        reason: "'सुंदर' is an Adjective (विशेषण); the rest are Nouns (संज्ञा)."
       }
-    ];
+    ]
+  };
 
-    let gameQuestions = [];
-    let currentQIndex = 0;
-    let score = 0;
-    let attemptsLeft = 2;
-    let isAnswered = false;
+  // State Variables
+  let currentLevel = 1;
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let attempts = 0;
+  const maxAttempts = 2;
 
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
+  // Level 1 Specific State
+  let currentSolution = [];
+  let userSlots = [];
+
+  // Navigation Logic
+  function showInstructionScreen() {
+    document.getElementById("logo-screen").classList.add("hidden");
+    document.getElementById("instruction-screen").classList.remove("hidden");
+  }
+
+  function startGame() {
+    document.getElementById("instruction-screen").classList.add("hidden");
+    document.getElementById("game-screen").classList.remove("hidden");
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    attempts = 0;
+    document.getElementById("chances-left").innerText = maxAttempts - attempts;
+    document.getElementById("next-btn").classList.add("hidden");
+
+    if (currentLevel === 1) {
+      document.getElementById("level1-ui").classList.remove("hidden");
+      document.getElementById("level2-ui").classList.add("hidden");
+      document.getElementById("level-indicator").innerText = "Level 1: Secret Code Breaker";
+      setupCodeBreaker();
+    } else {
+      document.getElementById("level1-ui").classList.add("hidden");
+      document.getElementById("level2-ui").classList.remove("hidden");
+      document.getElementById("level-indicator").innerText = "Level 2: Pattern Finder (Odd One Out)";
+      setupPatternFinder();
+    }
+  }
+
+  // --- LEVEL 1: CODE BREAKER LOGIC ---
+  function setupCodeBreaker() {
+    const qData = gameData.level1[currentQuestionIndex];
+    document.getElementById("target-hindi").innerText = qData.hindi;
+    currentSolution = qData.answer.split("");
+    userSlots = new Array(currentSolution.length).fill("");
+
+    // Create Slot Displays
+    const slotsContainer = document.getElementById("slots-container");
+    slotsContainer.innerHTML = "";
+    for (let i = 0; i < currentSolution.length; i++) {
+      const slot = document.createElement("div");
+      slot.className = "slot";
+      slot.id = `slot-${i}`;
+      slotsContainer.appendChild(slot);
     }
 
-    function playSound(type) {
-      const audio = document.getElementById(type === 'correct' ? 'audioCorrect' : 'audioWrong');
-      if (audio) {
-        audio.currentTime = 0;
-        audio.play().catch(err => console.log("Audio play blocked: ", err));
-      }
-    }
+    // Create Scrambled Letter Bank
+    const letterBank = document.getElementById("letter-bank");
+    letterBank.innerHTML = "";
+    
+    // Shuffle letter bank
+    let shuffledLetters = [...qData.bank].sort(() => Math.random() - 0.5);
 
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('total-questions').textContent = originalQuestions.length;
-      
-      setTimeout(() => {
-        switchScreen('intro-screen');
-      }, 5000);
+    shuffledLetters.forEach((char, index) => {
+      const btn = document.createElement("button");
+      btn.className = "letter-btn";
+      btn.innerText = char;
+      btn.id = `lbtn-${index}`;
+      btn.onclick = () => fillSlot(char, btn);
+      letterBank.appendChild(btn);
     });
+  }
 
-    function switchScreen(screenId) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(screenId).classList.add('active');
+  function fillSlot(char, btnObj) {
+    const emptyIndex = userSlots.indexOf("");
+    if (emptyIndex !== -1) {
+      userSlots[emptyIndex] = char;
+      const slotElement = document.getElementById(`slot-${emptyIndex}`);
+      slotElement.innerText = char;
+      btnObj.disabled = true;
+      btnObj.style.opacity = "0.3";
+
+      // If all slots are filled, evaluate submission
+      if (!userSlots.includes("")) {
+        checkCodeSolution();
+      }
     }
+  }
 
-    function startGame() {
-      gameQuestions = JSON.parse(JSON.stringify(originalQuestions));
-      shuffleArray(gameQuestions);
-      
-      currentQIndex = 0;
-      score = 0;
-      switchScreen('game-screen');
+  function checkCodeSolution() {
+    attempts++;
+    document.getElementById("chances-left").innerText = maxAttempts - attempts;
+
+    const userAttempt = userSlots.join("");
+    const targetAnswer = currentSolution.join("");
+
+    if (userAttempt === targetAnswer) {
+      playSound(soundCorrect);
+      highlightSlots(true);
+      score += (attempts === 1) ? 10 : 5;
+      document.getElementById("score").innerText = score;
+      finishTurn();
+    } else {
+      playSound(soundWrong);
+      highlightSlots(false);
+
+      if (attempts < maxAttempts) {
+        // Reset slots for 2nd chance after short delay
+        setTimeout(() => {
+          resetSlots();
+        }, 1000);
+      } else {
+        // Reveal correct answer on final failure
+        revealCodeSolution();
+        finishTurn();
+      }
+    }
+  }
+
+  function highlightSlots(isCorrect) {
+    for (let i = 0; i < currentSolution.length; i++) {
+      const slot = document.getElementById(`slot-${i}`);
+      if (isCorrect) {
+        slot.classList.add("correct");
+      } else {
+        slot.classList.add("wrong");
+      }
+    }
+  }
+
+  function resetSlots() {
+    userSlots.fill("");
+    for (let i = 0; i < currentSolution.length; i++) {
+      const slot = document.getElementById(`slot-${i}`);
+      slot.innerText = "";
+      slot.className = "slot";
+    }
+    const buttons = document.querySelectorAll(".letter-btn");
+    buttons.forEach(btn => {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+    });
+  }
+
+  function revealCodeSolution() {
+    for (let i = 0; i < currentSolution.length; i++) {
+      const slot = document.getElementById(`slot-${i}`);
+      slot.innerText = currentSolution[i];
+      slot.className = "slot correct";
+    }
+  }
+
+  // --- LEVEL 2: PATTERN FINDER LOGIC ---
+  function setupPatternFinder() {
+    const qData = gameData.level2[currentQuestionIndex];
+    document.getElementById("grammar-prompt").innerText = qData.prompt;
+
+    const patternContainer = document.getElementById("pattern-container");
+    patternContainer.innerHTML = "";
+
+    qData.options.forEach(option => {
+      const btn = document.createElement("button");
+      btn.className = "pattern-btn";
+      btn.innerText = option;
+      btn.onclick = () => checkPatternAnswer(btn, option, qData.answer);
+      patternContainer.appendChild(btn);
+    });
+  }
+
+  function checkPatternAnswer(selectedBtn, selectedOption, correctAnswer) {
+    attempts++;
+    document.getElementById("chances-left").innerText = maxAttempts - attempts;
+
+    if (selectedOption === correctAnswer) {
+      playSound(soundCorrect);
+      selectedBtn.classList.add("correct");
+      score += (attempts === 1) ? 10 : 5;
+      document.getElementById("score").innerText = score;
+      finishTurn();
+    } else {
+      playSound(soundWrong);
+      selectedBtn.classList.add("wrong");
+      selectedBtn.disabled = true;
+
+      if (attempts >= maxAttempts) {
+        revealPatternAnswer(correctAnswer);
+        finishTurn();
+      }
+    }
+  }
+
+  function revealPatternAnswer(correctAnswer) {
+    const buttons = document.querySelectorAll(".pattern-btn");
+    buttons.forEach(btn => {
+      btn.disabled = true;
+      if (btn.innerText === correctAnswer) {
+        btn.classList.add("correct");
+      }
+    });
+  }
+
+  function finishTurn() {
+    // Lock remaining input elements
+    const letterBtns = document.querySelectorAll(".letter-btn");
+    letterBtns.forEach(btn => btn.disabled = true);
+    
+    const patternBtns = document.querySelectorAll(".pattern-btn");
+    patternBtns.forEach(btn => btn.disabled = true);
+
+    document.getElementById("next-btn").classList.remove("hidden");
+  }
+
+  function nextQuestion() {
+    const currentList = currentLevel === 1 ? gameData.level1 : gameData.level2;
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < currentList.length) {
       loadQuestion();
+    } else if (currentLevel === 1) {
+      currentLevel = 2;
+      currentQuestionIndex = 0;
+      alert("Secret Codes Decrypted! Proceeding to Level 2: Pattern Finder (Grammar Concepts).");
+      loadQuestion();
+    } else {
+      showEndScreen();
     }
+  }
 
-    function loadQuestion() {
-      attemptsLeft = 2;
-      isAnswered = false;
-      
-      const q = gameQuestions[currentQIndex];
-      document.getElementById('question-number').textContent = currentQIndex + 1;
-      document.getElementById('current-score').textContent = score;
-      document.getElementById('attempts-left').textContent = attemptsLeft;
-      document.getElementById('feedbackMsg').textContent = '';
-      document.getElementById('feedbackMsg').className = 'feedback-msg';
-      document.getElementById('nextBtn').style.display = 'none';
+  function playSound(audioObject) {
+    audioObject.currentTime = 0;
+    audioObject.play().catch(() => {});
+  }
 
-      const poemBox = document.getElementById('poemBox');
-      poemBox.innerHTML = `${q.lineBefore} <span class="blank-space" id="blankWord">?</span> ${q.lineAfter}`;
+  function showEndScreen() {
+    document.getElementById("game-screen").classList.add("hidden");
+    document.getElementById("end-screen").classList.remove("hidden");
+    document.getElementById("final-score").innerText = score;
+  }
 
-      const shuffledOptions = shuffleArray([...q.options]);
-      const wordsContainer = document.getElementById('wordsContainer');
-      wordsContainer.innerHTML = '';
-
-      shuffledOptions.forEach(word => {
-        const btn = document.createElement('button');
-        btn.className = 'word-chip';
-        btn.textContent = word;
-        btn.onclick = () => handleWordSelect(word, btn);
-        wordsContainer.appendChild(btn);
-      });
-    }
-
-    function handleWordSelect(selectedWord, btnElement) {
-      if (isAnswered) return;
-
-      const q = gameQuestions[currentQIndex];
-      const feedbackMsg = document.getElementById('feedbackMsg');
-      const blankWord = document.getElementById('blankWord');
-
-      if (selectedWord === q.correctWord) {
-        playSound('correct');
-        btnElement.classList.add('correct');
-        blankWord.textContent = selectedWord;
-        blankWord.style.color = 'var(--success)';
-        
-        const pointsEarned = attemptsLeft === 2 ? 10 : 5;
-        score += pointsEarned;
-        document.getElementById('current-score').textContent = score;
-
-        feedbackMsg.textContent = `🎉 बहुत बढ़िया! सही उत्तर (+${pointsEarned} अंक)`;
-        feedbackMsg.className = 'feedback-msg correct-text';
-
-        disableAllChips();
-        isAnswered = true;
-        document.getElementById('nextBtn').style.display = 'inline-block';
-
-      } else {
-        playSound('wrong');
-        btnElement.classList.add('incorrect');
-        btnElement.disabled = true;
-        attemptsLeft--;
-        document.getElementById('attempts-left').textContent = attemptsLeft;
-
-        if (attemptsLeft > 0) {
-          feedbackMsg.textContent = `❌ गलत उत्तर! एक और प्रयास करें। (संकेत: ${q.hint})`;
-          feedbackMsg.className = 'feedback-msg wrong-text';
-        } else {
-          feedbackMsg.textContent = `❌ प्रयास समाप्त! सही उत्तर था: "${q.correctWord}"`;
-          feedbackMsg.className = 'feedback-msg wrong-text';
-          
-          blankWord.textContent = q.correctWord;
-          blankWord.style.color = 'var(--danger)';
-
-          document.querySelectorAll('.word-chip').forEach(chip => {
-            if (chip.textContent === q.correctWord) {
-              chip.classList.add('correct');
-            }
-          });
-
-          disableAllChips();
-          isAnswered = true;
-          document.getElementById('nextBtn').style.display = 'inline-block';
-        }
-      }
-    }
-
-    function disableAllChips() {
-      document.querySelectorAll('.word-chip').forEach(chip => chip.disabled = true);
-    }
-
-    function nextQuestion() {
-      currentQIndex++;
-      if (currentQIndex < gameQuestions.length) {
-        loadQuestion();
-      } else {
-        endGame();
-      }
-    }
-
-    function endGame() {
-      const maxScore = gameQuestions.length * 10;
-      document.getElementById('finalScore').textContent = `${score} / ${maxScore}`;
-      
-      const perfMsg = document.getElementById('performanceMsg');
-      if (score >= maxScore * 0.8) {
-        perfMsg.textContent = "🌟 उत्कृष्ट प्रदर्शन! आप कविता को बहुत अच्छे से समझते हैं।";
-      } else if (score >= maxScore * 0.5) {
-        perfMsg.textContent = "👍 अच्छा प्रयास! थोड़ा और अभ्यास करें।";
-      } else {
-        perfMsg.textContent = "📖 कविता 'जागो प्यारे' फिर से पढ़ें और पुनः प्रयास करें।";
-      }
-
-      switchScreen('end-screen');
-    }
-
-    function restartGame() {
-      switchScreen('intro-screen');
-    }
-  </script>
+  function restartGame() {
+    currentLevel = 1;
+    currentQuestionIndex = 0;
+    score = 0;
+    document.getElementById("score").innerText = score;
+    document.getElementById("end-screen").classList.add("hidden");
+    document.getElementById("logo-screen").classList.remove("hidden");
+  }
+</script>
 </body>
 </html>
