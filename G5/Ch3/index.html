@@ -1,248 +1,421 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>कोणार्क की यात्रा - अभ्यास खेल</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .game-container {
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            width: 100%;
-            max-width: 650px;
-            padding: 30px;
-        }
-        h1 {
-            color: #2c3e50;
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #e67e22;
-            padding-bottom: 10px;
-        }
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #d35400;
-            margin-top: 20px;
-            margin-bottom: 15px;
-        }
-        .fill-item {
-            margin-bottom: 18px;
-            font-size: 16px;
-            line-height: 1.6;
-            color: #34495e;
-        }
-        input[type="text"] {
-            border: 2px solid #bdc3c7;
-            border-radius: 6px;
-            padding: 6px 10px;
-            font-size: 15px;
-            width: 140px;
-            text-align: center;
-            outline: none;
-            transition: all 0.2s;
-        }
-        input[type="text"]:focus {
-            border-color: #e67e22;
-        }
-        input.correct {
-            border-color: #2ecc71;
-            background-color: #e8f8f5;
-            color: #27ae60;
-            font-weight: bold;
-        }
-        input.wrong {
-            border-color: #e74c3c;
-            background-color: #fadbd8;
-            color: #c0392b;
-        }
-        .matching-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .match-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #fdfefe;
-            padding: 10px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-        }
-        select {
-            padding: 6px 10px;
-            border-radius: 6px;
-            border: 2px solid #bdc3c7;
-            font-size: 14px;
-            outline: none;
-        }
-        select.correct {
-            border-color: #2ecc71;
-            background-color: #e8f8f5;
-        }
-        select.wrong {
-            border-color: #e74c3c;
-            background-color: #fadbd8;
-        }
-        .btn-container {
-            text-align: center;
-            margin-top: 25px;
-        }
-        button {
-            background-color: #e67e22;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        button:hover {
-            background-color: #d35400;
-        }
-        #result-msg {
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>कोणार्क सूर्य मंदिर - डिजिटल पुस्तिका व गेम</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #fff8e1;
+      color: #4e342e;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #bf360c;
+      text-align: center;
+    }
+
+    .main-container {
+      background: #ffffff;
+      border: 3px solid #ffb74d;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 700px;
+      padding: 20px;
+    }
+
+    /* Tab Controls */
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      background-color: #ffb74d;
+      color: #4e342e;
+      border: none;
+      padding: 10px 18px;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background-color: #f57c00;
+      color: #ffffff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Booklet Styling */
+    .booklet-page {
+      border: 2px dashed #ffb74d;
+      background: #fffde7;
+      padding: 20px;
+      border-radius: 8px;
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .booklet-title {
+      color: #d84315;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      border-bottom: 2px solid #ffe082;
+      padding-bottom: 5px;
+    }
+
+    .booklet-body {
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    .booklet-body ul {
+      margin-left: 20px;
+      margin-top: 8px;
+    }
+
+    .booklet-body li {
+      margin-bottom: 6px;
+    }
+
+    .booklet-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    /* Game Area Styling */
+    .dashboard {
+      display: flex;
+      justify-content: space-around;
+      background: #ffe0b2;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    .canvas-area {
+      position: relative;
+      width: 100%;
+      height: 280px;
+      background: linear-gradient(to bottom, #ffe0b2 50%, #d7ccc8 50%);
+      border-radius: 8px;
+      overflow: hidden;
+      border: 2px solid #bcaaa4;
+    }
+
+    .sun-chariot {
+      position: absolute;
+      bottom: 40px;
+      left: 20px;
+      font-size: 50px;
+      user-select: none;
+    }
+
+    .wheel {
+      position: absolute;
+      font-size: 40px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.3s;
+    }
+
+    .wheel:hover {
+      transform: scale(1.2) rotate(45deg);
+    }
+
+    .quiz-box {
+      margin-top: 20px;
+      background: #fff3e0;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #ffb74d;
+      text-align: center;
+    }
+
+    .quiz-question {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .opt-btn {
+      background-color: #ffffff;
+      border: 1.5px solid #ffb74d;
+      color: #4e342e;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+
+    .opt-btn:hover {
+      background-color: #ffe0b2;
+    }
+
+    .feedback {
+      margin-top: 8px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-<div class="game-container">
-    <h1>कोणार्क की यात्रा - अभ्यास खेल</h1>
+  <h1>🛕 कोणार्क सूर्य मंदिर (Konark Sun Temple) 🛕</h1>
 
-    <!-- Part 1: Fill in the Blanks -->
-    <div class="section-title">भाग 1: रिक्त स्थान भरिए (Fill in the blanks)</div>
-    
-    <div class="fill-item">
-        1. कोणार्क मंदिर का निर्माण राजा 
-        <input type="text" id="blank1" placeholder="राजा का नाम"> ने करवाया था।
-    </div>
-    
-    <div class="fill-item">
-        2. मंदिर को दूर से देखने पर काला दिखाई देने के कारण इसे 
-        <input type="text" id="blank2" placeholder="अन्य नाम"> भी कहते हैं।
+  <div class="main-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="switchTab('booklet')">📖 डिजिटल पुस्तिका (Booklet)</button>
+      <button class="tab-btn" onclick="switchTab('game')">🎮 मंदिर ज्ञान गेम (Game)</button>
     </div>
 
-    <div class="fill-item">
-        3. मंदिर के पूरे रथ को 
-        <input type="text" id="blank3" placeholder="संख्या"> घोड़ों द्वारा खींचते हुए दिखाया गया है।
-    </div>
-
-    <div class="fill-item">
-        4. मंदिर से 3 किलोमीटर की दूरी पर 
-        <input type="text" id="blank4" placeholder="समुद्र तट का नाम"> तट स्थित है।
-    </div>
-
-    <!-- Part 2: Match the Following -->
-    <div class="section-title">भाग 2: सही मिलान कीजिए (Match the following)</div>
-    
-    <div class="matching-grid">
-        <div class="match-row">
-            <span>(क) 24 पहिये</span>
-            <select id="match1">
-                <option value="">-- चुनें --</option>
-                <option value="pahar">दिन के 8 पहर</option>
-                <option value="hours">दिन के 24 घंटे</option>
-                <option value="days">सप्ताह के 7 दिन</option>
-            </select>
+    <!-- TAB 1: BOOKLET -->
+    <div id="booklet-tab" class="tab-content active">
+      <div class="booklet-page">
+        <div>
+          <div class="booklet-title" id="page-title">पृष्ठ 1: परिचय व स्थान</div>
+          <div class="booklet-body" id="page-content">
+            <!-- Dynamic Content -->
+          </div>
         </div>
-        <div class="match-row">
-            <span>(ख) 7 घोड़े</span>
-            <select id="match2">
-                <option value="">-- चुनें --</option>
-                <option value="pahar">दिन के 8 पहर</option>
-                <option value="hours">दिन के 24 घंटे</option>
-                <option value="days">सप्ताह के 7 दिन</option>
-            </select>
+        <div class="booklet-nav">
+          <button class="tab-btn" id="prev-btn" onclick="changePage(-1)" disabled>पिछला</button>
+          <span id="page-indicator" style="font-weight: bold;">पृष्ठ 1 / 4</span>
+          <button class="tab-btn" id="next-btn" onclick="changePage(1)">अगला</button>
         </div>
-        <div class="match-row">
-            <span>(ग) 8 तीलियाँ</span>
-            <select id="match3">
-                <option value="">-- चुनें --</option>
-                <option value="pahar">दिन के 8 पहर</option>
-                <option value="hours">दिन के 24 घंटे</option>
-                <option value="days">सप्ताह के 7 दिन</option>
-            </select>
-        </div>
+      </div>
     </div>
 
-    <div class="btn-container">
-        <button onclick="checkAnswers()">उत्तर जाँचें (Check Answers)</button>
+    <!-- TAB 2: GAME -->
+    <div id="game-tab" class="tab-content">
+      <div class="dashboard">
+        <div>संग्रहीत पहिए ☸️: <span id="wheel-count">0</span> / 24</div>
+        <div>ज्ञान अंक 🌟: <span id="game-score">0</span></div>
+      </div>
+
+      <div class="canvas-area" id="game-canvas">
+        <div class="sun-chariot">🛕 🐎🐎🐎</div>
+        <!-- Collectible wheels will be generated here -->
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-question" id="quiz-q">प्रश्न लोड हो रहा है...</div>
+        <div class="quiz-options" id="quiz-opts"></div>
+        <div class="feedback" id="quiz-fb"></div>
+      </div>
     </div>
+  </div>
 
-    <div id="result-msg"></div>
-</div>
+  <script>
+    // --- TAB SWITCHING ---
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-<script>
-    function checkAnswers() {
-        let score = 0;
-        let total = 7;
-
-        // Fill in blanks answers
-        const answers = {
-            blank1: ["नरसिंह देव प्रथम", "नरसिंह देव", "नरसिंहदेव"],
-            blank2: ["ब्लैक पैगोडा", "ब्लैक पेगोडा"],
-            blank3: ["7", "सात"],
-            blank4: ["चंद्रभागा", "चन्द्रभागा"]
-        };
-
-        for (let id in answers) {
-            let input = document.getElementById(id);
-            let userVal = input.value.trim();
-            if (answers[id].includes(userVal)) {
-                input.className = "correct";
-                score++;
-            } else {
-                input.className = "wrong";
-            }
-        }
-
-        // Matching answers
-        const matchAns = {
-            match1: "hours",
-            match2: "days",
-            match3: "pahar"
-        };
-
-        for (let id in matchAns) {
-            let select = document.getElementById(id);
-            if (select.value === matchAns[id]) {
-                select.className = "correct";
-                score++;
-            } else {
-                select.className = "wrong";
-            }
-        }
-
-        // Show result
-        const resultMsg = document.getElementById("result-msg");
-        if (score === total) {
-            resultMsg.style.color = "#27ae60";
-            resultMsg.innerText = `बहुत बढ़िया! आपने सभी ${total} प्रश्नों के सही उत्तर दिए। 🎉`;
-        } else {
-            resultMsg.style.color = "#e67e22";
-            resultMsg.innerText = `आपका स्कोर: ${score} / ${total}। लाल रंग वाले उत्तरों को सुधारें और पुनः प्रयास करें!`;
-        }
+      if (tabName === 'booklet') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('booklet-tab').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('game-tab').classList.add('active');
+        initGame();
+      }
     }
-</script>
 
+    // --- BOOKLET DATA & LOGIC ---
+    const bookletPages = [
+      {
+        title: "पृष्ठ 1: मंदिर का स्थान एवं परिचय",
+        content: `
+          <p><strong>स्थान:</strong> कोणार्क, पूरी ज़िला, ओडिशा (बंगाल की खाड़ी के तट पर)।</p><br>
+          <p><strong>नाम का अर्थ:</strong> 'कोण' (कोना) + 'अर्क' (सूर्य) = सूर्य का कोना।</p><br>
+          <p><strong>अन्य नाम:</strong> इसे 'ब्लैक पैगोडा' (Black Pagoda) भी कहा जाता है, क्योंकि दूर से इसका टॉवर काला दिखाई देता है ।</p>
+        `
+      },
+      {
+        title: "पृष्ठ 2: प्रमुख विशेषताएँ (वास्तुकला)",
+        content: `
+          <ul>
+            <li><strong>रथ का आकार:</strong> पूरा मंदिर एक विशाल रथ के रूप में निर्मित है, जिसे 7 बेताब घोड़े खींच रहे हैं (सप्ताह के 7 दिन)।</li>
+            <li><strong>24 विशाल पहिए:</strong> रथ में 10 फ़ीट ऊँचे 24 पहिए हैं, जो दिन के 24 घंटों के प्रतीक हैं।</li>
+            <li><strong>8 तीलियाँ:</strong> हर पहिए में 8 तीलियाँ हैं, जो दिन के 8 पहर को दर्शाती हैं।</li>
+            <li><strong>समय का ज्ञान:</strong> प्राचीन काल में लोग पहियों की छाया देखकर सटीक समय का अंदाज़ा लगाते थे[cite: 3]।</li>
+          </ul>
+        `
+      },
+      {
+        title: "पृष्ठ 3: सांस्कृतिक महत्त्व व अंतर्राष्ट्रीय जुड़ाव",
+        content: `
+          <ul>
+            <li><strong>निर्माता:</strong> 13वीं शताब्दी में गंग वंश के राजा नरसिंह देव प्रथम ने इसे बनवाया[cite: 3]।</li>
+            <li><strong>मुख्य वास्तुकार:</strong> इस मंदिर के मुख्य वास्तुकार बिसु महाराणा थे[cite: 3]।</li>
+            <li><strong>यूनेस्को विश्व धरोहर:</strong> 1984 में यूनेस्को द्वारा विश्व धरोहर स्थल घोषित किया गया[cite: 3]।</li>
+            <li><strong>कलिंग वास्तुकला:</strong> यह कलिंग वास्तुकला शैली का सर्वोत्तम और अनूठा उदाहरण है[cite: 3]।</li>
+          </ul>
+        `
+      },
+      {
+        title: "पृष्ठ 4: 3 रोचक तथ्य (Interesting Facts)",
+        content: `
+          <ol style="margin-left: 20px; line-height: 1.8;">
+            <li><strong>चुंबकीय लोहा:</strong> मुख्य मंदिर के शिखर निर्माण में 52 टन चुंबकीय लोहे का इस्तेमाल किया गया था[cite: 3]।</li>
+            <li><strong>सटीक सूर्योदय:</strong> मंदिर की स्थिति इतनी सटीक है कि हर दिन सूर्योदय की पहली किरण मुख्य मूर्ति पर पड़ती थी[cite: 3]।</li>
+            <li><strong>संगीत की ध्वनियाँ:</strong> हवा चलने पर पत्थरों की विशेष बनावट के कारण संगीत की ध्वनियाँ उत्पन्न होती हैं[cite: 3]।</li>
+          </ol>
+        `
+      }
+    ];
+
+    let currentPage = 0;
+
+    function renderPage() {
+      const p = bookletPages[currentPage];
+      document.getElementById('page-title').innerText = p.title;
+      document.getElementById('page-content').innerHTML = p.content;
+      document.getElementById('page-indicator').innerText = `पृष्ठ ${currentPage + 1} / ${bookletPages.length}`;
+      
+      document.getElementById('prev-btn').disabled = (currentPage === 0);
+      document.getElementById('next-btn').disabled = (currentPage === bookletPages.length - 1);
+    }
+
+    function changePage(dir) {
+      currentPage += dir;
+      renderPage();
+    }
+
+    // Init Page 1
+    renderPage();
+
+    // --- GAME LOGIC ---
+    let wheelsCollected = 0;
+    let gameScore = 0;
+    let currentQuizIndex = 0;
+
+    const quizData = [
+      {
+        q: "कोणार्क सूर्य मंदिर किस राज्य में स्थित है?",
+        opts: ["ओडिशा", "पश्चिम बंगाल", "राजस्थान", "बिहार"],
+        ans: 0
+      },
+      {
+        q: "मंदिर का निर्माण किस राजा ने करवाया था?",
+        opts: ["चंद्रगुप्त", "अकबर", "राजा नरसिंह देव प्रथम", "अशोक"],
+        ans: 2
+      },
+      {
+        q: "सूर्य मंदिर को अन्य किस नाम से जाना जाता है?",
+        opts: ["रेड पैलेस", "ब्लैक पैगोडा", "व्हाइट टॉवर", "गोल्डन टेम्पल"],
+        ans: 1
+      },
+      {
+        q: "रथ में कुल कितने विशाल पत्थर के पहिए हैं?",
+        opts: ["7", "12", "24", "52"],
+        ans: 2
+      },
+      {
+        q: "मंदिर के मुख्य वास्तुकार कौन थे?",
+        opts: ["रवींद्रनाथ टैगोर", "शुभंकर", "बिसु महाराणा", "नरसिंह देव"],
+        ans: 2
+      }
+    ];
+
+    function initGame() {
+      spawnWheel();
+      loadQuestion();
+    }
+
+    function spawnWheel() {
+      const canvas = document.getElementById('game-canvas');
+      const existing = canvas.querySelector('.wheel');
+      if (existing) canvas.removeChild(existing);
+
+      const wheel = document.createElement('div');
+      wheel.className = 'wheel';
+      wheel.innerHTML = '☸️';
+      wheel.style.left = `${Math.random() * (canvas.clientWidth - 60) + 10}px`;
+      wheel.style.top = `${Math.random() * 140 + 20}px`;
+
+      wheel.onclick = () => {
+        wheelsCollected = Math.min(24, wheelsCollected + 1);
+        gameScore += 10;
+        document.getElementById('wheel-count').innerText = wheelsCollected;
+        document.getElementById('game-score').innerText = gameScore;
+        canvas.removeChild(wheel);
+        setTimeout(spawnWheel, 1000);
+      };
+
+      canvas.appendChild(wheel);
+    }
+
+    function loadQuestion() {
+      const qObj = quizData[currentQuizIndex];
+      document.getElementById('quiz-q').innerText = `प्र॰ ${currentQuizIndex + 1}: ${qObj.q}`;
+      const optsContainer = document.getElementById('quiz-opts');
+      optsContainer.innerHTML = '';
+      document.getElementById('quiz-fb').innerText = '';
+
+      qObj.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(idx);
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function checkAnswer(selectedIdx) {
+      const qObj = quizData[currentQuizIndex];
+      const fb = document.getElementById('quiz-fb');
+
+      if (selectedIdx === qObj.ans) {
+        fb.style.color = 'green';
+        fb.innerText = 'सही उत्तर! 🎉 (+20 ज्ञान अंक)';
+        gameScore += 20;
+        document.getElementById('game-score').innerText = gameScore;
+        currentQuizIndex = (currentQuizIndex + 1) % quizData.length;
+        setTimeout(loadQuestion, 1500);
+      } else {
+        fb.style.color = 'red';
+        fb.innerText = 'गलत उत्तर, पुनः प्रयास करें!';
+      }
+    }
+  </script>
 </body>
 </html>
