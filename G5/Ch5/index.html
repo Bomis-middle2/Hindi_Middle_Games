@@ -1,703 +1,362 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>गुल्लक - बिन्दुओं को मिलाएँ</title>
-    <style>
-        :root {
-            --clay-brown: #b45309;
-            --gold-coin: #f59e0b;
-            --sky-blue: #0ea5e9;
-            --success-green: #22c55e;
-            --danger-red: #ef4444;
-            --bg-light: #f0f9ff;
-            --text-dark: #0f172a;
-            --text-gray: #64748b;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>गुल्लक - बचत का महत्त्व एवं गतिविधियाँ</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
+    body {
+      background-color: #e8f5e9;
+      color: #1b5e20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-        body {
-            background: linear-gradient(to bottom, #e0f2fe 0%, #bae6fd 100%);
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 10px;
-            overflow: hidden;
-        }
+    h1 {
+      margin-bottom: 12px;
+      color: #2e7d32;
+      text-align: center;
+    }
 
-        .game-container {
-            width: 100%;
-            max-width: 550px;
-            height: 94vh;
-            min-height: 580px;
-            max-height: 750px;
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border: 4px solid var(--clay-brown);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+    .main-container {
+      background: #ffffff;
+      border: 3px solid #81c784;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 700px;
+      padding: 20px;
+    }
 
-        .screen {
-            display: none;
-            width: 100%;
-            height: 100%;
-            flex-direction: column;
-            padding: 16px;
-            position: relative;
-        }
+    /* Tab Controls */
+    .tab-buttons {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
 
-        .screen.active {
-            display: flex;
-        }
+    .tab-btn {
+      background-color: #a5d6a7;
+      color: #1b5e20;
+      border: none;
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
 
-        /* 1) Splash Screen (Strictly 5 Seconds with Local Asset Image) */
-        #splash-screen {
-            background: #ffffff;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+    .tab-btn.active, .tab-btn:hover {
+      background-color: #2e7d32;
+      color: #ffffff;
+    }
 
-        .splash-logo-img {
-            max-width: 180px;
-            height: auto;
-            animation: pulseLogo 2s infinite ease-in-out;
-        }
+    .tab-content {
+      display: none;
+    }
 
-        @keyframes pulseLogo {
-            0%, 100% { transform: scale(0.97); opacity: 0.95; }
-            50% { transform: scale(1.03); opacity: 1; }
-        }
+    .tab-content.active {
+      display: block;
+    }
 
-        /* 2) Instruction Screen */
-        #instruction-screen {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
+    /* Card & Content Section */
+    .card {
+      background: #f1f8e9;
+      border: 2px dashed #aed581;
+      padding: 20px;
+      border-radius: 8px;
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
 
-        .title-header {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--clay-brown);
-            margin-bottom: 15px;
-        }
+    .card h2 {
+      color: #33691e;
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+      border-bottom: 2px solid #81c784;
+      padding-bottom: 5px;
+    }
 
-        .ins-box {
-            background: var(--bg-light);
-            border: 2px dashed var(--clay-brown);
-            border-radius: 12px;
-            padding: 16px;
-            width: 100%;
-            max-width: 440px;
-            text-align: left;
-            margin-bottom: 20px;
-        }
+    .poem-text {
+      font-style: italic;
+      text-align: center;
+      color: #1b5e20;
+      margin-bottom: 15px;
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #c8e6c9;
+    }
 
-        .ins-item {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #334155;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            line-height: 1.4;
-        }
+    .info-list {
+      margin-left: 20px;
+    }
 
-        .btn-start {
-            background: var(--clay-brown);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            font-size: 16px;
-            font-weight: 700;
-            border-radius: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(180, 83, 9, 0.3);
-            transition: transform 0.2s;
-        }
+    .info-list li {
+      margin-bottom: 8px;
+    }
 
-        .btn-start:hover {
-            transform: scale(1.02);
-        }
+    /* Piggy Bank Calculator */
+    .calc-box {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+      margin-top: 10px;
+    }
 
-        /* 3) Game Play Screen */
-        .top-navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 8px;
-            border-bottom: 2px solid #e2e8f0;
-        }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      max-width: 320px;
+    }
 
-        .stats-hud {
-            background: #fff;
-            padding: 4px 12px;
-            border-radius: 15px;
-            font-weight: 700;
-            font-size: 13px;
-            border: 2px solid var(--clay-brown);
-            display: flex;
-            gap: 12px;
-        }
+    .input-group label {
+      font-weight: bold;
+    }
 
-        .audio-btn {
-            background: #fff;
-            border: 2px solid var(--clay-brown);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 13px;
-        }
+    .input-group input {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 2px solid #81c784;
+    }
 
-        /* Dot Connecting Area */
-        .canvas-container {
-            height: 200px;
-            margin: 10px 0;
-            background: #fafafa;
-            border-radius: 12px;
-            border: 2px dashed #cbd5e1;
-            position: relative;
-        }
+    .calc-btn {
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-        #dot-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+    .calc-btn:hover {
+      background-color: #1b5e20;
+    }
 
-        .dot-node {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: #94a3b8;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 5;
-            transition: background 0.3s, transform 0.3s;
-        }
+    .result-display {
+      width: 100%;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      background-color: #c8e6c9;
+      color: #1b5e20;
+      margin-top: 10px;
+    }
 
-        .dot-node.active {
-            background: var(--gold-coin);
-            transform: translate(-50%, -50%) scale(1.3);
-            box-shadow: 0 0 8px var(--gold-coin);
-        }
+    /* Quiz Game */
+    .quiz-box {
+      background: #f1f8e9;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #81c784;
+      text-align: center;
+    }
 
-        .dot-label {
-            position: absolute;
-            font-size: 11px;
-            font-weight: bold;
-            color: #64748b;
-            transform: translate(-50%, -100%);
-            margin-top: -6px;
-        }
+    .quiz-question {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
 
-        .dot-node.active + .dot-label {
-            color: var(--clay-brown);
-            font-size: 13px;
-        }
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
 
-        /* Question Box Layout */
-        .question-box-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 12px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-        }
+    .opt-btn {
+      background-color: #ffffff;
+      border: 1.5px solid #66bb6a;
+      color: #1b5e20;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
 
-        .competency-tag {
-            align-self: flex-start;
-            background: #fef3c7;
-            color: #d97706;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 700;
-            margin-bottom: 6px;
-        }
+    .opt-btn:hover {
+      background-color: #c8e6c9;
+    }
 
-        .main-question {
-            font-size: 14px;
-            font-weight: 700;
-            line-height: 1.4;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-        }
-
-        .options-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .option-btn {
-            background: #fff;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 13px;
-            font-weight: 600;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .option-btn:hover:not(:disabled) {
-            background: #fafafa;
-            border-color: var(--clay-brown);
-        }
-
-        .option-btn.correct {
-            background: #d8f3dc !important;
-            border-color: var(--success-green) !important;
-            color: var(--success-green) !important;
-        }
-
-        .option-btn.wrong {
-            background: #ffe3e3 !important;
-            border-color: var(--danger-red) !important;
-            color: #b91c1c !important;
-        }
-
-        .hint-banner {
-            padding: 6px;
-            border-radius: 6px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 12px;
-            margin-top: 6px;
-            display: none;
-            background: #fff7ed;
-            color: #c2410c;
-            border: 1px solid #ffedd5;
-        }
-
-        /* 4) End Screen */
-        #result-screen {
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-        }
-
-        .victory-art {
-            font-size: 55px;
-            margin-bottom: 10px;
-        }
-
-        .score-circle {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: var(--gold-coin);
-            border: 3px solid #fff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 22px;
-            font-weight: 800;
-            color: #fff;
-            margin: 12px 0;
-        }
-
-        .end-msg {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-gray);
-            max-width: 400px;
-            line-height: 1.4;
-            margin-bottom: 20px;
-            padding: 0 10px;
-        }
-    </style>
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="game-container">
+  <h1>🪙 गुल्लक - बचत की आदत 🪙</h1>
 
-        <div id="splash-screen" class="screen active">
-            <img src="assets/image_9d321f.png" alt="Innovine Logo" class="splash-logo-img">
-        </div>
-
-        <div id="instruction-screen" class="screen">
-            <div class="title-header">✏️ गुल्लक: बिन्दुओं को मिलाएँ</div>
-            <div class="ins-box">
-                <div class="ins-item">📍 <span>स्क्रीन पर आपको 1 से 10 तक के बिंदु (Dots) दिखाई देंगे।</span></div>
-                <div class="ins-item">❓ <span>'गुल्लक' कविता के कुल 10 आसान प्रश्नों के उत्तर एक-एक करके दें।</span></div>
-                <div class="ins-item">🔄 <span>गलत जवाब देने पर आपको 1 और मौका (दूसरा प्रयास) मिलेगा।</span></div>
-                <div class="ins-item">🐷 <span>हर सही जवाब पर बिंदु जुड़ेंगे और अंत में एक सुंदर गुल्लक बनेगी!</span></div>
-            </div>
-            <button class="btn-start" onclick="startGame()">खेल शुरू करें 🚀</button>
-        </div>
-
-        <div id="gameplay-screen" class="screen">
-            <div class="top-navbar">
-                <div class="stats-hud">
-                    <span id="hud-question">प्रश्न: 1/10</span>
-                    <span id="hud-score">अंक: 0/10</span>
-                </div>
-                <div class="audio-btn" id="audio-toggle" onclick="toggleMute()">🔊</div>
-            </div>
-
-            <div class="canvas-container" id="canvas-box">
-                <canvas id="dot-canvas"></canvas>
-            </div>
-
-            <div class="question-box-card">
-                <div>
-                    <div class="competency-tag" id="lbl-comp">पाठ की समझ</div>
-                    <div class="main-question" id="lbl-question">लोड हो रहा है...</div>
-                    <div class="options-stack" id="box-options">
-                        </div>
-                </div>
-                <div class="hint-banner" id="lbl-hint"></div>
-            </div>
-        </div>
-
-        <div id="result-screen" class="screen">
-            <div class="victory-art">🐷🪙🎉</div>
-            <div class="title-header" style="color:var(--success-green);">गुल्लक तैयार है!</div>
-            <div class="score-circle" id="lbl-final-score">0/10</div>
-            <div class="end-msg" id="lbl-final-msg">बधाई हो! आपने बचत की आदतों से जुड़े सभी सही उत्तर देकर सारे बिंदुओं को सही तरीके से जोड़ लिया है और गुल्लक का चित्र पूरा कर लिया है।</div>
-            <button class="btn-start" onclick="resetGame()">🔄 फिर से खेलें</button>
-        </div>
-
+  <div class="main-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="switchTab('poem')">📜 कविता व सीख</button>
+      <button class="tab-btn" onclick="switchTab('facts')">🌍 रोचक तथ्य</button>
+      <button class="tab-btn" onclick="switchTab('calc')">🧮 बचत कैलकुलेटर</button>
+      <button class="tab-btn" onclick="switchTab('quiz')">🎮 प्रश्नोत्तरी</button>
     </div>
 
-    <script>
-        // Concise and Authentic Dataset based on Chapter 5: गुल्लक
-        const chapterDataset = [
-            {
-                q: "जब बच्चे की मिट्टी की गुल्लक पूरी पैसों से भर जाती है, तो उसे कैसा लगता है?",
-                options: ["वह उदास होता है", "वह बहुत खुश होता है", "वह गुस्सा होता है", "वह डर जाता है"],
-                correct: 1,
-                comp: "कविता के मुख्य भाव की समझ"
-            },
-            {
-                q: "गुल्लक भर जाने के बाद बच्चा अपने पैसों से इनमें से क्या खरीदना चाहता है?",
-                options: ["नया मकान", "गेंद और किताब", "बड़ी गाड़ी", "बड़ी दुकान"],
-                correct: 1,
-                comp: "तथ्यात्मक ज्ञान"
-            },
-            {
-                q: "मम्मी बच्चे को प्यार से हँसकर पैसे किस तरह खर्च करने की सीख देती हैं?",
-                options: ["जल्दी से", "सँभलकर और सोचकर", "बिना सोचे-समझे", "बहुत ज्यादा"],
-                correct: 1,
-                comp: "पाठ के मुख्य संवाद की समझ"
-            },
-            {
-                q: "मम्मी के अनुसार, जीवन में अपना बड़ा सपना पूरा करने के लिए हमें रोज़ क्या करना चाहिए?",
-                options: ["पैसे फेंकने चाहिए", "थोड़ी-थोड़ी बचत", "कर्ज लेना चाहिए", "खर्च बढ़ाना चाहिए"],
-                correct: 1,
-                comp: "अच्छी आदतों का विकास"
-            },
-            {
-                q: "रोज़ थोड़ा-थोड़ा पैसा बचाने से वह आगे चलकर किसके जैसा बहुत बड़ा बन जाता है?",
-                options: ["नदी जैसा", "धन के बड़े ढेर जैसा", "तालाब जैसा", "कचरे जैसा"],
-                correct: 1,
-                comp: "कविता की पंक्तियों की समझ"
-            },
-            {
-                q: "जापान देश के बच्चे अपनी रोज़ की छोटी-छोटी बचत को सुरक्षित रखने के लिए क्या रखते हैं?",
-                options: ["लोहे की तिजोरी", "एक छोटा बचत बॉक्स", "एक बड़ा झोला", "बड़ा बैंक खाता"],
-                correct: 1,
-                comp: "दुनिया के बच्चों की आदतें"
-            },
-            {
-                q: "अमेरिका में बच्चे जो 'Save Money Challenge' खेल खेलते हैं, उसका क्या मतलब है?",
-                options: ["पैसे उड़ाना", "पैसे बचाने का नियम बनाना", "पैसे चुराना", "सिक्के फेंकना"],
-                correct: 1,
-                comp: "खेल-खेल में बचत सीखना"
-            },
-            {
-                q: "स्कूलों में बच्चों को 'वित्तीय साक्षरता' (Financial Literacy) क्यों सिखाई जाती है?",
-                options: ["तेज़ी से पैसे गिनने के लिए", "पैसे का सही उपयोग सीखने के लिए", "अमीर दिखने के लिए", "नया बैंक खोलने के लिए"],
-                correct: 1,
-                comp: "व्यावहारिक शिक्षा का महत्व"
-            },
-            {
-                q: "इतिहासिक खोजों के अनुसार, दुनिया का सबसे पुराना सिक्का किस देश में मिला था?",
-                options: ["भारत", "तुर्की", "चीन", "जापान"],
-                correct: 1,
-                comp: "इतिहास की सामान्य जानकारी"
-            },
-            {
-                q: "यदि आपके माता-पिता आपको कुछ पैसे दें, तो सबसे अच्छी और सही आदत क्या होगी?",
-                options: ["प्लास्टिक के खिलौने लाना", "कुछ पैसे गुल्लक में बचाना", "बाहर का खाना खाना", "पैसे कहीं खो देना"],
-                correct: 1,
-                comp: "सही निर्णय लेने की क्षमता"
-            }
-        ];
+    <!-- TAB 1: POEM -->
+    <div id="poem-tab" class="tab-content active">
+      <div class="card">
+        <h2>मेरी गुल्लक - बचत की सीख</h2>
+        <div class="poem-text">
+          "मेरी गुल्लक छोटी प्यारी,<br>
+          बचत की यह सच्ची सवारी।<br>
+          रोज़ बचाओ थोड़ा पैसा,<br>
+          बन जाएगा धन अंबार जैसा।"[cite: 5]
+        </div>
+        <ul class="info-list">
+          <li><strong>खन-खन की आवाज़:</strong> जब भी गुल्लक में सिक्का जाता है, वह मधुर संगीत सुनाता है[cite: 5]।</li>
+          <li><strong>अभिभावकों की सीख:</strong> पापा बचत के गुण सिखाते हैं और माँ सँभलकर खर्च करने की सलाह देती हैं[cite: 5]।</li>
+          <li><strong>बचत का लाभ:</strong> थोड़ी-थोड़ी बचत करने से बड़े सपने पूरे होते हैं और जीवन भर सुख-समृद्धि मिलती है[cite: 5]।</li>
+        </ul>
+      </div>
+    </div>
 
-        const dotCoordinates = [
-            {x: 50, y: 20},  
-            {x: 75, y: 30},  
-            {x: 85, y: 55},  
-            {x: 70, y: 80},  
-            {x: 65, y: 92},  
-            {x: 45, y: 92},  
-            {x: 40, y: 80},  
-            {x: 18, y: 60},  
-            {x: 20, y: 40},  
-            {x: 38, y: 25}   
-        ];
+    <!-- TAB 2: FACTS -->
+    <div id="facts-tab" class="tab-content">
+      <div class="card">
+        <h2>अंतरराष्ट्रीय जुड़ाव व तथ्य (Facts)</h2>
+        <ul class="info-list">
+          <li><strong>पिग्गी बैंक का इतिहास:</strong> मध्य युग में बर्तन बनाने के लिए 'पिग' (Pygg) नामक मिट्टी का प्रयोग होता था, जिससे यह नाम पड़ा[cite: 5]।</li>
+          <li><strong>सबसे पुराना सिक्का:</strong> दुनिया का सबसे पुराना सिक्का लगभग 2700 साल पुराना है, जो तुर्की में मिला था[cite: 5]।</li>
+          <li><strong>जापान व अमेरिका:</strong> जापान में बच्चे रोज़ बचत बॉक्स का इस्तेमाल करते हैं, वहीं अमेरिका में 'Save Money Challenge' खेला जाता है[cite: 5]।</li>
+          <li><strong>वित्तीय साक्षरता:</strong> दुनिया भर के स्कूलों में बच्चों को Financial Literacy सिखाई जाती है[cite: 5]।</li>
+        </ul>
+      </div>
+    </div>
 
-        let challengePool = [];
-        let activeIndex = 0;
-        let runningScore = 0;
-        let currentAttempts = 0;
-        let muted = false;
-        let actionLocked = false;
-        let connectedCount = 0;
+    <!-- TAB 3: SAVINGS CALCULATOR -->
+    <div id="calc-tab" class="tab-content">
+      <div class="card">
+        <h2>अपनी गुल्लक की बचत का हिसाब लगाएँ</h2>
+        <div class="calc-box">
+          <div class="input-group">
+            <label for="daily">दैनिक बचत (प्रतिदिन रुपए):</label>
+            <input type="number" id="daily" value="5" min="1">
+          </div>
+          <div class="input-group">
+            <label for="days">दिनों की संख्या:</label>
+            <input type="number" id="days" value="30" min="1">
+          </div>
+          <button class="calc-btn" onclick="calculateSavings()">बचत की गणना करें</button>
+          <div id="calc-result" class="result-display">
+            आपकी कुल बचत: ₹150
+          </div>
+        </div>
+      </div>
+    </div>
 
-        const audioEngine = new (window.AudioContext || window.webkitAudioContext)();
+    <!-- TAB 4: QUIZ -->
+    <div id="quiz-tab" class="tab-content">
+      <div class="quiz-box">
+        <div class="quiz-question" id="quiz-q">प्रश्न लोड हो रहा है...</div>
+        <div class="quiz-options" id="quiz-opts"></div>
+        <div class="feedback" id="quiz-fb"></div>
+      </div>
+    </div>
+  </div>
 
-        function playSoundTone(actionType) {
-            if (muted) return;
-            const osc = audioEngine.createOscillator();
-            const gainNode = audioEngine.createGain();
-            osc.connect(gainNode);
-            gainNode.connect(audioEngine.destination);
-            gainNode.gain.setValueAtTime(0.08, audioEngine.currentTime);
+  <script>
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-            if (actionType === 'correct') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(440, audioEngine.currentTime); 
-                osc.frequency.setValueAtTime(554.37, audioEngine.currentTime + 0.08); 
-                osc.frequency.setValueAtTime(659.25, audioEngine.currentTime + 0.16); 
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.3);
-                osc.start();
-                osc.stop(audioEngine.currentTime + 0.3);
-            } else if (actionType === 'wrong') {
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(135, audioEngine.currentTime); 
-                gainNode.gain.exponentialRampToValueAtTime(0.01, audioEngine.currentTime + 0.35);
-                osc.start();
-                osc.stop(audioEngine.currentTime + 0.35);
-            } else if (actionType === 'win') {
-                osc.type = 'sine';
-                const t = audioEngine.currentTime;
-                osc.frequency.setValueAtTime(523.25, t);
-                osc.frequency.setValueAtTime(659.25, t + 0.1);
-                osc.frequency.setValueAtTime(783.99, t + 0.2);
-                gainNode.gain.exponentialRampToValueAtTime(0.01, t + 0.6);
-                osc.start();
-                osc.stop(t + 0.6);
-            }
-        }
+      const tabs = ['poem', 'facts', 'calc', 'quiz'];
+      const index = tabs.indexOf(tabName);
+      
+      document.querySelectorAll('.tab-btn')[index].classList.add('active');
+      document.getElementById(`${tabName}-tab`).classList.add('active');
 
-        function toggleMute() {
-            muted = !muted;
-            document.getElementById('audio-toggle').innerText = muted ? "🔇" : "🔊";
-        }
+      if(tabName === 'quiz') loadQuiz();
+    }
 
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
+    // Savings Calculator Logic
+    function calculateSavings() {
+      const daily = parseFloat(document.getElementById('daily').value) || 0;
+      const days = parseInt(document.getElementById('days').value) || 0;
+      const total = daily * days;
+      document.getElementById('calc-result').innerText = `आपकी कुल बचत: ₹${total}`;
+    }
 
-        window.onload = () => {
-            setTimeout(() => { showScreen('instruction-screen'); }, 5000); 
-        };
+    // Quiz Data
+    const quizData = [
+      {
+        q: "बचत की सच्ची सवारी किसे कहा गया है?[cite: 5]",
+        opts: ["पैसा", "दादी", "सिक्का", "गुल्लक"],
+        ans: 3
+      },
+      {
+        q: "दुनिया का सबसे पुराना सिक्का किस देश में मिला था?[cite: 5]",
+        opts: ["भारत", "तुर्की", "जापान", "चीन"],
+        ans: 1
+      },
+      {
+        q: "पापा बच्चे को क्या सिखाते हैं?[cite: 5]",
+        opts: ["बचत करना", "खर्च करना", "खेलना", "सोना"],
+        ans: 0
+      },
+      {
+        q: "'पिग्गी बैंक' नाम किस मिट्टी से पड़ा?[cite: 5]",
+        opts: ["रेत", "पिग (Pygg)", "चिकनी मिट्टी", "लाल मिट्टी"],
+        ans: 1
+      }
+    ];
 
-        function startGame() {
-            if (audioEngine.state === 'suspended') { audioEngine.resume(); }
-            challengePool = [...chapterDataset];
-            activeIndex = 0;
-            runningScore = 0;
-            connectedCount = 0;
+    let qIndex = 0;
 
-            showScreen('gameplay-screen');
-            setupDotNodes();
-            loadNextQuestion();
-            
-            window.addEventListener('resize', drawConnectingLines);
-        }
+    function loadQuiz() {
+      const q = quizData[qIndex];
+      document.getElementById('quiz-q').innerText = `प्र॰ ${qIndex + 1}: ${q.q}`;
+      const opts = document.getElementById('quiz-opts');
+      opts.innerHTML = '';
+      document.getElementById('quiz-fb').innerText = '';
 
-        function setupDotNodes() {
-            const container = document.getElementById('canvas-box');
-            document.querySelectorAll('.dot-node, .dot-label').forEach(el => el.remove());
+      q.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkQuiz(idx);
+        opts.appendChild(btn);
+      });
+    }
 
-            dotCoordinates.forEach((coord, idx) => {
-                const node = document.createElement('div');
-                node.className = 'dot-node';
-                node.id = `dot-${idx + 1}`;
-                node.style.left = `${coord.x}%`;
-                node.style.top = `${coord.y}%`;
-
-                const label = document.createElement('div');
-                label.className = 'dot-label';
-                label.innerText = idx + 1;
-                label.style.left = `${coord.x}%`;
-                label.style.top = `${coord.y}%`;
-
-                container.appendChild(node);
-                container.appendChild(label);
-            });
-
-            document.getElementById('dot-1').classList.add('active');
-            drawConnectingLines();
-        }
-
-        function drawConnectingLines() {
-            const canvas = document.getElementById('dot-canvas');
-            const container = document.getElementById('canvas-box');
-            canvas.width = container.clientWidth;
-            canvas.height = container.clientHeight;
-
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = '#b45309';
-            ctx.lineCap = 'round';
-
-            if (connectedCount < 1) return;
-
-            ctx.beginPath();
-            for (let i = 0; i <= connectedCount; i++) {
-                if (i >= dotCoordinates.length) break;
-                const realX = (dotCoordinates[i].x / 100) * canvas.width;
-                const realY = (dotCoordinates[i].y / 100) * canvas.height;
-
-                if (i === 0) {
-                    ctx.moveTo(realX, realY);
-                } else {
-                    ctx.lineTo(realX, realY);
-                }
-            }
-
-            if (connectedCount >= 10) {
-                const startX = (dotCoordinates[0].x / 100) * canvas.width;
-                const startY = (dotCoordinates[0].y / 100) * canvas.height;
-                ctx.lineTo(startX, startY);
-            }
-            ctx.stroke();
-        }
-
-        function loadNextQuestion() {
-            currentAttempts = 0;
-            actionLocked = false;
-            const currentItem = challengePool[activeIndex];
-
-            document.getElementById('hud-question').innerText = `प्रश्न: ${activeIndex + 1}/10`;
-            document.getElementById('hud-score').innerText = `अंक: ${runningScore}/10`;
-            document.getElementById('lbl-comp').innerText = currentItem.comp;
-            document.getElementById('lbl-question').innerText = currentItem.q;
-            document.getElementById('lbl-hint').style.display = 'none';
-
-            const optionsContainer = document.getElementById('box-options');
-            optionsContainer.innerHTML = '';
-
-            currentItem.options.forEach((optText, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = optText;
-                btn.onclick = () => evaluateChoice(idx, btn);
-                optionsContainer.appendChild(btn);
-            });
-        }
-
-        function evaluateChoice(selectedIndex, selectedBtn) {
-            if (actionLocked) return;
-            const item = challengePool[activeIndex];
-            const hintBox = document.getElementById('lbl-hint');
-
-            if (selectedIndex === item.correct) {
-                actionLocked = true;
-                selectedBtn.classList.add('correct');
-                playSoundTone('correct');
-
-                runningScore++;
-                connectedCount++;
-
-                if (connectedCount < 10) {
-                    const nextNode = document.getElementById(`dot-${connectedCount + 1}`);
-                    if (nextNode) nextNode.classList.add('active');
-                }
-
-                drawConnectingLines();
-                setTimeout(proceedForward, 1200);
-            } else {
-                currentAttempts++;
-                selectedBtn.classList.add('wrong');
-                selectedBtn.disabled = true;
-                playSoundTone('wrong');
-
-                if (currentAttempts === 1) {
-                    hintBox.innerText = "गलत विकल्प! ध्यान से सोचें, आपके पास 1 और मौका है।";
-                    hintBox.style.display = 'block';
-                } else {
-                    actionLocked = true;
-                    hintBox.style.display = 'none';
-                    const allButtons = document.querySelectorAll('.option-btn');
-                    allButtons[item.correct].classList.add('correct');
-                    
-                    connectedCount++;
-                    if (connectedCount < 10) {
-                        const nextNode = document.getElementById(`dot-${connectedCount + 1}`);
-                        if (nextNode) nextNode.classList.add('active');
-                    }
-                    drawConnectingLines();
-                    
-                    setTimeout(proceedForward, 1800);
-                }
-            }
-        }
-
-        function proceedForward() {
-            activeIndex++;
-            if (activeIndex < challengePool.length) {
-                loadNextQuestion();
-            } else {
-                setTimeout(endGame, 400);
-            }
-        }
-
-        function endGame() {
-            showScreen('result-screen');
-            document.getElementById('lbl-final-score').innerText = `${runningScore}/10`;
-            playSoundTone('win');
-
-            const messageBox = document.getElementById('lbl-final-msg');
-            if (runningScore >= 8) {
-                messageBox.innerText = "अद्भुत! 🎉 आपने सभी प्रश्नों के सही उत्तर देकर सारे बिंदुओं को सही तरीके से जोड़ लिया है और आपकी सुंदर मिट्टी की गुल्लक तैयार हो गई है!";
-            } else if (runningScore >= 5) {
-                messageBox.innerText = "अच्छा प्रयास! 👍 आपने गुल्लक का चित्र पूरा तो कर लिया, लेकिन कुछ उत्तरों में भूल हुई। अपनी बचत की समझ को और पक्का करने के लिए फिर से खेलें।";
-            } else {
-                messageBox.innerText = "कोई बात नहीं! 🌿 गुल्लक की अच्छी आदतों और समझदारी की सीख को एक बार फिर से याद करने के लिए दोबारा खेलें। अभ्यास से ही सुधार होगा!";
-            }
-        }
-
-        function resetGame() {
-            showScreen('instruction-screen');
-        }
-    </script>
+    function checkQuiz(selected) {
+      const q = quizData[qIndex];
+      const fb = document.getElementById('quiz-fb');
+      if (selected === q.ans) {
+        fb.style.color = 'green';
+        fb.innerText = 'शाबाश! सही उत्तर 🌟';
+        qIndex = (qIndex + 1) % quizData.length;
+        setTimeout(loadQuiz, 1500);
+      } else {
+        fb.style.color = 'red';
+        fb.innerText = 'पुनः प्रयास करें!';
+      }
+    }
+  </script>
 </body>
 </html>
