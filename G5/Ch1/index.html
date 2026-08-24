@@ -71,9 +71,9 @@
 </head>
 <body>
 
-  <!-- Hidden Audio Elements -->
-  <audio id="audioCorrect" src="correct.mp3" preload="auto"></audio>
-  <audio id="audioWrong" src="wrong.mp3" preload="auto"></audio>
+  <!-- Audio Elements Updated with assets/ path -->
+  <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
+  <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
 
   <!-- 1. Logo Screen -->
   <div id="logo-screen" class="screen active">
@@ -129,7 +129,6 @@
   </div>
 
   <script>
-    // Chapter 1: जागो प्यारे (Class 5 Hindi) - Game Questions
     const originalQuestions = [
       {
         lineBefore: "उठो लाल अब आँखें खोलो, पानी लाई हूँ",
@@ -195,7 +194,6 @@
     let attemptsLeft = 2;
     let isAnswered = false;
 
-    // Shuffle Array Helper
     function shuffleArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -204,7 +202,6 @@
       return array;
     }
 
-    // Play Audio Helper
     function playSound(type) {
       const audio = document.getElementById(type === 'correct' ? 'audioCorrect' : 'audioWrong');
       if (audio) {
@@ -213,11 +210,9 @@
       }
     }
 
-    // Window Load Event
     window.addEventListener('DOMContentLoaded', () => {
       document.getElementById('total-questions').textContent = originalQuestions.length;
       
-      // Auto transition from Logo Screen to Instruction Screen after 5 seconds
       setTimeout(() => {
         switchScreen('intro-screen');
       }, 5000);
@@ -229,7 +224,6 @@
     }
 
     function startGame() {
-      // Deep copy & Shuffle questions
       gameQuestions = JSON.parse(JSON.stringify(originalQuestions));
       shuffleArray(gameQuestions);
       
@@ -251,11 +245,9 @@
       document.getElementById('feedbackMsg').className = 'feedback-msg';
       document.getElementById('nextBtn').style.display = 'none';
 
-      // Render Poem Line with Blank Space
       const poemBox = document.getElementById('poemBox');
       poemBox.innerHTML = `${q.lineBefore} <span class="blank-space" id="blankWord">?</span> ${q.lineAfter}`;
 
-      // Shuffle Word Options
       const shuffledOptions = shuffleArray([...q.options]);
       const wordsContainer = document.getElementById('wordsContainer');
       wordsContainer.innerHTML = '';
@@ -277,13 +269,11 @@
       const blankWord = document.getElementById('blankWord');
 
       if (selectedWord === q.correctWord) {
-        // CORRECT ANSWER
         playSound('correct');
         btnElement.classList.add('correct');
         blankWord.textContent = selectedWord;
         blankWord.style.color = 'var(--success)';
         
-        // Scoring based on attempts left
         const pointsEarned = attemptsLeft === 2 ? 10 : 5;
         score += pointsEarned;
         document.getElementById('current-score').textContent = score;
@@ -296,7 +286,6 @@
         document.getElementById('nextBtn').style.display = 'inline-block';
 
       } else {
-        // INCORRECT ANSWER
         playSound('wrong');
         btnElement.classList.add('incorrect');
         btnElement.disabled = true;
@@ -307,14 +296,12 @@
           feedbackMsg.textContent = `❌ गलत उत्तर! एक और प्रयास करें। (संकेत: ${q.hint})`;
           feedbackMsg.className = 'feedback-msg wrong-text';
         } else {
-          // REVEAL CORRECT ANSWER AFTER 2 FAILED ATTEMPTS
           feedbackMsg.textContent = `❌ प्रयास समाप्त! सही उत्तर था: "${q.correctWord}"`;
           feedbackMsg.className = 'feedback-msg wrong-text';
           
           blankWord.textContent = q.correctWord;
           blankWord.style.color = 'var(--danger)';
 
-          // Highlight the actual correct option chip
           document.querySelectorAll('.word-chip').forEach(chip => {
             if (chip.textContent === q.correctWord) {
               chip.classList.add('correct');
