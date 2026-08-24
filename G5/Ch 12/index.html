@@ -1,1 +1,345 @@
 
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>चाँद की चिट्ठी - 2 Level Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #090d16;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 12px;
+    }
+
+    #game-card {
+      background: #111827;
+      border: 3px solid #e2e8f0;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 700px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(226, 232, 240, 0.2);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      color: #fef08a;
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    .header p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      background: #1f2937;
+      padding: 10px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #fef08a;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .intro-box {
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .intro-box h2 {
+      color: #60a5fa;
+      margin-bottom: 12px;
+    }
+
+    .level-desc {
+      background: #030712;
+      padding: 14px;
+      border-radius: 8px;
+      margin: 12px 0;
+      text-align: left;
+      border-left: 4px solid #fef08a;
+    }
+
+    .level-desc strong {
+      color: #fef08a;
+    }
+
+    .q-box {
+      background: #030712;
+      padding: 18px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      border-left: 5px solid #fef08a;
+      line-height: 1.5;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .opt-btn {
+      background: #1f2937;
+      color: #ffffff;
+      border: 2px solid #374151;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .opt-btn:hover {
+      background: #374151;
+      border-color: #fef08a;
+    }
+
+    .feedback {
+      margin-top: 15px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      min-height: 25px;
+      text-align: center;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+      color: #000;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-card">
+    <div class="header">
+      <h1>🌕 पाठ 12: चाँद की चिट्ठी ✉️</h1>
+      <p>चाँद, चंद्रयान और व्याकरण - 2 स्तर का खेल</p>
+    </div>
+
+    <div class="status-bar" id="status-bar" style="display: none;">
+      <div>स्तर (Level): <span id="level-num">1</span></div>
+      <div>अंक (Score): <span id="score-num">0</span></div>
+    </div>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen active intro-box">
+      <h2>🚀 अंतरिक्ष यात्रा में आपका स्वागत है!</h2>
+      <div class="level-desc">
+        <strong>स्तर 1: पाठ बोध (Moon & Chandrayaan Quiz)</strong><br>
+        चाँद की कलाओं, गुरुत्वाकर्षण, नील आर्मस्ट्रॉन्ग और चंद्रयान अभियानों से जुड़े प्रश्न।
+      </div>
+      <div class="level-desc">
+        <strong>स्तर 2: व्याकरण अभ्यास (Grammar Quiz)</strong><br>
+        अर्थ (प्रश्नवाचक, विस्मयवाचक आदि) और रचना (सरल, संयुक्त, मिश्र वाक्य) के आधार पर वाक्य-भेद का अभ्यास।
+      </div>
+      <button class="btn" onclick="startLevel(1)">स्तर 1 प्रारंभ करें</button>
+    </div>
+
+    <!-- GAME PLAY SCREEN -->
+    <div id="play-screen" class="screen">
+      <div class="q-box" id="q-text">प्रश्न यहाँ दिखेगा...</div>
+      <div class="options-grid" id="opts-container"></div>
+      <div class="feedback" id="feedback-msg"></div>
+    </div>
+
+    <!-- LEVEL COMPLETE / GAME OVER SCREEN -->
+    <div id="end-screen" class="screen intro-box">
+      <h2 id="end-title">स्तर पूर्ण! 🎉</h2>
+      <p id="end-desc" style="margin: 15px 0; font-size: 1.1rem;"></p>
+      <button class="btn" id="next-btn" onclick="nextAction()">आगे बढ़ें</button>
+    </div>
+  </div>
+
+  <script>
+    // LEVEL 1: STORY & SCIENCE QUESTIONS
+    const level1Data = [
+      {
+        q: "चाँद पर सबसे पहले कदम रखने वाले अंतरिक्षयात्री कौन थे?",
+        opts: ["बज़ एल्ड्रिन", "नील आर्मस्ट्रॉन्ग", "राकेश शर्मा", "यूरी गागरिन"],
+        ans: 1
+      },
+      {
+        q: "चाँद का गुरुत्वाकर्षण बल पृथ्वी के गुरुत्वाकर्षण का लगभग कितना भाग है?",
+        opts: ["1/2 भाग", "1/4 भाग", "1/6 भाग", "1/10 भाग"],
+        ans: 2
+      },
+      {
+        q: "23 अगस्त 2023 को चंद्रयान-3 के 'प्रज्ञान' रोवर ने चाँद पर किस तत्त्व की उपस्थिति दर्ज की?",
+        opts: ["सल्फर", "सोना", "चाँदी", "हीलियम"],
+        ans: 0
+      },
+      {
+        q: "चाँद वैज्ञानिक खोजों से प्रसन्न होने के साथ-साथ किस बात को लेकर चिंतित है?",
+        opts: ["उसका प्रकाश कम हो जाएगा", "खोज के दौरान वहाँ कचरा छोड़ा जा सकता है", "मनुष्य उससे प्रश्न पूछता है", "अंतरिक्षयान छोटे हैं"],
+        ans: 1
+      }
+    ];
+
+    // LEVEL 2: GRAMMAR QUESTIONS (वाक्य-भेद)
+    const level2Data = [
+      {
+        q: "'वाह! पृथ्वी कितनी सुंदर दिखाई देती है!' अर्थ के आधार पर यह कौन-सा वाक्य है?",
+        opts: ["प्रश्नवाचक", "आज्ञावाचक", "विस्मयवाचक", "निषेधवाचक"],
+        ans: 2
+      },
+      {
+        q: "'क्या चाँद पर साँस लेने योग्य हवा है?' अर्थ के आधार पर वाक्य का भेद बताइए:",
+        opts: ["प्रश्नवाचक", "विधानवाचक", "इच्छावाचक", "संदेहवाचक"],
+        ans: 0
+      },
+      {
+        q: "'प्रज्ञान रोवर चाँद पर चला।' रचना के आधार पर यह कौन-सा वाक्य भेद है?",
+        opts: ["संयुक्त वाक्य", "सरल वाक्य", "मिश्र वाक्य", "आश्रित वाक्य"],
+        ans: 1
+      },
+      {
+        q: "'चाँद निकला और चारों ओर उजाला फैल गया।' रचना के आधार पर वाक्य पहचानिए:",
+        opts: ["सरल वाक्य", "संयुक्त वाक्य", "मिश्र वाक्य", "निषेधवाचक वाक्य"],
+        ans: 1
+      }
+    ];
+
+    let currentLevel = 1;
+    let currentQIndex = 0;
+    let score = 0;
+    let currentQuestions = [];
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function startLevel(lvl) {
+      currentLevel = lvl;
+      currentQIndex = 0;
+      currentQuestions = (lvl === 1) ? level1Data : level2Data;
+
+      document.getElementById('status-bar').style.display = 'flex';
+      document.getElementById('level-num').innerText = currentLevel;
+      document.getElementById('score-num').innerText = score;
+
+      showScreen('play-screen');
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const q = currentQuestions[currentQIndex];
+      document.getElementById('q-text').innerText = `प्र॰ ${currentQIndex + 1}: ${q.q}`;
+      document.getElementById('feedback-msg').innerText = '';
+
+      const container = document.getElementById('opts-container');
+      container.innerHTML = '';
+
+      q.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerText = opt;
+        btn.onclick = () => selectOption(idx);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectOption(selectedIdx) {
+      const q = currentQuestions[currentQIndex];
+      const feedback = document.getElementById('feedback-msg');
+      const btns = document.querySelectorAll('.opt-btn');
+
+      btns.forEach(b => b.style.pointerEvents = 'none');
+
+      if (selectedIdx === q.ans) {
+        feedback.style.color = '#4ade80';
+        feedback.innerText = '✓ शाबाश! सही उत्तर।';
+        btns[selectedIdx].style.background = '#166534';
+        btns[selectedIdx].style.borderColor = '#4ade80';
+        score += 10;
+        document.getElementById('score-num').innerText = score;
+      } else {
+        feedback.style.color = '#f87171';
+        feedback.innerText = `✗ गलत उत्तर! सही उत्तर था: ${q.opts[q.ans]}`;
+        btns[selectedIdx].style.background = '#991b1b';
+        btns[q.ans].style.background = '#166534';
+      }
+
+      setTimeout(() => {
+        currentQIndex++;
+        if (currentQIndex < currentQuestions.length) {
+          loadQuestion();
+        } else {
+          finishLevel();
+        }
+      }, 1800);
+    }
+
+    function finishLevel() {
+      showScreen('end-screen');
+      const title = document.getElementById('end-title');
+      const desc = document.getElementById('end-desc');
+      const btn = document.getElementById('next-btn');
+
+      if (currentLevel === 1) {
+        title.innerText = '🌕 स्तर 1 पूर्ण! (Level 1 Completed)';
+        desc.innerText = `अद्भुत! आपने चाँद की चिट्ठी पाठ के सभी प्रश्नों का सही उत्तर दिया। आपका स्कोर: ${score}`;
+        btn.innerText = 'स्तर 2 (वाक्य-भेद) प्रारंभ करें';
+      } else {
+        title.innerText = '🏆 बधाई हो! खेल समाप्त';
+        desc.innerText = `शानदार प्रदर्शन! आपने पाठ बोध और हिंदी व्याकरण (वाक्य-भेद) दोनों स्तर सफलता से पूरे कर लिए। अंतिम स्कोर: ${score}/80`;
+        btn.innerText = 'पुनः खेलें (Play Again)';
+      }
+    }
+
+    function nextAction() {
+      if (currentLevel === 1) {
+        startLevel(2);
+      } else {
+        score = 0;
+        startLevel(1);
+      }
+    }
+  </script>
+</body>
+</html>
