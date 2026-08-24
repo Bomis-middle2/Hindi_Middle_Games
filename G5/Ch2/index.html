@@ -1,68 +1,320 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>पेड़ों की महिमा - सही या गलत</title>
-<style>
-  :root { --primary: #15803d; --bg: #f0fdf4; --card: #ffffff; }
-  body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-  .game-card { background: var(--card); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 550px; text-align: center; }
-  .statement-box { background: #dcfce7; padding: 25px; border-radius: 12px; font-size: 1.2rem; font-weight: bold; color: #14532d; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; }
-  .btn-container { display: flex; gap: 15px; justify-content: center; }
-  .btn-choice { padding: 12px 30px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-  .btn-true { background: #22c55e; color: white; }
-  .btn-false { background: #ef4444; color: white; }
-  .btn-choice:hover { transform: scale(1.05); }
-  .feedback { margin-top: 15px; font-weight: bold; font-size: 1.1rem; min-height: 30px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>पेड़ों की महिमा - गेम</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #1b5e20;
+    }
+
+    .game-container {
+      background: #ffffff;
+      border: 3px solid #4caf50;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 650px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .dashboard {
+      display: flex;
+      justify-content: space-around;
+      background: #c8e6c9;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+
+    .canvas-area {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      background: linear-gradient(to bottom, #81d4fa 60%, #a5d6a7 60%);
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid #81c784;
+    }
+
+    .tree {
+      position: absolute;
+      bottom: 40px;
+      font-size: 45px;
+      user-select: none;
+      transition: transform 0.2s;
+    }
+
+    .tree:hover {
+      transform: scale(1.15);
+    }
+
+    .threat {
+      position: absolute;
+      font-size: 35px;
+      cursor: pointer;
+      user-select: none;
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.2); }
+    }
+
+    .controls {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #388e3c;
+    }
+
+    button:disabled {
+      background-color: #a5d6a7;
+      cursor: not-allowed;
+    }
+
+    /* Word Bridge Modal / Area */
+    .word-bridge {
+      margin-top: 20px;
+      background: #f1f8e9;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #66bb6a;
+    }
+
+    .word-bridge h3 {
+      margin-bottom: 10px;
+      color: #2e7d32;
+    }
+
+    .word-display {
+      font-size: 1.5rem;
+      letter-spacing: 4px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .input-group {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      font-size: 1rem;
+      width: 60px;
+      text-align: center;
+      border: 2px solid #4caf50;
+      border-radius: 4px;
+    }
+
+    .instruction {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
-<div class="game-card">
-  <h2>पेड़ों की महिमा - सही या गलत?</h2>
-  <div style="margin-top: 10px; color: #64748b;">अंक: <span id="score">0</span></div>
-  <div class="statement-box" id="statement">कथन यहाँ आएगा...</div>
-  <div class="btn-container">
-    <button class="btn-choice btn-true" onclick="checkAnswer(true)">सही (True)</button>
-    <button class="btn-choice btn-false" onclick="checkAnswer(false)">गलत (False)</button>
+
+  <h1>🌳 पेड़ों की महिमा - रक्षा और शब्द-सेतु 🌳</h1>
+
+  <div class="game-container">
+    <div class="dashboard">
+      <div>ऑक्सीजन 💨: <span id="score">0</span></div>
+      <div>पेड़ 🌲: <span id="tree-count">0</span></div>
+    </div>
+
+    <div class="canvas-area" id="game-canvas">
+      <!-- Trees and threats will render here dynamically -->
+    </div>
+
+    <p class="instruction">मैदान पर क्लिक करके पेड़ लगाएं (Water/Plant)! खतरों (🏭, 🪓) पर क्लिक करके पर्यावरण की रक्षा करें!</p>
+
+    <div class="controls">
+      <button id="btn-water" onclick="plantTree()">पेड़ लगाएं (Plant)</button>
+    </div>
+
+    <!-- Word Bridge Challenge Section -->
+    <div class="word-bridge">
+      <h3>🧩 शब्द-सेतु (Fill the Missing Letter)</h3>
+      <div class="word-display" id="quiz-word">_ क्सीजन</div>
+      <div class="input-group">
+        <input type="text" id="missing-letter" maxlength="2" placeholder="अक्षर">
+        <button onclick="checkWordAnswer()">जांचें</button>
+      </div>
+      <p id="quiz-feedback" style="margin-top: 8px; font-weight: bold;"></p>
+    </div>
   </div>
-  <div class="feedback" id="feedback"></div>
-  <button id="nextBtn" style="display:none; margin: 20px auto 0; padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;" onclick="loadNext()">अगला प्रश्न ➔</button>
-</div>
 
-<script>
-  const questions = [
-    { text: "पेड़ों को पर्यावरण का 'हरा सोना' कहा जाता है।", ans: true },
-    { text: "पेड़ ऑक्सीजन ग्रहण करते हैं और कार्बन डाइऑक्साइड छोड़ते हैं।", ans: false },
-    { text: "विश्व पर्यावरण दिवस 5 जून को मनाया जाता है।", ans: true },
-    { text: "भगवान बुद्ध को बरगद के पेड़ के नीचे ज्ञान प्राप्त हुआ था।", ans: false }
-  ];
-  let index = 0, score = 0;
+  <script>
+    let score = 0;
+    let trees = [];
+    let threats = [];
+    const canvas = document.getElementById('game-canvas');
+    const scoreEl = document.getElementById('score');
+    const treeCountEl = document.getElementById('tree-count');
 
-  function loadNext() {
-    if(index >= questions.length) {
-      document.querySelector('.game-card').innerHTML = `<h2>खेल समाप्त!</h2><p style="font-size:1.5rem; margin:20px 0;">आपका कुल अंक: ${score} / ${questions.length * 10}</p><button onclick="location.reload()" class="btn-choice btn-true">पुनः खेलें</button>`;
-      return;
+    // Vocabulary Questions from Page 20 Word Bridge
+    const vocabList = [
+      { display: "_ क्सीजन", missing: "ऑ", full: "ऑक्सीजन" },
+      { display: "अ _ मोल", missing: "न", full: "अनमोल" },
+      { display: "ज _ वायु", missing: "ल", full: "जलवायु" },
+      { display: "पु _ य", missing: "ण", full: "पुण्य" }
+    ];
+
+    let currentQuizIndex = 0;
+
+    // Plant a Tree
+    function plantTree(xPos) {
+      if (trees.length >= 10) return;
+
+      const x = xPos || Math.random() * (canvas.clientWidth - 50);
+      const tree = document.createElement('div');
+      tree.className = 'tree';
+      tree.innerHTML = '🌲';
+      tree.style.left = `${x}px`;
+      canvas.appendChild(tree);
+      
+      trees.push(tree);
+      updateDashboard();
     }
-    document.getElementById('statement').innerText = questions[index].text;
-    document.getElementById('feedback').innerText = '';
-    document.getElementById('nextBtn').style.display = 'none';
-  }
 
-  function checkAnswer(userAns) {
-    const isCorrect = userAns === questions[index].ans;
-    const fb = document.getElementById('feedback');
-    if(isCorrect) {
-      score += 10;
-      document.getElementById('score').innerText = score;
-      fb.innerText = "🎉 सही उत्तर!"; fb.style.color = "#22c55e";
-    } else {
-      fb.innerText = "❌ गलत उत्तर!"; fb.style.color = "#ef4444";
+    // Canvas click to plant tree manually
+    canvas.addEventListener('click', (e) => {
+      if (e.target === canvas) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left - 20;
+        plantTree(x);
+      }
+    });
+
+    // Spawn Threats (Pollution / Axes)
+    function spawnThreat() {
+      if (trees.length === 0) return;
+
+      const threatTypes = ['🏭', '🪓', '💨'];
+      const type = threatTypes[Math.floor(Math.random() * threatTypes.length)];
+      
+      const threat = document.createElement('div');
+      threat.className = 'threat';
+      threat.innerHTML = type;
+      threat.style.left = `${Math.random() * (canvas.clientWidth - 40)}px`;
+      threat.style.top = `${Math.random() * 150 + 20}px`;
+
+      // Click threat to neutralize
+      threat.onclick = (e) => {
+        e.stopPropagation();
+        canvas.removeChild(threat);
+        threats = threats.filter(t => t !== threat);
+        score += 15; // Reward for neutralizing threat
+        updateDashboard();
+      };
+
+      canvas.appendChild(threat);
+      threats.push(threat);
+
+      // Threat destroys a tree if left alone for 4 seconds
+      setTimeout(() => {
+        if (threats.includes(threat)) {
+          canvas.removeChild(threat);
+          threats = threats.filter(t => t !== threat);
+          if (trees.length > 0) {
+            const removedTree = trees.pop();
+            canvas.removeChild(removedTree);
+            updateDashboard();
+          }
+        }
+      }, 4000);
     }
-    document.getElementById('nextBtn').style.display = 'block';
-    index++;
-  }
-  loadNext();
-</script>
+
+    // Passive Oxygen Production from Trees
+    setInterval(() => {
+      score += trees.length * 2;
+      updateDashboard();
+    }, 2000);
+
+    // Random threats spawn every 3.5 seconds
+    setInterval(spawnThreat, 3500);
+
+    function updateDashboard() {
+      scoreEl.innerText = score;
+      treeCountEl.innerText = trees.length;
+    }
+
+    // Load Quiz Question
+    function loadQuiz() {
+      const q = vocabList[currentQuizIndex];
+      document.getElementById('quiz-word').innerText = q.display;
+      document.getElementById('missing-letter').value = '';
+      document.getElementById('quiz-feedback').innerText = '';
+    }
+
+    // Check Word Bridge Answer
+    function checkWordAnswer() {
+      const input = document.getElementById('missing-letter').value.trim();
+      const current = vocabList[currentQuizIndex];
+      const feedback = document.getElementById('quiz-feedback');
+
+      if (input === current.missing) {
+        feedback.style.color = 'green';
+        feedback.innerText = `सही उत्तर! (${current.full}) +50 ऑक्सीजन!`;
+        score += 50;
+        plantTree();
+        updateDashboard();
+        
+        currentQuizIndex = (currentQuizIndex + 1) % vocabList.length;
+        setTimeout(loadQuiz, 1500);
+      } else {
+        feedback.style.color = 'red';
+        feedback.innerText = 'गलत उत्तर, पुनः प्रयास करें!';
+      }
+    }
+
+    // Initialize initial tree and quiz
+    plantTree(100);
+    loadQuiz();
+  </script>
 </body>
 </html>
