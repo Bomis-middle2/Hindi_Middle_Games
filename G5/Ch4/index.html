@@ -1,138 +1,370 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>होली - Grammar Time Attack</title>
-<style>
-  :root { --primary: #9333ea; --bg: #f3e8ff; --card: #ffffff; }
-  body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-  .game-card { background: var(--card); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 550px; text-align: center; }
-  .level-badge { display: inline-block; background: #e9d5ff; color: #6b21a8; padding: 4px 12px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; margin-bottom: 10px; }
-  .timer-bar { height: 8px; background: #e9d5ff; border-radius: 4px; margin: 15px 0; overflow: hidden; }
-  .timer-fill { height: 100%; background: var(--primary); width: 100%; transition: width 0.1s linear; }
-  .status-bar { display: flex; justify-content: space-between; font-weight: bold; color: #4c1d95; margin-bottom: 15px; }
-  .question-box { background: #faf5ff; padding: 20px; border: 2px dashed #c084fc; border-radius: 12px; font-size: 1.2rem; font-weight: bold; color: #581c87; margin-bottom: 20px; min-height: 60px; display: flex; align-items: center; justify-content: center; }
-  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .btn-opt { padding: 14px; font-size: 1rem; font-weight: bold; border: 2px solid #e9d5ff; background: #ffffff; color: #581c87; border-radius: 10px; cursor: pointer; transition: 0.2s; }
-  .btn-opt:hover { background: #f3e8ff; transform: translateY(-2px); }
-  .feedback { margin-top: 15px; font-weight: bold; font-size: 1.1rem; min-height: 25px; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>होली का त्योहार - सुंदर कविता व गतिविधियाँ</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #fce4ec;
+      color: #4a148c;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #c2185b;
+      text-align: center;
+    }
+
+    .main-container {
+      background: #ffffff;
+      border: 3px solid #f48fb1;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 700px;
+      padding: 20px;
+    }
+
+    /* Tab Controls */
+    .tab-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      background-color: #f48fb1;
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    .tab-btn.active, .tab-btn:hover {
+      background-color: #c2185b;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Poem & Content Section */
+    .card {
+      background: #fff8e1;
+      border: 2px dashed #ffe082;
+      padding: 20px;
+      border-radius: 8px;
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
+
+    .card h2 {
+      color: #d81b60;
+      margin-bottom: 12px;
+      font-size: 1.3rem;
+      border-bottom: 2px solid #ff80ab;
+      padding-bottom: 5px;
+    }
+
+    .poem-text {
+      font-style: italic;
+      text-align: center;
+      color: #880e4f;
+      margin-bottom: 15px;
+    }
+
+    .info-list {
+      margin-left: 20px;
+    }
+
+    .info-list li {
+      margin-bottom: 8px;
+    }
+
+    /* Color Mixer Interactive */
+    .mixer-box {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    .color-inputs {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .color-select {
+      padding: 8px 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 2px solid #f48fb1;
+    }
+
+    .result-display {
+      width: 100%;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2rem;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px #000;
+      transition: background 0.3s;
+    }
+
+    /* Quiz Game */
+    .quiz-box {
+      margin-top: 10px;
+      background: #f3e5f5;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px dashed #ba68c8;
+      text-align: center;
+    }
+
+    .quiz-question {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .opt-btn {
+      background-color: #ffffff;
+      border: 1.5px solid #ab47bc;
+      color: #4a148c;
+      padding: 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+
+    .opt-btn:hover {
+      background-color: #e1bee7;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-<div class="game-card">
-  <h2>🎨 होली - व्याकरण टाइम अटैक</h2>
-  <div class="level-badge" id="levelBadge">Level 1</div>
-  
-  <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
-  <div class="status-bar">
-    <span>अंक: <span id="score">0</span></span>
-    <span>समय: <span id="timeLeft">10</span>s</span>
+  <h1>🎨 होली - रंगों का त्योहार 🎨</h1>
+
+  <div class="main-container">
+    <div class="tab-buttons">
+      <button class="tab-btn active" onclick="switchTab('poem')">📜 कविता व भाव</button>
+      <button class="tab-btn" onclick="switchTab('facts')">🌍 अंतरराष्ट्रीय जुड़ाव</button>
+      <button class="tab-btn" onclick="switchTab('mixer')">🎨 रंग मिश्रण</button>
+      <button class="tab-btn" onclick="switchTab('quiz')">🎮 प्रश्नोत्तरी</button>
+    </div>
+
+    <!-- TAB 1: POEM -->
+    <div id="poem-tab" class="tab-content active">
+      <div class="card">
+        <h2>होली के रंगों का संदेश</h2>
+        <div class="poem-text">
+          "होली आई, होली आई,<br>
+          संग रंगों की सौगात लाई।<br>
+          पीला, हरा, नीला, लाल,<br>
+          गूँज उठा मंजीरे का ताल।"[cite: 4]
+        </div>
+        <ul class="info-list">
+          <li><strong>लाल रंग:</strong> प्रेम सिखाता है और मन में अपनापन जगाता है[cite: 4]।</li>
+          <li><strong>पीला रंग:</strong> विश्वास बढ़ाता है और जीवन में उजियारा लाता है[cite: 4]।</li>
+          <li><strong>हरा रंग:</strong> नई आशा भरता है और दिल में उत्साह सँवारता है[cite: 4]।</li>
+          <li><strong>केसरिया रंग:</strong> साहस और उमंग की शक्ति देता है[cite: 4]।</li>
+          <li><strong>मुख्य संदेश:</strong> जाति-धर्म की दीवारें तोड़कर मानवता, प्रेम और दया का प्रसार करना[cite: 4]।</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TAB 2: FACTS -->
+    <div id="facts-tab" class="tab-content">
+      <div class="card">
+        <h2>विश्व भर में होली (International Connect)</h2>
+        <ul class="info-list">
+          <li><strong>नेपाल:</strong> इसे 'फागु पूर्णिमा' कहते हैं; लोग पशु-पक्षियों पर रंग नहीं, बल्कि फूल बरसाते हैं[cite: 4]।</li>
+          <li><strong>मॉरीशस & जर्मनी:</strong> पानी बचाने के लिए सूखे गुलाल से होली मनाई जाती है[cite: 4]।</li>
+          <li><strong>ऑस्ट्रेलिया:</strong> इसे 'फेस्टिवल ऑफ कलर्स' कहा जाता है, जहाँ जल-संरक्षण पर ध्यान दिया जाता है[cite: 4]।</li>
+          <li><strong>बरसाना (भारत):</strong> यहाँ की विश्व प्रसिद्ध 'लठमार होली' खेली जाती है[cite: 4]।</li>
+          <li><strong>पारंपरिक रंग:</strong> नीम, हल्दी और कुमकुम से बने प्राकृतिक रंग त्वचा को कीटाणुओं से बचाते हैं[cite: 4]।</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- TAB 3: COLOR MIXER -->
+    <div id="mixer-tab" class="tab-content">
+      <div class="card">
+        <h2>विचार-तरंग: रंग मिलाकर नया रंग बनाएँ[cite: 4]</h2>
+        <div class="mixer-box">
+          <div class="color-inputs">
+            <select id="color1" class="color-select" onchange="mixColors()">
+              <option value="red">लाल (Red)</option>
+              <option value="yellow">पीला (Yellow)</option>
+              <option value="blue">नीला (Blue)</option>
+            </select>
+            <span>+</span>
+            <select id="color2" class="color-select" onchange="mixColors()">
+              <option value="yellow">पीला (Yellow)</option>
+              <option value="red">लाल (Red)</option>
+              <option value="blue">नीला (Blue)</option>
+            </select>
+          </div>
+          <div id="mix-result" class="result-display" style="background-color: #ff9800;">
+            नया रंग: नारंगी (Orange)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: QUIZ -->
+    <div id="quiz-tab" class="tab-content">
+      <div class="quiz-box">
+        <div class="quiz-question" id="quiz-q">प्रश्न लोड हो रहा है...</div>
+        <div class="quiz-options" id="quiz-opts"></div>
+        <div class="feedback" id="quiz-fb"></div>
+      </div>
+    </div>
   </div>
-  
-  <div class="question-box" id="question">प्रश्न लोड हो रहा है...</div>
-  <div class="options-grid" id="options"></div>
-  <div class="feedback" id="feedback"></div>
-</div>
 
-<script>
-  const questions = [
-    // Level 1: Word Unscramble (शब्द-सेतु)
-    { lvl: "Level 1: सही शब्द चुनो", q: "अक्षरों को सही क्रम दें: 'गाासौौत'", options: ["सौगात", "गातसौ", "तसाौग", "सौताग"], ans: 0 },
-    { lvl: "Level 1: सही शब्द चुनो", q: "अक्षरों को सही क्रम दें: 'जियाारााउ'", options: ["राजिउआ", "उजियारा", "याराउजि", "उराजिया"], ans: 1 },
-    { lvl: "Level 1: सही शब्द चुनो", q: "अक्षरों को सही क्रम दें: 'रत्योोहाा'", options: ["हारत्यो", "त्योहार", "हारत्यो", "त्योहारा"], ans: 1 },
-    { lvl: "Level 1: सही शब्द चुनो", q: "अक्षरों को सही क्रम दें: 'पहाारउ'", options: ["उपहार", "हारउप", "उ पहार", "पहारउ"], ans: 0 },
-    
-    // Level 2: Grammar - Synonyms & Antonyms (पर्यायवाची व विलोम)
-    { lvl: "Level 2: व्याकरण बोध", q: "'मित्र' का सही पर्यायवाची क्या होगा?", options: ["शत्रु", "सखा", "निकट", "सफलता"], ans: 1 },
-    { lvl: "Level 2: व्याकरण बोध", q: "'निकट' शब्द का विलोम शब्द क्या है?", options: ["पास", "दूर", "सामने", "समीप"], ans: 1 },
-    { lvl: "Level 2: व्याकरण बोध", q: "'अपरिचित' का विलोम शब्द क्या होगा?", options: ["अज्ञान", "परिचित", "अनजान", "मित्र"], ans: 1 },
-    { lvl: "Level 2: व्याकरण बोध", q: "'जीवन' का सही विलोम शब्द क्या है?", options: ["सफलता", "मरण", "अमर", "उजियारा"], ans: 1 }
-  ];
+  <script>
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.remove('active');
+      });
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-  let index = 0, score = 0, timeLeft = 10, timerInterval = null;
-
-  function startTimer() {
-    timeLeft = 10;
-    document.getElementById('timeLeft').innerText = timeLeft;
-    document.getElementById('timerFill').style.width = '100%';
-    
-    clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-      timeLeft -= 0.1;
-      document.getElementById('timeLeft').innerText = Math.max(0, Math.ceil(timeLeft));
-      document.getElementById('timerFill').style.width = (timeLeft / 10 * 100) + '%';
+      const tabs = ['poem', 'facts', 'mixer', 'quiz'];
+      const index = tabs.indexOf(tabName);
       
-      if (timeLeft <= 0) {
-        clearInterval(timerInterval);
-        showFeedback(false, "⌛ समय समाप्त!");
-        setTimeout(nextQuestion, 1200);
+      document.querySelectorAll('.tab-btn')[index].classList.add('active');
+      document.getElementById(`${tabName}-tab`).classList.add('active');
+
+      if(tabName === 'quiz') loadQuiz();
+    }
+
+    // Color Mixing Logic
+    function mixColors() {
+      const c1 = document.getElementById('color1').value;
+      const c2 = document.getElementById('color2').value;
+      const res = document.getElementById('mix-result');
+
+      if (c1 === c2) {
+        res.style.backgroundColor = getHex(c1);
+        res.innerText = `समान रंग: ${getName(c1)}`;
+      } else if ((c1 === 'red' && c2 === 'yellow') || (c1 === 'yellow' && c2 === 'red')) {
+        res.style.backgroundColor = '#ff9800';
+        res.innerText = 'नया रंग: नारंगी (Orange)';
+      } else if ((c1 === 'red' && c2 === 'blue') || (c1 === 'blue' && c2 === 'red')) {
+        res.style.backgroundColor = '#9c27b0';
+        res.innerText = 'नया रंग: बैंगनी (Purple)';
+      } else if ((c1 === 'yellow' && c2 === 'blue') || (c1 === 'blue' && c2 === 'yellow')) {
+        res.style.backgroundColor = '#4caf50';
+        res.innerText = 'नया रंग: हरा (Green)';
       }
-    }, 100);
-  }
-
-  function loadQuestion() {
-    if (index >= questions.length) {
-      clearInterval(timerInterval);
-      document.querySelector('.game-card').innerHTML = `
-        <h2>🏆 शानदार खेल!</h2>
-        <p style="font-size:1.4rem; margin:20px 0;">आपका कुल अंक: <b>${score}</b> / ${questions.length * 10}</p>
-        <button onclick="location.reload()" class="btn-opt" style="background:var(--primary); color:white; width:100%;">पुनः खेलें</button>
-      `;
-      return;
     }
 
-    const current = questions[index];
-    document.getElementById('levelBadge').innerText = current.lvl;
-    document.getElementById('question').innerText = current.q;
-    document.getElementById('feedback').innerText = '';
-    
-    const optsBox = document.getElementById('options');
-    optsBox.innerHTML = '';
-    
-    current.options.forEach((opt, idx) => {
-      const btn = document.createElement('button');
-      btn.className = 'btn-opt';
-      btn.innerText = opt;
-      btn.onclick = () => checkAnswer(idx);
-      optsBox.appendChild(btn);
-    });
-
-    startTimer();
-  }
-
-  function checkAnswer(selectedIdx) {
-    clearInterval(timerInterval);
-    const correctIdx = questions[index].ans;
-    const isCorrect = selectedIdx === correctIdx;
-    
-    if (isCorrect) {
-      score += 10;
-      document.getElementById('score').innerText = score;
-      showFeedback(true, "✅ बिल्कुल सही!");
-    } else {
-      showFeedback(false, `❌ गलत! सही उत्तर: ${questions[index].options[correctIdx]}`);
+    function getHex(c) {
+      if(c === 'red') return '#f44336';
+      if(c === 'yellow') return '#ffeb3b';
+      if(c === 'blue') return '#2196f3';
     }
 
-    setTimeout(nextQuestion, 1200);
-  }
+    function getName(c) {
+      if(c === 'red') return 'लाल';
+      if(c === 'yellow') return 'पीला';
+      if(c === 'blue') return 'नीला';
+    }
 
-  function showFeedback(isCorrect, msg) {
-    const fb = document.getElementById('feedback');
-    fb.innerText = msg;
-    fb.style.color = isCorrect ? "#16a34a" : "#dc2626";
-    
-    const btns = document.querySelectorAll('.btn-opt');
-    btns.forEach(b => b.disabled = true);
-  }
+    // Quiz Data
+    const quizData = [
+      {
+        q: "केसरिया रंग किसका प्रतीक है?[cite: 4]",
+        opts: ["प्रेम", "साहस", "विश्वास", "आशा"],
+        ans: 1
+      },
+      {
+        q: "नेपाल में होली पर क्या बरसाया जाता है?[cite: 4]",
+        opts: ["रंग", "पानी", "फूल", "गुलाल"],
+        ans: 2
+      },
+      {
+        q: "कविता के अनुसार सबसे बड़ी क्या है?[cite: 4]",
+        opts: ["मानवता", "मिठाई", "छुट्टी", "दीवारें"],
+        ans: 0
+      },
+      {
+        q: "लठमार होली कहाँ खेली जाती है?[cite: 4]",
+        opts: ["जयपुर", "बरसाना", "दिल्ली", "मुंबई"],
+        ans: 1
+      }
+    ];
 
-  function nextQuestion() {
-    index++;
-    loadQuestion();
-  }
+    let qIndex = 0;
 
-  loadQuestion();
-</script>
+    function loadQuiz() {
+      const q = quizData[qIndex];
+      document.getElementById('quiz-q').innerText = `प्र॰ ${qIndex + 1}: ${q.q}`;
+      const opts = document.getElementById('quiz-opts');
+      opts.innerHTML = '';
+      document.getElementById('quiz-fb').innerText = '';
+
+      q.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkQuiz(idx);
+        opts.appendChild(btn);
+      });
+    }
+
+    function checkQuiz(selected) {
+      const q = quizData[qIndex];
+      const fb = document.getElementById('quiz-fb');
+      if (selected === q.ans) {
+        fb.style.color = 'green';
+        fb.innerText = 'उत्कृष्ट! सही उत्तर 🌟';
+        qIndex = (qIndex + 1) % quizData.length;
+        setTimeout(loadQuiz, 1500);
+      } else {
+        fb.style.color = 'red';
+        fb.innerText = 'पुनः प्रयास करें!';
+      }
+    }
+  </script>
 </body>
 </html>
