@@ -1,1 +1,365 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>जागो प्यारे - कविता खेल</title>
+<style>
+  :root {
+    --primary: #d97706;
+    --primary-hover: #b45309;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --bg: #fffbeb;
+    --card: #ffffff;
+    --text: #1e293b;
+    --border: #fde68a;
+  }
 
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  
+  .screen { display: none; width: 100%; max-width: 650px; background: var(--card); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(217, 119, 6, 0.15); border: 2px solid var(--border); text-align: center; }
+  .screen.active { display: block; }
+
+  /* 1. Logo Screen */
+  #logo-screen { 
+    display: none; 
+    min-height: 320px;
+  }
+  #logo-screen.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .app-logo {
+    max-width: 280px;
+    max-height: 160px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
+  }
+
+  /* Intro & End Screen */
+  .meta-card { background: #fef3c7; padding: 20px; border-radius: 12px; margin: 20px 0; text-align: left; line-height: 1.6; }
+  .meta-card ul { margin-left: 20px; margin-top: 10px; }
+  button.btn-action { background: var(--primary); color: white; border: none; padding: 12px 28px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; }
+  button.btn-action:hover { background: var(--primary-hover); }
+
+  /* Game Area */
+  .game-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; font-weight: bold; }
+  .attempts-badge { background: #fed7aa; color: #9a3412; padding: 4px 10px; border-radius: 12px; font-size: 0.9rem; }
+  
+  .poem-box { background: #fffdf5; border: 2px dashed #f59e0b; padding: 20px; border-radius: 12px; font-size: 1.3rem; margin-bottom: 25px; line-height: 1.8; color: #78350f; font-weight: bold; }
+  .blank-space { display: inline-block; min-width: 100px; border-bottom: 3px solid var(--primary); color: var(--primary); text-align: center; padding: 0 8px; }
+
+  .words-container { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 25px; }
+  .word-chip { background: #ffffff; border: 2px solid #cbd5e1; padding: 10px 20px; border-radius: 25px; font-size: 1.1rem; cursor: pointer; transition: all 0.2s; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
+  .word-chip:hover:not(:disabled) { border-color: var(--primary); background: #fef3c7; transform: translateY(-2px); }
+  .word-chip:disabled { cursor: not-allowed; opacity: 0.6; }
+  .word-chip.correct { background: #dcfce7; border-color: var(--success); color: #14532d; }
+  .word-chip.incorrect { background: #fee2e2; border-color: var(--danger); color: #7f1d1d; }
+
+  .feedback-msg { min-height: 30px; font-size: 1.05rem; font-weight: bold; margin-bottom: 15px; }
+  .feedback-msg.correct-text { color: var(--success); }
+  .feedback-msg.wrong-text { color: var(--danger); }
+
+  .score-display { font-size: 2.8rem; font-weight: bold; color: var(--primary); margin: 15px 0; }
+</style>
+</head>
+<body>
+
+  <!-- Hidden Audio Elements -->
+  <audio id="audioCorrect" src="correct.mp3" preload="auto"></audio>
+  <audio id="audioWrong" src="wrong.mp3" preload="auto"></audio>
+
+  <!-- 1. Logo Screen -->
+  <div id="logo-screen" class="screen active">
+    <img src="assets/logo.png" alt="Logo" class="app-logo" onerror="this.src='https://via.placeholder.com/280x160?text=Logo+Image'">
+  </div>
+
+  <!-- 2. Instruction Screen -->
+  <div id="intro-screen" class="screen">
+    <h1 style="color: var(--primary); margin-bottom: 10px;">जागो प्यारे - शब्द जोड़ो खेल</h1>
+    <div class="meta-card">
+      <h3>खेल के नियम:</h3>
+      <ul>
+        <li>कविता की पंक्तियों को ध्यान से पढ़ें और सही शब्द चुनकर खाली स्थान भरें।</li>
+        <li>प्रत्येक प्रश्न के लिए आपको <strong>2 अवसर (2 Chances)</strong> मिलेंगे।</li>
+        <li>पहला प्रयास सही होने पर <strong>10 अंक</strong> मिलेंगे।</li>
+        <li>दूसरे प्रयास में सही होने पर <strong>5 अंक</strong> मिलेंगे।</li>
+        <li>दो गलत प्रयासों के बाद सही शब्द अपने आप प्रकट (Reveal) हो जाएगा।</li>
+      </ul>
+    </div>
+    <button class="btn-action" onclick="startGame()">खेल शुरू करें</button>
+  </div>
+
+  <!-- 3. Game Screen -->
+  <div id="game-screen" class="screen">
+    <div class="game-header">
+      <span>अंक: <span id="current-score">0</span></span>
+      <span class="attempts-badge">अवसर शेष: <span id="attempts-left">2</span></span>
+      <span>प्रश्न: <span id="question-number">1</span>/<span id="total-questions">0</span></span>
+    </div>
+
+    <div class="poem-box" id="poemBox">
+      <!-- Poem sentence with blank space will load here -->
+    </div>
+
+    <div class="feedback-msg" id="feedbackMsg"></div>
+
+    <div class="words-container" id="wordsContainer">
+      <!-- Word Chips will load here -->
+    </div>
+
+    <button class="btn-action" id="nextBtn" onclick="nextQuestion()" style="display: none;">अगला प्रश्न ➔</button>
+  </div>
+
+  <!-- 4. End Screen -->
+  <div id="end-screen" class="screen">
+    <h1 style="color: var(--primary);">शाबाश! खेल पूरा हुआ</h1>
+    <div class="meta-card" style="text-align: center;">
+      <p>आपका कुल स्कोर</p>
+      <div class="score-display" id="finalScore">0 / 0</div>
+      <p id="performanceMsg"></p>
+    </div>
+    <button class="btn-action" onclick="restartGame()">पुनः खेलें</button>
+  </div>
+
+  <script>
+    // Chapter 1: जागो प्यारे (Class 5 Hindi) - Game Questions
+    const originalQuestions = [
+      {
+        lineBefore: "उठो लाल अब आँखें खोलो, पानी लाई हूँ",
+        lineAfter: "धो लो।",
+        correctWord: "मुँह",
+        options: ["मुँह", "हाथ", "पैर", "सिर"],
+        hint: "माँ बच्चे का चेहरा धोने के लिए पानी लाई है।"
+      },
+      {
+        lineBefore: "बीती रात कमल दल फूले, उनके ऊपर",
+        lineAfter: "डोले।",
+        correctWord: "भँवरे",
+        options: ["भँवरे", "तितली", "पक्षी", "हंस"],
+        hint: "कमल के फूलों पर कौन मँडरा रहे हैं?"
+      },
+      {
+        lineBefore: "चिड़िया चहक उठी",
+        lineAfter: "पर, बहने लगी हवा अति सुंदर।",
+        correctWord: "पेड़",
+        options: ["पेड़", "छत", "नभ", "घर"],
+        hint: "सुबह-सुबह पक्षी कहाँ चहक रहे हैं?"
+      },
+      {
+        lineBefore: "नभ में न्यारी लाली छाई, धरती ने प्यारी",
+        lineAfter: "पाई।",
+        correctWord: "छवि",
+        options: ["छवि", "छाया", "रोशनी", "किरण"],
+        hint: "सुबह धरती की सूरत (रूप) बहुत सुंदर लग रही है।"
+      },
+      {
+        lineBefore: "भोर हुआ सूरज उग आया, जल में पड़ी",
+        lineAfter: "छाया।",
+        correctWord: "सुनहरी",
+        options: ["सुनहरी", "नीली", "काली", "रूपेरी"],
+        hint: "सूरज की पहली धूप की किरणें सोने जैसी होती हैं।"
+      },
+      {
+        lineBefore: "ऐसा सुंदर समय न खोओ, मेरे",
+        lineAfter: "अब मत सोओ।",
+        correctWord: "प्यारे",
+        options: ["प्यारे", "राजा", "लाला", "भैया"],
+        hint: "माँ अपने प्रिय बच्चे को क्या कहकर पुकारती है?"
+      },
+      {
+        lineBefore: "कविता के अनुसार सुबह की हवा बहुत",
+        lineAfter: "होती है।",
+        correctWord: "सुंदर",
+        options: ["सुंदर", "गरम", "तेज", "धीमी"],
+        hint: "प्रातःकाल की ठंडी और ताजी पवन कैसी लगती है?"
+      },
+      {
+        lineBefore: "'नभ' शब्द का सही पर्यायवाची शब्द",
+        lineAfter: "है।",
+        correctWord: "आकाश",
+        options: ["आकाश", "जल", "धरती", "पवन"],
+        hint: "जहाँ सूरज उगता है और लाली छाती है।"
+      }
+    ];
+
+    let gameQuestions = [];
+    let currentQIndex = 0;
+    let score = 0;
+    let attemptsLeft = 2;
+    let isAnswered = false;
+
+    // Shuffle Array Helper
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    // Play Audio Helper
+    function playSound(type) {
+      const audio = document.getElementById(type === 'correct' ? 'audioCorrect' : 'audioWrong');
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(err => console.log("Audio play blocked: ", err));
+      }
+    }
+
+    // Window Load Event
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('total-questions').textContent = originalQuestions.length;
+      
+      // Auto transition from Logo Screen to Instruction Screen after 5 seconds
+      setTimeout(() => {
+        switchScreen('intro-screen');
+      }, 5000);
+    });
+
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+    }
+
+    function startGame() {
+      // Deep copy & Shuffle questions
+      gameQuestions = JSON.parse(JSON.stringify(originalQuestions));
+      shuffleArray(gameQuestions);
+      
+      currentQIndex = 0;
+      score = 0;
+      switchScreen('game-screen');
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      attemptsLeft = 2;
+      isAnswered = false;
+      
+      const q = gameQuestions[currentQIndex];
+      document.getElementById('question-number').textContent = currentQIndex + 1;
+      document.getElementById('current-score').textContent = score;
+      document.getElementById('attempts-left').textContent = attemptsLeft;
+      document.getElementById('feedbackMsg').textContent = '';
+      document.getElementById('feedbackMsg').className = 'feedback-msg';
+      document.getElementById('nextBtn').style.display = 'none';
+
+      // Render Poem Line with Blank Space
+      const poemBox = document.getElementById('poemBox');
+      poemBox.innerHTML = `${q.lineBefore} <span class="blank-space" id="blankWord">?</span> ${q.lineAfter}`;
+
+      // Shuffle Word Options
+      const shuffledOptions = shuffleArray([...q.options]);
+      const wordsContainer = document.getElementById('wordsContainer');
+      wordsContainer.innerHTML = '';
+
+      shuffledOptions.forEach(word => {
+        const btn = document.createElement('button');
+        btn.className = 'word-chip';
+        btn.textContent = word;
+        btn.onclick = () => handleWordSelect(word, btn);
+        wordsContainer.appendChild(btn);
+      });
+    }
+
+    function handleWordSelect(selectedWord, btnElement) {
+      if (isAnswered) return;
+
+      const q = gameQuestions[currentQIndex];
+      const feedbackMsg = document.getElementById('feedbackMsg');
+      const blankWord = document.getElementById('blankWord');
+
+      if (selectedWord === q.correctWord) {
+        // CORRECT ANSWER
+        playSound('correct');
+        btnElement.classList.add('correct');
+        blankWord.textContent = selectedWord;
+        blankWord.style.color = 'var(--success)';
+        
+        // Scoring based on attempts left
+        const pointsEarned = attemptsLeft === 2 ? 10 : 5;
+        score += pointsEarned;
+        document.getElementById('current-score').textContent = score;
+
+        feedbackMsg.textContent = `🎉 बहुत बढ़िया! सही उत्तर (+${pointsEarned} अंक)`;
+        feedbackMsg.className = 'feedback-msg correct-text';
+
+        disableAllChips();
+        isAnswered = true;
+        document.getElementById('nextBtn').style.display = 'inline-block';
+
+      } else {
+        // INCORRECT ANSWER
+        playSound('wrong');
+        btnElement.classList.add('incorrect');
+        btnElement.disabled = true;
+        attemptsLeft--;
+        document.getElementById('attempts-left').textContent = attemptsLeft;
+
+        if (attemptsLeft > 0) {
+          feedbackMsg.textContent = `❌ गलत उत्तर! एक और प्रयास करें। (संकेत: ${q.hint})`;
+          feedbackMsg.className = 'feedback-msg wrong-text';
+        } else {
+          // REVEAL CORRECT ANSWER AFTER 2 FAILED ATTEMPTS
+          feedbackMsg.textContent = `❌ प्रयास समाप्त! सही उत्तर था: "${q.correctWord}"`;
+          feedbackMsg.className = 'feedback-msg wrong-text';
+          
+          blankWord.textContent = q.correctWord;
+          blankWord.style.color = 'var(--danger)';
+
+          // Highlight the actual correct option chip
+          document.querySelectorAll('.word-chip').forEach(chip => {
+            if (chip.textContent === q.correctWord) {
+              chip.classList.add('correct');
+            }
+          });
+
+          disableAllChips();
+          isAnswered = true;
+          document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+      }
+    }
+
+    function disableAllChips() {
+      document.querySelectorAll('.word-chip').forEach(chip => chip.disabled = true);
+    }
+
+    function nextQuestion() {
+      currentQIndex++;
+      if (currentQIndex < gameQuestions.length) {
+        loadQuestion();
+      } else {
+        endGame();
+      }
+    }
+
+    function endGame() {
+      const maxScore = gameQuestions.length * 10;
+      document.getElementById('finalScore').textContent = `${score} / ${maxScore}`;
+      
+      const perfMsg = document.getElementById('performanceMsg');
+      if (score >= maxScore * 0.8) {
+        perfMsg.textContent = "🌟 उत्कृष्ट प्रदर्शन! आप कविता को बहुत अच्छे से समझते हैं।";
+      } else if (score >= maxScore * 0.5) {
+        perfMsg.textContent = "👍 अच्छा प्रयास! थोड़ा और अभ्यास करें।";
+      } else {
+        perfMsg.textContent = "📖 कविता 'जागो प्यारे' फिर से पढ़ें और पुनः प्रयास करें।";
+      }
+
+      switchScreen('end-screen');
+    }
+
+    function restartGame() {
+      switchScreen('intro-screen');
+    }
+  </script>
+</body>
+</html>
