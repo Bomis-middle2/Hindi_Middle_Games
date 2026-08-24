@@ -1,1 +1,343 @@
 
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>भारत कोकिला - 2 Level Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: #121212;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 10px;
+    }
+
+    #game-card {
+      background: #1e1e1e;
+      border: 3px solid #ffca28;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 700px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(255, 202, 40, 0.2);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      color: #ffca28;
+      font-size: 1.8rem;
+      margin-bottom: 5px;
+    }
+
+    .header p {
+      color: #b0bec5;
+      font-size: 0.95rem;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      background: #2d2d2d;
+      padding: 10px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #ffca28;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .intro-box {
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .intro-box h2 {
+      color: #81c784;
+      margin-bottom: 12px;
+    }
+
+    .level-desc {
+      background: #263238;
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      text-align: left;
+    }
+
+    .level-desc strong {
+      color: #ffca28;
+    }
+
+    .q-box {
+      background: #263238;
+      padding: 18px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      border-left: 5px solid #ffca28;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .opt-btn {
+      background: #37474f;
+      color: #ffffff;
+      border: 2px solid #546e7a;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .opt-btn:hover {
+      background: #455a64;
+      border-color: #ffca28;
+    }
+
+    .feedback {
+      margin-top: 15px;
+      font-size: 1.05rem;
+      font-weight: bold;
+      min-height: 25px;
+      text-align: center;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #ffca28 0%, #f57f17 100%);
+      color: #000;
+      border: none;
+      padding: 12px 28px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(245, 127, 23, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.03);
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-card">
+    <div class="header">
+      <h1>🎵 पाठ 10: भारत कोकिला 🎵</h1>
+      <p>लता मंगेशकर की जीवन-यात्रा - 2 स्तर का खेल</p>
+    </div>
+
+    <div class="status-bar" id="status-bar" style="display: none;">
+      <div>स्तर (Level): <span id="level-num">1</span></div>
+      <div>अंक (Score): <span id="score-num">0</span></div>
+    </div>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="screen active intro-box">
+      <h2>🎵 संगीत यात्रा में आपका स्वागत है!</h2>
+      <div class="level-desc">
+        <strong>स्तर 1: अध्याय बोध (Chapter Quiz)</strong><br>
+        लता मंगेशकर के जीवन, उनके संघर्ष और उपलब्धियों से जुड़े प्रश्न।
+      </div>
+      <div class="level-desc">
+        <strong>स्तर 2: व्याकरण अभ्यास (Grammar Quiz)</strong><br>
+        अविकारी शब्द / अव्यय (क्रियाविशेषण, संबंधबोधक, समुच्चयबोधक, विस्मयादिबोधक) का अभ्यास।
+      </div>
+      <button class="btn" onclick="startLevel(1)">स्तर 1 प्रारंभ करें</button>
+    </div>
+
+    <!-- GAME PLAY SCREEN -->
+    <div id="play-screen" class="screen">
+      <div class="q-box" id="q-text">प्रश्न यहाँ दिखेगा...</div>
+      <div class="options-grid" id="opts-container"></div>
+      <div class="feedback" id="feedback-msg"></div>
+    </div>
+
+    <!-- LEVEL COMPLETE / GAME OVER SCREEN -->
+    <div id="end-screen" class="screen intro-box">
+      <h2 id="end-title">स्तर पूर्ण! 🎉</h2>
+      <p id="end-desc" style="margin: 15px 0; font-size: 1.1rem;"></p>
+      <button class="btn" id="next-btn" onclick="nextAction()">आगे बढ़ें</button>
+    </div>
+  </div>
+
+  <script>
+    // LEVEL 1: CHAPTER BASED QUESTIONS
+    const level1Data = [
+      {
+        q: "लता मंगेशकर की पहली संगीतशाला क्या थी?",
+        opts: ["विद्यालय", "रिकॉर्डिंग स्टूडियो", "उनका घर", "संगीत-मंच"],
+        ans: 2
+      },
+      {
+        q: "आरंभ में कुछ लोगों ने लता जी की आवाज़ को कैसा बताया था?",
+        opts: ["बहुत ऊँची", "बहुत भारी", "बहुत पतली", "बहुत धीमी"],
+        ans: 2
+      },
+      {
+        q: "लता मंगेशकर जी को किस वर्ष 'भारत रत्न' से सम्मानित किया गया?",
+        opts: ["1974 में", "1999 में", "2001 में", "2022 में"],
+        ans: 2
+      },
+      {
+        q: "लोग लता जी को प्रेम से किस नाम से पुकारते थे?",
+        opts: ["भारत कोकिला", "स्वर कोकिला", "संगीत रानी", "स्वर परी"],
+        ans: 1
+      }
+    ];
+
+    // LEVEL 2: GRAMMAR BASED QUESTIONS (अविकारी शब्द / अव्यय)
+    const level2Data = [
+      {
+        q: "'लता जी हमेशा मन लगाकर अभ्यास करती थीं।' वाक्य में 'हमेशा' किस प्रकार का अविकारी शब्द है?",
+        opts: ["क्रियाविशेषण", "संबंधबोधक", "समुच्चयबोधक", "विस्मयादिबोधक"],
+        ans: 0
+      },
+      {
+        q: "'तानपुरा उनके पास रखा था।' वाक्य में 'के पास' कौन-सा अव्यय भेद है?",
+        opts: ["क्रियाविशेषण", "संबंधबोधक", "समुच्चयबोधक", "विस्मयादिबोधक"],
+        ans: 1
+      },
+      {
+        q: "'उन्होंने कठिनाइयाँ देखीं, परंतु हार नहीं मानी।' वाक्य में 'परंतु' कौन-सा भेद है?",
+        opts: ["क्रियाविशेषण", "संबंधबोधक", "समुच्चयबोधक", "विस्मयादिबोधक"],
+        ans: 2
+      },
+      {
+        q: "'अरे! यह सुर तो गलत है।' वाक्य में 'अरे!' शब्द क्या दर्शाता है?",
+        opts: ["समुच्चयबोधक", "संबंधबोधक", "क्रियाविशेषण", "विस्मयादिबोधक"],
+        ans: 3
+      }
+    ];
+
+    let currentLevel = 1;
+    let currentQIndex = 0;
+    let score = 0;
+    let currentQuestions = [];
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function startLevel(lvl) {
+      currentLevel = lvl;
+      currentQIndex = 0;
+      currentQuestions = (lvl === 1) ? level1Data : level2Data;
+
+      document.getElementById('status-bar').style.display = 'flex';
+      document.getElementById('level-num').innerText = currentLevel;
+      document.getElementById('score-num').innerText = score;
+
+      showScreen('play-screen');
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const q = currentQuestions[currentQIndex];
+      document.getElementById('q-text').innerText = `प्र॰ ${currentQIndex + 1}: ${q.q}`;
+      document.getElementById('feedback-msg').innerText = '';
+
+      const container = document.getElementById('opts-container');
+      container.innerHTML = '';
+
+      q.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerText = opt;
+        btn.onclick = () => selectOption(idx);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectOption(selectedIdx) {
+      const q = currentQuestions[currentQIndex];
+      const feedback = document.getElementById('feedback-msg');
+      const btns = document.querySelectorAll('.opt-btn');
+
+      btns.forEach(b => b.style.pointerEvents = 'none');
+
+      if (selectedIdx === q.ans) {
+        feedback.style.color = '#81c784';
+        feedback.innerText = '✓ अति उत्तम! सही उत्तर।';
+        btns[selectedIdx].style.background = '#2e7d32';
+        btns[selectedIdx].style.borderColor = '#81c784';
+        score += 10;
+        document.getElementById('score-num').innerText = score;
+      } else {
+        feedback.style.color = '#e57373';
+        feedback.innerText = `✗ गलत उत्तर! सही उत्तर था: ${q.opts[q.ans]}`;
+        btns[selectedIdx].style.background = '#c62828';
+        btns[q.ans].style.background = '#2e7d32';
+      }
+
+      setTimeout(() => {
+        currentQIndex++;
+        if (currentQIndex < currentQuestions.length) {
+          loadQuestion();
+        } else {
+          finishLevel();
+        }
+      }, 1800);
+    }
+
+    function finishLevel() {
+      showScreen('end-screen');
+      const title = document.getElementById('end-title');
+      const desc = document.getElementById('end-desc');
+      const btn = document.getElementById('next-btn');
+
+      if (currentLevel === 1) {
+        title.innerText = '🎵 स्तर 1 पूर्ण! (Level 1 Completed)';
+        desc.innerText = `शानदार! आपने अध्याय के सभी उत्तर सफलता से पूरे किए। आपका स्कोर: ${score}`;
+        btn.innerText = 'स्तर 2 (व्याकरण) प्रारंभ करें';
+      } else {
+        title.innerText = '🏆 उत्कृष्ट प्रदर्शन! खेल समाप्त';
+        desc.innerText = `बधाई हो! आपने अध्याय और व्याकरण (अविकारी शब्द) दोनों स्तर सफलता से पूरे कर लिए। कुल स्कोर: ${score}/80`;
+        btn.innerText = 'पुनः खेलें (Play Again)';
+      }
+    }
+
+    function nextAction() {
+      if (currentLevel === 1) {
+        startLevel(2);
+      } else {
+        score = 0;
+        startLevel(1);
+      }
+    }
+  </script>
+</body>
+</html>
