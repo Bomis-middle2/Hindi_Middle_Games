@@ -3,351 +3,66 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>पेड़ों की महिमा - शब्द खेल</title>
+<title>पेड़ों की महिमा - सही या गलत</title>
 <style>
-  :root {
-    --primary: #15803d;
-    --primary-hover: #166534;
-    --success: #16a34a;
-    --danger: #dc2626;
-    --bg: #f0fdf4;
-    --card: #ffffff;
-    --text: #14532d;
-    --border: #bbf7d0;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-  body { background-color: var(--bg); color: #1e293b; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-  
-  .screen { display: none; width: 100%; max-width: 650px; background: var(--card); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(22, 101, 52, 0.15); border: 2px solid var(--border); text-align: center; }
-  .screen.active { display: block; }
-
-  /* 1. Logo Screen */
-  #logo-screen { 
-    display: none; 
-    min-height: 320px;
-  }
-  #logo-screen.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .app-logo {
-    max-width: 280px;
-    max-height: 160px;
-    width: auto;
-    height: auto;
-    object-fit: contain;
-    display: block;
-    margin: 0 auto;
-  }
-
-  /* Intro & End Screen */
-  .meta-card { background: #dcfce7; padding: 20px; border-radius: 12px; margin: 20px 0; text-align: left; line-height: 1.6; border: 1px solid #86efac; }
-  .meta-card ul { margin-left: 20px; margin-top: 10px; }
-  button.btn-action { background: var(--primary); color: white; border: none; padding: 12px 28px; font-size: 1.1rem; border-radius: 8px; cursor: pointer; transition: 0.2s; font-weight: 600; }
-  button.btn-action:hover { background: var(--primary-hover); }
-
-  /* Game Area */
-  .game-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border); padding-bottom: 12px; margin-bottom: 20px; font-weight: bold; color: var(--text); }
-  .attempts-badge { background: #fef08a; color: #854d0e; padding: 4px 10px; border-radius: 12px; font-size: 0.9rem; }
-  
-  .poem-box { background: #f0fdf4; border: 2px dashed #4ade80; padding: 20px; border-radius: 12px; font-size: 1.25rem; margin-bottom: 25px; line-height: 1.8; color: #14532d; font-weight: bold; }
-  .blank-space { display: inline-block; min-width: 100px; border-bottom: 3px solid var(--primary); color: var(--primary); text-align: center; padding: 0 8px; }
-
-  .words-container { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 25px; }
-  .word-chip { background: #ffffff; border: 2px solid #cbd5e1; padding: 10px 20px; border-radius: 25px; font-size: 1.1rem; cursor: pointer; transition: all 0.2s; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
-  .word-chip:hover:not(:disabled) { border-color: var(--primary); background: #dcfce7; transform: translateY(-2px); }
-  .word-chip:disabled { cursor: not-allowed; opacity: 0.6; }
-  .word-chip.correct { background: #dcfce7; border-color: var(--success); color: #14532d; }
-  .word-chip.incorrect { background: #fee2e2; border-color: var(--danger); color: #7f1d1d; }
-
-  .feedback-msg { min-height: 30px; font-size: 1.05rem; font-weight: bold; margin-bottom: 15px; }
-  .feedback-msg.correct-text { color: var(--success); }
-  .feedback-msg.wrong-text { color: var(--danger); }
-
-  .score-display { font-size: 2.8rem; font-weight: bold; color: var(--primary); margin: 15px 0; }
+  :root { --primary: #15803d; --bg: #f0fdf4; --card: #ffffff; }
+  body { background-color: var(--bg); font-family: 'Segoe UI', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+  .game-card { background: var(--card); padding: 30px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 550px; text-align: center; }
+  .statement-box { background: #dcfce7; padding: 25px; border-radius: 12px; font-size: 1.2rem; font-weight: bold; color: #14532d; margin: 20px 0; min-height: 80px; display: flex; align-items: center; justify-content: center; }
+  .btn-container { display: flex; gap: 15px; justify-content: center; }
+  .btn-choice { padding: 12px 30px; font-size: 1.1rem; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+  .btn-true { background: #22c55e; color: white; }
+  .btn-false { background: #ef4444; color: white; }
+  .btn-choice:hover { transform: scale(1.05); }
+  .feedback { margin-top: 15px; font-weight: bold; font-size: 1.1rem; min-height: 30px; }
 </style>
 </head>
 <body>
-
-  <!-- Audio Assets -->
-  <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
-  <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
-
-  <!-- 1. Logo Screen -->
-  <div id="logo-screen" class="screen active">
-    <img src="assets/logo.png" alt="Logo" class="app-logo" onerror="this.src='https://via.placeholder.com/280x160?text=Logo+Image'">
+<div class="game-card">
+  <h2>पेड़ों की महिमा - सही या गलत?</h2>
+  <div style="margin-top: 10px; color: #64748b;">अंक: <span id="score">0</span></div>
+  <div class="statement-box" id="statement">कथन यहाँ आएगा...</div>
+  <div class="btn-container">
+    <button class="btn-choice btn-true" onclick="checkAnswer(true)">सही (True)</button>
+    <button class="btn-choice btn-false" onclick="checkAnswer(false)">गलत (False)</button>
   </div>
+  <div class="feedback" id="feedback"></div>
+  <button id="nextBtn" style="display:none; margin: 20px auto 0; padding: 10px 20px; background: #15803d; color: white; border: none; border-radius: 6px; cursor: pointer;" onclick="loadNext()">अगला प्रश्न ➔</button>
+</div>
 
-  <!-- 2. Instruction Screen -->
-  <div id="intro-screen" class="screen">
-    <h1 style="color: var(--primary); margin-bottom: 10px;">पेड़ों की महिमा - खेल</h1>
-    <div class="meta-card">
-      <h3>खेल के नियम:</h3>
-      <ul>
-        <li>वाक्य या विचार को ध्यान से पढ़ें और सही शब्द चुनकर खाली स्थान भरें।</li>
-        <li>प्रत्येक प्रश्न के लिए आपको <strong>2 अवसर (2 Chances)</strong> मिलेंगे।</li>
-        <li>प्रथम प्रयास में सही उत्तर देने पर <strong>10 अंक</strong>।</li>
-        <li>द्वितीय प्रयास में सही उत्तर देने पर <strong>5 अंक</strong>।</li>
-        <li>दो गलत प्रयासों के बाद सही शब्द अपने आप प्रकट हो जाएगा।</li>
-      </ul>
-    </div>
-    <button class="btn-action" onclick="startGame()">खेल शुरू करें</button>
-  </div>
+<script>
+  const questions = [
+    { text: "पेड़ों को पर्यावरण का 'हरा सोना' कहा जाता है।", ans: true },
+    { text: "पेड़ ऑक्सीजन ग्रहण करते हैं और कार्बन डाइऑक्साइड छोड़ते हैं।", ans: false },
+    { text: "विश्व पर्यावरण दिवस 5 जून को मनाया जाता है।", ans: true },
+    { text: "भगवान बुद्ध को बरगद के पेड़ के नीचे ज्ञान प्राप्त हुआ था।", ans: false }
+  ];
+  let index = 0, score = 0;
 
-  <!-- 3. Game Screen -->
-  <div id="game-screen" class="screen">
-    <div class="game-header">
-      <span>अंक: <span id="current-score">0</span></span>
-      <span class="attempts-badge">अवसर शेष: <span id="attempts-left">2</span></span>
-      <span>प्रश्न: <span id="question-number">1</span>/<span id="total-questions">0</span></span>
-    </div>
-
-    <div class="poem-box" id="poemBox">
-      <!-- Question text will load here -->
-    </div>
-
-    <div class="feedback-msg" id="feedbackMsg"></div>
-
-    <div class="words-container" id="wordsContainer">
-      <!-- Word Chips will load here -->
-    </div>
-
-    <button class="btn-action" id="nextBtn" onclick="nextQuestion()" style="display: none;">अगला प्रश्न ➔</button>
-  </div>
-
-  <!-- 4. End Screen -->
-  <div id="end-screen" class="screen">
-    <h1 style="color: var(--primary);">शाबाश! खेल पूरा हुआ</h1>
-    <div class="meta-card" style="text-align: center;">
-      <p>आपका कुल स्कोर</p>
-      <div class="score-display" id="finalScore">0 / 0</div>
-      <p id="performanceMsg"></p>
-    </div>
-    <button class="btn-action" onclick="restartGame()">पुनः खेलें</button>
-  </div>
-
-  <script>
-    // Chapter 2: पेड़ों की महिमा Questions
-    const originalQuestions = [
-      {
-        lineBefore: "पेड़ों को पर्यावरण का",
-        lineAfter: "भी कहा जाता है।",
-        correctWord: "हरा सोना",
-        options: ["हरा सोना", "सफेद सोना", "हीरा", "वरदान"],
-        hint: "पेड़ों को उनकी उपयोगिता के कारण एक विशेष नाम दिया गया है।"
-      },
-      {
-        lineBefore: "पेड़ हमारे द्वारा छोड़ी गई हानिकारक",
-        lineAfter: "गैस को सोख लेते हैं।",
-        correctWord: "कार्बन डाइऑक्साइड",
-        options: ["कार्बन डाइऑक्साइड", "ऑक्सीजन", "नाइट्रोजन", "हाइड्रोजन"],
-        hint: "पेड़ किस गैस को ग्रहण करके हवा साफ़ करते हैं?"
-      },
-      {
-        lineBefore: "भगवान बुद्ध को बोधगया में",
-        lineAfter: "के पेड़ के नीचे ज्ञान प्राप्त हुआ था।",
-        correctWord: "पीपल",
-        options: ["पीपल", "बरगद", "आम", "अशोक"],
-        hint: "यह पेड़ दिन-रात ऑक्सीजन देने के लिए भी जाना जाता है।"
-      },
-      {
-        lineBefore: "भारत में किस पेड़ के फलों की टोकरी भेंट करना",
-        lineAfter: "का प्रतीक माना जाता है?",
-        correctWord: "मित्रता",
-        options: ["मित्रता", "शत्रुता", "आदर", "प्रेम"],
-        hint: "आमों की टोकरी देना किस भावना को दर्शाता है?"
-      },
-      {
-        lineBefore: "पेड़ों को 'प्रकृति के",
-        lineAfter: "' (Lungs of Nature) भी कहा जाता है।",
-        correctWord: "फेफड़े",
-        options: ["फेफड़े", "दिल", "गुर्दे", "कवच"],
-        hint: "यह अंग शरीर को साँस लेने में मदद करता है।"
-      },
-      {
-        lineBefore: "विश्व पर्यावरण दिवस प्रतिवर्ष",
-        lineAfter: "को मनाया जाता है।",
-        correctWord: "5 जून",
-        options: ["5 जून", "21 मार्च", "15 अगस्त", "26 जनवरी"],
-        hint: "यह दिन जून महीने की शुरुआत में आता है।"
-      },
-      {
-        lineBefore: "भारत का राष्ट्रीय वृक्ष",
-        lineAfter: "है।",
-        correctWord: "बरगद",
-        options: ["बरगद", "पीपल", "आम", "नीम"],
-        hint: "यह एक विशाल और छायादार वृक्ष है।"
-      },
-      {
-        lineBefore: "एक बड़ा पेड़ एक दिन में लगभग",
-        lineAfter: "लोगों के लिए पर्याप्त ऑक्सीजन देता है।",
-        correctWord: "100",
-        options: ["100", "50", "200", "500"],
-        hint: "यह संख्या सौ के बराबर है।"
-      }
-    ];
-
-    let gameQuestions = [];
-    let currentQIndex = 0;
-    let score = 0;
-    let attemptsLeft = 2;
-    let isAnswered = false;
-
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-      return array;
+  function loadNext() {
+    if(index >= questions.length) {
+      document.querySelector('.game-card').innerHTML = `<h2>खेल समाप्त!</h2><p style="font-size:1.5rem; margin:20px 0;">आपका कुल अंक: ${score} / ${questions.length * 10}</p><button onclick="location.reload()" class="btn-choice btn-true">पुनः खेलें</button>`;
+      return;
     }
+    document.getElementById('statement').innerText = questions[index].text;
+    document.getElementById('feedback').innerText = '';
+    document.getElementById('nextBtn').style.display = 'none';
+  }
 
-    function playSound(type) {
-      const audio = document.getElementById(type === 'correct' ? 'audioCorrect' : 'audioWrong');
-      if (audio) {
-        audio.currentTime = 0;
-        audio.play().catch(err => console.log("Audio play blocked: ", err));
-      }
+  function checkAnswer(userAns) {
+    const isCorrect = userAns === questions[index].ans;
+    const fb = document.getElementById('feedback');
+    if(isCorrect) {
+      score += 10;
+      document.getElementById('score').innerText = score;
+      fb.innerText = "🎉 सही उत्तर!"; fb.style.color = "#22c55e";
+    } else {
+      fb.innerText = "❌ गलत उत्तर!"; fb.style.color = "#ef4444";
     }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('total-questions').textContent = originalQuestions.length;
-      
-      setTimeout(() => {
-        switchScreen('intro-screen');
-      }, 5000);
-    });
-
-    function switchScreen(screenId) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(screenId).classList.add('active');
-    }
-
-    function startGame() {
-      gameQuestions = JSON.parse(JSON.stringify(originalQuestions));
-      shuffleArray(gameQuestions);
-      
-      currentQIndex = 0;
-      score = 0;
-      switchScreen('game-screen');
-      loadQuestion();
-    }
-
-    function loadQuestion() {
-      attemptsLeft = 2;
-      isAnswered = false;
-      
-      const q = gameQuestions[currentQIndex];
-      document.getElementById('question-number').textContent = currentQIndex + 1;
-      document.getElementById('current-score').textContent = score;
-      document.getElementById('attempts-left').textContent = attemptsLeft;
-      document.getElementById('feedbackMsg').textContent = '';
-      document.getElementById('feedbackMsg').className = 'feedback-msg';
-      document.getElementById('nextBtn').style.display = 'none';
-
-      const poemBox = document.getElementById('poemBox');
-      poemBox.innerHTML = `${q.lineBefore} <span class="blank-space" id="blankWord">?</span> ${q.lineAfter}`;
-
-      const shuffledOptions = shuffleArray([...q.options]);
-      const wordsContainer = document.getElementById('wordsContainer');
-      wordsContainer.innerHTML = '';
-
-      shuffledOptions.forEach(word => {
-        const btn = document.createElement('button');
-        btn.className = 'word-chip';
-        btn.textContent = word;
-        btn.onclick = () => handleWordSelect(word, btn);
-        wordsContainer.appendChild(btn);
-      });
-    }
-
-    function handleWordSelect(selectedWord, btnElement) {
-      if (isAnswered) return;
-
-      const q = gameQuestions[currentQIndex];
-      const feedbackMsg = document.getElementById('feedbackMsg');
-      const blankWord = document.getElementById('blankWord');
-
-      if (selectedWord === q.correctWord) {
-        playSound('correct');
-        btnElement.classList.add('correct');
-        blankWord.textContent = selectedWord;
-        blankWord.style.color = 'var(--success)';
-        
-        const pointsEarned = attemptsLeft === 2 ? 10 : 5;
-        score += pointsEarned;
-        document.getElementById('current-score').textContent = score;
-
-        feedbackMsg.textContent = `🎉 उत्तम! सही उत्तर (+${pointsEarned} अंक)`;
-        feedbackMsg.className = 'feedback-msg correct-text';
-
-        disableAllChips();
-        isAnswered = true;
-        document.getElementById('nextBtn').style.display = 'inline-block';
-
-      } else {
-        playSound('wrong');
-        btnElement.classList.add('incorrect');
-        btnElement.disabled = true;
-        attemptsLeft--;
-        document.getElementById('attempts-left').textContent = attemptsLeft;
-
-        if (attemptsLeft > 0) {
-          feedbackMsg.textContent = `❌ गलत उत्तर! एक और प्रयास करें। (संकेत: ${q.hint})`;
-          feedbackMsg.className = 'feedback-msg wrong-text';
-        } else {
-          feedbackMsg.textContent = `❌ प्रयास समाप्त! सही उत्तर था: "${q.correctWord}"`;
-          feedbackMsg.className = 'feedback-msg wrong-text';
-          
-          blankWord.textContent = q.correctWord;
-          blankWord.style.color = 'var(--danger)';
-
-          document.querySelectorAll('.word-chip').forEach(chip => {
-            if (chip.textContent === q.correctWord) {
-              chip.classList.add('correct');
-            }
-          });
-
-          disableAllChips();
-          isAnswered = true;
-          document.getElementById('nextBtn').style.display = 'inline-block';
-        }
-      }
-    }
-
-    function disableAllChips() {
-      document.querySelectorAll('.word-chip').forEach(chip => chip.disabled = true);
-    }
-
-    function nextQuestion() {
-      currentQIndex++;
-      if (currentQIndex < gameQuestions.length) {
-        loadQuestion();
-      } else {
-        endGame();
-      }
-    }
-
-    function endGame() {
-      const maxScore = gameQuestions.length * 10;
-      document.getElementById('finalScore').textContent = `${score} / ${maxScore}`;
-      
-      const perfMsg = document.getElementById('performanceMsg');
-      if (score >= maxScore * 0.8) {
-        perfMsg.textContent = "🌟 शानदार! आपने 'पेड़ों की महिमा' पाठ को बहुत अच्छी तरह समझा है।";
-      } else if (score >= maxScore * 0.5) {
-        perfMsg.textContent = "👍 अच्छा प्रयास! थोड़ा और अभ्यास करें।";
-      } else {
-        perfMsg.textContent = "📖 पाठ 'पेड़ों की महिमा' दोबारा पढ़ें और फिर से खेलें।";
-      }
-
-      switchScreen('end-screen');
-    }
-
-    function restartGame() {
-      switchScreen('intro-screen');
-    }
-  </script>
+    document.getElementById('nextBtn').style.display = 'block';
+    index++;
+  }
+  loadNext();
+</script>
 </body>
 </html>
