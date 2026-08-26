@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>पेड़ों की महिमा - गेम</title>
+  <title>पेड़ों की महिमा - 2 Level Game</title>
   <style>
     * {
       box-sizing: border-box;
@@ -25,6 +25,7 @@
     h1 {
       margin-bottom: 10px;
       color: #1b5e20;
+      text-align: center;
     }
 
     .game-container {
@@ -40,19 +41,28 @@
 
     .dashboard {
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       background: #c8e6c9;
-      padding: 10px;
+      padding: 10px 15px;
       border-radius: 8px;
       font-weight: bold;
       margin-bottom: 20px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
 
+    .level-badge {
+      background: #2e7d32;
+      color: white;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+    }
+
+    /* LEVEL 1: Canvas Area */
     .canvas-area {
       position: relative;
       width: 100%;
-      height: 300px;
+      height: 280px;
       background: linear-gradient(to bottom, #81d4fa 60%, #a5d6a7 60%);
       border-radius: 8px;
       overflow: hidden;
@@ -77,12 +87,12 @@
       font-size: 35px;
       cursor: pointer;
       user-select: none;
-      animation: pulse 1s infinite alternate;
+      animation: pulse 0.8s infinite alternate;
     }
 
     @keyframes pulse {
       from { transform: scale(1); }
-      to { transform: scale(1.2); }
+      to { transform: scale(1.25); }
     }
 
     .controls {
@@ -108,105 +118,155 @@
       background-color: #388e3c;
     }
 
-    button:disabled {
-      background-color: #a5d6a7;
-      cursor: not-allowed;
-    }
-
-    /* Word Bridge Modal / Area */
-    .word-bridge {
-      margin-top: 20px;
-      background: #f1f8e9;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px dashed #66bb6a;
-    }
-
-    .word-bridge h3 {
-      margin-bottom: 10px;
-      color: #2e7d32;
-    }
-
-    .word-display {
-      font-size: 1.5rem;
-      letter-spacing: 4px;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-
-    .input-group {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    input[type="text"] {
-      padding: 8px;
-      font-size: 1rem;
-      width: 60px;
-      text-align: center;
-      border: 2px solid #4caf50;
-      border-radius: 4px;
-    }
-
     .instruction {
       font-size: 0.9rem;
       color: #555;
       margin-top: 10px;
     }
+
+    /* LEVEL 2: Grammar & Word Bridge UI */
+    .grammar-card {
+      background: #f1f8e9;
+      padding: 20px;
+      border-radius: 8px;
+      border: 2px dashed #66bb6a;
+      margin-top: 10px;
+    }
+
+    .grammar-card h3 {
+      margin-bottom: 12px;
+      color: #1b5e20;
+    }
+
+    .question-prompt {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #2e7d32;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .option-btn {
+      background: #ffffff;
+      color: #2e7d32;
+      border: 2px solid #a5d6a7;
+      padding: 12px;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .option-btn:hover {
+      background: #c8e6c9;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #feedback {
+      margin-top: 12px;
+      font-weight: bold;
+      font-size: 1rem;
+    }
   </style>
 </head>
 <body>
 
-  <h1>🌳 पेड़ों की महिमा - रक्षा और शब्द-सेतु 🌳</h1>
+  <h1>🌳 पेड़ों की महिमा 🌳</h1>
 
   <div class="game-container">
+    <!-- Top Dashboard -->
     <div class="dashboard">
+      <div><span class="level-badge" id="level-indicator">Level 1: Chapter Game</span></div>
       <div>ऑक्सीजन 💨: <span id="score">0</span></div>
       <div>पेड़ 🌲: <span id="tree-count">0</span></div>
     </div>
 
-    <div class="canvas-area" id="game-canvas">
-      <!-- Trees and threats will render here dynamically -->
-    </div>
-
-    <p class="instruction">मैदान पर क्लिक करके पेड़ लगाएं (Water/Plant)! खतरों (🏭, 🪓) पर क्लिक करके पर्यावरण की रक्षा करें!</p>
-
-    <div class="controls">
-      <button id="btn-water" onclick="plantTree()">पेड़ लगाएं (Plant)</button>
-    </div>
-
-    <!-- Word Bridge Challenge Section -->
-    <div class="word-bridge">
-      <h3>🧩 शब्द-सेतु (Fill the Missing Letter)</h3>
-      <div class="word-display" id="quiz-word">_ क्सीजन</div>
-      <div class="input-group">
-        <input type="text" id="missing-letter" maxlength="2" placeholder="अक्षर">
-        <button onclick="checkWordAnswer()">जांचें</button>
+    <!-- LEVEL 1: CHAPTER GAME (Tree Defense & Planting) -->
+    <div id="level1-screen">
+      <div class="canvas-area" id="game-canvas">
+        <!-- Dynamic Trees & Threats -->
       </div>
-      <p id="quiz-feedback" style="margin-top: 8px; font-weight: bold;"></p>
+      <p class="instruction">मैदान पर क्लिक करके पेड़ लगाएं! खतरों (🏭, 🪓) पर क्लिक करके पेड़ बचाएं!</p>
+      <div class="controls">
+        <button onclick="plantTree()">पेड़ लगाएं (Plant)</button>
+        <button id="next-level-btn" onclick="startLevel2()" style="background-color: #2e7d32;">Level 2 पर जाएं ➔</button>
+      </div>
     </div>
+
+    <!-- LEVEL 2: GRAMMAR & VOCABULARY GAME -->
+    <div id="level2-screen" class="hidden">
+      <div class="grammar-card">
+        <h3>🧩 व्याकरण एवं शब्द-सेतु (Grammar Quest)</h3>
+        <div class="question-prompt" id="grammar-prompt">प्रश्न लोड हो रहा है...</div>
+        <div class="options-grid" id="options-container">
+          <!-- Dynamic Answer Buttons -->
+        </div>
+        <div id="feedback"></div>
+      </div>
+    </div>
+
   </div>
 
   <script>
+    // Game State
+    let currentLevel = 1;
     let score = 0;
     let trees = [];
     let threats = [];
+    let threatInterval;
+    let oxygenInterval;
+
     const canvas = document.getElementById('game-canvas');
     const scoreEl = document.getElementById('score');
     const treeCountEl = document.getElementById('tree-count');
 
-    // Vocabulary Questions from Page 20 Word Bridge
-    const vocabList = [
-      { display: "_ क्सीजन", missing: "ऑ", full: "ऑक्सीजन" },
-      { display: "अ _ मोल", missing: "न", full: "अनमोल" },
-      { display: "ज _ वायु", missing: "ल", full: "जलवायु" },
-      { display: "पु _ य", missing: "ण", full: "पुण्य" }
+    // Grammar & Vocabulary Questions for Level 2
+    const grammarQuestions = [
+      {
+        prompt: "रिक्त स्थान भरें: _ क्सीजन",
+        options: ["ऑ", "अ", "ओ", "आ"],
+        answer: "ऑ",
+        explanation: "सही शब्द 'ऑक्सीजन' है।"
+      },
+      {
+        prompt: "इनमें से कौन सा शब्द संज्ञा (Noun) है?",
+        options: ["पेड़", "हरा", "सुंदर", "काटना"],
+        answer: "पेड़",
+        explanation: "'पेड़' एक संज्ञा (Noun) है, जबकि 'हरा' और 'सुंदर' विशेषण हैं।"
+      },
+      {
+        prompt: "रिक्त स्थान भरें: अ _ मोल",
+        options: ["न", "म", "र", "स"],
+        answer: "न",
+        explanation: "सही शब्द 'अनमोल' है।"
+      },
+      {
+        prompt: "'सुंदर' शब्द व्याकरण की दृष्टि से क्या है?",
+        options: ["संज्ञा (Noun)", "विशेषण (Adjective)", "क्रिया (Verb)", "सर्वनाम (Pronoun)"],
+        answer: "विशेषण (Adjective)",
+        explanation: "'सुंदर' एक गुणवाचक विशेषण (Adjective) है।"
+      },
+      {
+        prompt: "रिक्त स्थान भरें: ज _ वायु",
+        options: ["ल", "र", "म", "न"],
+        answer: "ल",
+        explanation: "सही शब्द 'जलवायु' है।"
+      }
     ];
 
-    let currentQuizIndex = 0;
+    let currentGrammarIndex = 0;
 
-    // Plant a Tree
+    // --- LEVEL 1 LOGIC ---
+
     function plantTree(xPos) {
       if (trees.length >= 10) return;
 
@@ -216,12 +276,11 @@
       tree.innerHTML = '🌲';
       tree.style.left = `${x}px`;
       canvas.appendChild(tree);
-      
+
       trees.push(tree);
       updateDashboard();
     }
 
-    // Canvas click to plant tree manually
     canvas.addEventListener('click', (e) => {
       if (e.target === canvas) {
         const rect = canvas.getBoundingClientRect();
@@ -230,91 +289,123 @@
       }
     });
 
-    // Spawn Threats (Pollution / Axes)
     function spawnThreat() {
-      if (trees.length === 0) return;
+      if (trees.length === 0 || currentLevel !== 1) return;
 
       const threatTypes = ['🏭', '🪓', '💨'];
       const type = threatTypes[Math.floor(Math.random() * threatTypes.length)];
-      
+
       const threat = document.createElement('div');
       threat.className = 'threat';
       threat.innerHTML = type;
       threat.style.left = `${Math.random() * (canvas.clientWidth - 40)}px`;
-      threat.style.top = `${Math.random() * 150 + 20}px`;
+      threat.style.top = `${Math.random() * 120 + 20}px`;
 
-      // Click threat to neutralize
       threat.onclick = (e) => {
         e.stopPropagation();
-        canvas.removeChild(threat);
-        threats = threats.filter(t => t !== threat);
-        score += 15; // Reward for neutralizing threat
-        updateDashboard();
+        if (canvas.contains(threat)) {
+          canvas.removeChild(threat);
+          threats = threats.filter(t => t !== threat);
+          score += 15;
+          updateDashboard();
+        }
       };
 
       canvas.appendChild(threat);
       threats.push(threat);
 
-      // Threat destroys a tree if left alone for 4 seconds
+      // Threat destroys tree if left unclicked for 3.5 seconds
       setTimeout(() => {
         if (threats.includes(threat)) {
-          canvas.removeChild(threat);
+          if (canvas.contains(threat)) canvas.removeChild(threat);
           threats = threats.filter(t => t !== threat);
           if (trees.length > 0) {
             const removedTree = trees.pop();
-            canvas.removeChild(removedTree);
+            if (canvas.contains(removedTree)) canvas.removeChild(removedTree);
             updateDashboard();
           }
         }
-      }, 4000);
+      }, 3500);
     }
 
-    // Passive Oxygen Production from Trees
-    setInterval(() => {
-      score += trees.length * 2;
-      updateDashboard();
-    }, 2000);
+    function startLevel1Timers() {
+      oxygenInterval = setInterval(() => {
+        if (currentLevel === 1) {
+          score += trees.length * 2;
+          updateDashboard();
+        }
+      }, 2000);
 
-    // Random threats spawn every 3.5 seconds
-    setInterval(spawnThreat, 3500);
+      threatInterval = setInterval(spawnThreat, 3000);
+    }
+
+    // --- LEVEL 2 LOGIC ---
+
+    function startLevel2() {
+      currentLevel = 2;
+      clearInterval(threatInterval);
+
+      document.getElementById('level1-screen').classList.add('hidden');
+      document.getElementById('level2-screen').classList.remove('hidden');
+      document.getElementById('level-indicator').innerText = "Level 2: Grammar Game";
+
+      loadGrammarQuestion();
+    }
+
+    function loadGrammarQuestion() {
+      const q = grammarQuestions[currentGrammarIndex];
+      document.getElementById('grammar-prompt').innerText = q.prompt;
+      document.getElementById('feedback').innerText = '';
+
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkGrammarAnswer(opt, q);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkGrammarAnswer(selected, questionObj) {
+      const feedback = document.getElementById('feedback');
+
+      if (selected === questionObj.answer) {
+        feedback.style.color = '#2e7d32';
+        feedback.innerText = `सही उत्तर! (+50 ऑक्सीजन) - ${questionObj.explanation}`;
+        score += 50;
+        updateDashboard();
+
+        // Disable buttons after answer
+        const btns = document.querySelectorAll('.option-btn');
+        btns.forEach(b => b.disabled = true);
+
+        setTimeout(() => {
+          currentGrammarIndex++;
+          if (currentGrammarIndex < grammarQuestions.length) {
+            loadGrammarQuestion();
+          } else {
+            feedback.style.color = '#1b5e20';
+            feedback.innerHTML = `🎉 **बधाई हो!** आपने दोनों लेवल्स पूरे कर लिए हैं!<br>कुल स्कोर: ${score} ऑक्सीजन`;
+            document.getElementById('options-container').innerHTML = '';
+          }
+        }, 2000);
+      } else {
+        feedback.style.color = '#d32f2f';
+        feedback.innerText = 'गलत उत्तर! पुनः प्रयास करें।';
+      }
+    }
 
     function updateDashboard() {
       scoreEl.innerText = score;
       treeCountEl.innerText = trees.length;
     }
 
-    // Load Quiz Question
-    function loadQuiz() {
-      const q = vocabList[currentQuizIndex];
-      document.getElementById('quiz-word').innerText = q.display;
-      document.getElementById('missing-letter').value = '';
-      document.getElementById('quiz-feedback').innerText = '';
-    }
-
-    // Check Word Bridge Answer
-    function checkWordAnswer() {
-      const input = document.getElementById('missing-letter').value.trim();
-      const current = vocabList[currentQuizIndex];
-      const feedback = document.getElementById('quiz-feedback');
-
-      if (input === current.missing) {
-        feedback.style.color = 'green';
-        feedback.innerText = `सही उत्तर! (${current.full}) +50 ऑक्सीजन!`;
-        score += 50;
-        plantTree();
-        updateDashboard();
-        
-        currentQuizIndex = (currentQuizIndex + 1) % vocabList.length;
-        setTimeout(loadQuiz, 1500);
-      } else {
-        feedback.style.color = 'red';
-        feedback.innerText = 'गलत उत्तर, पुनः प्रयास करें!';
-      }
-    }
-
-    // Initialize initial tree and quiz
+    // Initialize Game
     plantTree(100);
-    loadQuiz();
+    startLevel1Timers();
   </script>
 </body>
 </html>
