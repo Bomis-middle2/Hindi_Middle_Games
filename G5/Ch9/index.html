@@ -1,347 +1,367 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>हिंदवी स्वराज्य - 2 Level Game</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background: #121212;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 10px;
-    }
-
-    #game-card {
-      background: #1e1e1e;
-      border: 3px solid #ff9933;
-      border-radius: 16px;
-      width: 100%;
-      max-width: 700px;
-      padding: 24px;
-      box-shadow: 0 10px 30px rgba(255, 153, 51, 0.2);
-    }
-
-    .header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .header h1 {
-      color: #ff9933;
-      font-size: 1.8rem;
-      margin-bottom: 5px;
-    }
-
-    .header p {
-      color: #b0bec5;
-      font-size: 0.95rem;
-    }
-
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
-      background: #2d2d2d;
-      padding: 10px 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-weight: bold;
-      color: #ffca28;
-    }
-
-    /* Screen Management */
-    .screen {
-      display: none;
-    }
-
-    .screen.active {
-      display: block;
-    }
-
-    /* Intro Screen */
-    .intro-box {
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    .intro-box h2 {
-      color: #81c784;
-      margin-bottom: 12px;
-    }
-
-    .level-desc {
-      background: #263238;
-      padding: 12px;
-      border-radius: 8px;
-      margin: 10px 0;
-      text-align: left;
-    }
-
-    .level-desc strong {
-      color: #ff9933;
-    }
-
-    /* Question Screen */
-    .q-box {
-      background: #263238;
-      padding: 18px;
-      border-radius: 10px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 18px;
-      border-left: 5px solid #ff9933;
-    }
-
-    .options-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .opt-btn {
-      background: #37474f;
-      color: #ffffff;
-      border: 2px solid #546e7a;
-      padding: 12px 16px;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s ease;
-    }
-
-    .opt-btn:hover {
-      background: #455a64;
-      border-color: #ff9933;
-    }
-
-    .feedback {
-      margin-top: 15px;
-      font-size: 1.05rem;
-      font-weight: bold;
-      min-height: 25px;
-      text-align: center;
-    }
-
-    /* Action Buttons */
-    .btn {
-      background: linear-gradient(135deg, #ff9933 0%, #f57c00 100%);
-      color: #fff;
-      border: none;
-      padding: 12px 28px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      border-radius: 25px;
-      cursor: pointer;
-      margin-top: 20px;
-      box-shadow: 0 4px 12px rgba(245, 124, 0, 0.4);
-      transition: transform 0.2s;
-    }
-
-    .btn:hover {
-      transform: scale(1.03);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Balloon Burst Game - योग दिवस</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #game-header {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        h1 {
+            margin: 0 0 5px 0;
+            color: #2c3e50;
+            font-size: 22px;
+        }
+        .info-bar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #27ae60;
+        }
+        #question-box {
+            margin-top: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #d35400;
+            background: #fff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        #game-container {
+            position: relative;
+            width: 100%;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .balloon {
+            position: absolute;
+            bottom: -130px;
+            width: 110px;
+            height: 130px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 10px;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2);
+            animation: floatUp 6s linear forwards;
+        }
+        .balloon::after {
+            content: "";
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-bottom: 12px solid inherit;
+        }
+        .string {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            width: 2px;
+            height: 25px;
+            background-color: #777;
+        }
+        @keyframes floatUp {
+            0% {
+                bottom: -140px;
+                opacity: 1;
+            }
+            100% {
+                bottom: 100%;
+                opacity: 1;
+            }
+        }
+        .pop {
+            animation: popAnimation 0.3s ease-out forwards !important;
+        }
+        @keyframes popAnimation {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.5; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        .modal {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            z-index: 20;
+            max-width: 90%;
+            width: 350px;
+        }
+        .modal button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .modal button:hover {
+            background: #2980b9;
+        }
+    </style>
 </head>
 <body>
 
-  <div id="game-card">
-    <div class="header">
-      <h1>⚔️ छत्रपति शिवाजी महाराज ⚔️</h1>
-      <p>पाठ 8: हिंदवी स्वराज्य - 2 स्तर का खेल</p>
+    <div id="game-header">
+        <h1>🎈 अध्याय 9: योग दिवस (Balloon Burst Game)</h1>
+        <div class="info-bar">
+            <span>स्तर (Level): <span id="level-num">1</span>/2</span>
+            <span>अंक (Score): <span id="score">0</span></span>
+        </div>
+        <div id="question-box">प्रश्न लोड हो रहा है...</div>
     </div>
 
-    <div class="status-bar" id="status-bar" style="display: none;">
-      <div>स्तर (Level): <span id="level-num">1</span></div>
-      <div>अंक (Score): <span id="score-num">0</span></div>
+    <div id="game-container"></div>
+
+    <!-- Level Transition Modal -->
+    <div id="level-modal" class="modal">
+        <h2 id="level-title">🎉 Level 1 पूरा हुआ!</h2>
+        <p id="level-desc">अब Level 2 (व्याकरण बोध - विशेषण) शुरू होगा।</p>
+        <button onclick="nextLevel()">Level 2 शुरू करें ➔</button>
     </div>
 
-    <!-- START SCREEN -->
-    <div id="start-screen" class="screen active intro-box">
-      <h2>🚩 स्वराज्य अभियान में आपका स्वागत है!</h2>
-      <div class="level-desc">
-        <strong>स्तर 1: अध्याय बोध (Chapter Quiz)</strong><br>
-        शिवाजी महाराज के जीवन, गनीमी कावा रणनीति और स्वराज्य के इतिहास से जुड़े प्रश्न।
-      </div>
-      <div class="level-desc">
-        <strong>स्तर 2: व्याकरण अभ्यास (Grammar Quiz)</strong><br>
-        श्रुतिसम भिन्नार्थक, अनेकार्थक और वाक्यांशों के लिए एक शब्द का अभ्यास।
-      </div>
-      <button class="btn" onclick="startLevel(1)">स्तर 1 प्रारंभ करें</button>
+    <!-- Game Over Modal -->
+    <div id="game-over-modal" class="modal">
+        <h2>🏆 शानदार! आपने खेल पूरा कर लिया!</h2>
+        <p id="final-score">आपका कुल अंक: 0</p>
+        <button onclick="restartGame()">फिर से खेलें 🔄</button>
     </div>
 
-    <!-- GAME PLAY SCREEN -->
-    <div id="play-screen" class="screen">
-      <div class="q-box" id="q-text">प्रश्न यहाँ दिखेगा...</div>
-      <div class="options-grid" id="opts-container"></div>
-      <div class="feedback" id="feedback-msg"></div>
-    </div>
+    <script>
+        // Level 1: Chapter Questions (पाठ-बोध)
+        const level1Questions = [
+            {
+                q: "अंतर्राष्ट्रीय योग दिवस कब मनाया जाता है?",
+                options: ["21 जून", "15 अगस्त", "26 जनवरी", "21 मई"],
+                correct: "21 जून"
+            },
+            {
+                q: "'योग' शब्द संस्कृत के किस शब्द से बना है?",
+                options: ["युज", "योगी", "योग्यता", "युग"],
+                correct: "युज"
+            },
+            {
+                q: "आधुनिक योग का जनक किसे माना जाता है?",
+                options: ["महर्षि पतंजलि", "स्वामी विवेकानंद", "महर्षि वेदव्यास", "गुरु दीपक जी"],
+                correct: "महर्षि पतंजलि"
+            },
+            {
+                q: "पाचन तंत्र के लिए कौन-सा आसन सबसे अच्छा है?",
+                options: ["वज्रासन", "ताड़ासन", "वृक्षासन", "शवासन"],
+                correct: "वज्रासन"
+            },
+            {
+                q: "शरीर में संतुलन लाने वाला आसन कौन-सा है?",
+                options: ["वृक्षासन", "शवासन", "भुजंगासन", "वज्रासन"],
+                correct: "वृक्षासन"
+            }
+        ];
 
-    <!-- LEVEL COMPLETE / GAME OVER SCREEN -->
-    <div id="end-screen" class="screen intro-box">
-      <h2 id="end-title">स्तर पूर्ण! 🎉</h2>
-      <p id="end-desc" style="margin: 15px 0; font-size: 1.1rem;"></p>
-      <button class="btn" id="next-btn" onclick="nextAction()">आगे बढ़ें</button>
-    </div>
-  </div>
+        // Level 2: Grammar Questions (व्याकरण बोध - विशेषण)
+        const level2Questions = [
+            {
+                q: "'रंग-बिरंगी चटाइयाँ' - इसमें विशेषण शब्द क्या है?",
+                options: ["रंग-बिरंगी", "चटाइयाँ", "बिछी", "हैं"],
+                correct: "रंग-बिरंगी"
+            },
+            {
+                q: "'शांत', 'सुलभ' या 'सुंदर' किस प्रकार के विशेषण हैं?",
+                options: ["गुणवाचक", "संख्यावाचक", "परिमाणवाचक", "सार्वनामिक"],
+                correct: "गुणवाचक"
+            },
+            {
+                q: "'दो बार', 'चार फल' किस विशेषण के उदाहरण हैं?",
+                options: ["संख्यावाचक", "गुणवाचक", "परिमाणवाचक", "सार्वनामिक"],
+                correct: "संख्यावाचक"
+            },
+            {
+                q: "'थोड़ा पानी', 'दो किलो' किस विशेषण के उदाहरण हैं?",
+                options: ["परिमाणवाचक", "संख्यावाचक", "गुणवाचक", "सार्वनामिक"],
+                correct: "परिमाणवाचक"
+            },
+            {
+                q: "'वह लड़का', 'यह किताब' में 'वह' और 'यह' कौन से विशेषण हैं?",
+                options: ["सार्वनामिक", "गुणवाचक", "संख्यावाचक", "परिमाणवाचक"],
+                correct: "सार्वनामिक"
+            }
+        ];
 
-  <script>
-    // LEVEL 1: CHAPTER BASED QUESTIONS
-    const level1Data = [
-      {
-        q: "शिवाजी महाराज का जन्म किस क़िले में हुआ था?",
-        opts: ["रायगढ़ क़िला", "शिवनेरी क़िला", "सिंहगढ़ क़िला", "विजयदुर्ग क़िला"],
-        ans: 1
-      },
-      {
-        q: "शिवाजी महाराज ने 16 वर्ष की उम्र में स्वराज्य का प्रण कहाँ लिया था?",
-        opts: ["रायगढ़ मंदिर", "शिवनेरी मंदिर", "रायरेश्वर मंदिर", "तुलजा भवानी मंदिर"],
-        ans: 2
-      },
-      {
-        q: "शिवाजी महाराज की पहाड़ी व छापामार युद्ध रणनीति क्या कहलाती थी?",
-        opts: ["समुद्री युद्ध", "गनीमी कावा", "खुला युद्ध", "अष्टप्रधान"],
-        ans: 1
-      },
-      {
-        q: "शिवाजी महाराज का राज्याभिषेक किस वर्ष हुआ था?",
-        opts: ["1630 में", "1650 में", "1674 में", "1688 में"],
-        ans: 2
-      }
-    ];
+        const colors = ["#FF5733", "#2ECC71", "#3498DB", "#F1C40F", "#9B59B6", "#E67E22"];
 
-    // LEVEL 2: GRAMMAR BASED QUESTIONS
-    const level2Data = [
-      {
-        q: "'जो सबकी रक्षा करता है' - इस वाक्यांश के लिए एक शब्द क्या होगा?",
-        opts: ["अमर", "रक्षक", "दूरदर्शी", "सैनिक"],
-        ans: 1
-      },
-      {
-        q: "'कल' शब्द के दो अर्थ (बीता दिन / आने वाला दिन) हैं। यह किस प्रकार का शब्द है?",
-        opts: ["श्रुतिसम भिन्नार्थक", "अनेकार्थक शब्द", "विलोम शब्द", "सर्वनाम"],
-        ans: 1
-      },
-      {
-        q: "'कुल' (वंश) और 'कूल' (किनारा) किस प्रकार के शब्द हैं?",
-        opts: ["श्रुतिसम भिन्नार्थक शब्द", "अनेकार्थक शब्द", "पर्यायवाची शब्द", "संज्ञा शब्द"],
-        ans: 0
-      },
-      {
-        q: "'जो आगे की सोचता है' - इस वाक्यांश के लिए एक शब्द क्या होगा?",
-        opts: ["अनपढ़", "अमर", "दूरदर्शी", "न्यायप्रिय"],
-        ans: 2
-      }
-    ];
+        let currentLevel = 1;
+        let currentQIndex = 0;
+        let score = 0;
+        let balloonInterval;
+        let activeQuestions = [];
 
-    let currentLevel = 1;
-    let currentQIndex = 0;
-    let score = 0;
-    let currentQuestions = [];
+        const questionBox = document.getElementById("question-box");
+        const scoreDisplay = document.getElementById("score");
+        const levelDisplay = document.getElementById("level-num");
+        const gameContainer = document.getElementById("game-container");
+        const levelModal = document.getElementById("level-modal");
+        const gameOverModal = document.getElementById("game-over-modal");
 
-    function showScreen(id) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-    }
-
-    function startLevel(lvl) {
-      currentLevel = lvl;
-      currentQIndex = 0;
-      currentQuestions = (lvl === 1) ? level1Data : level2Data;
-
-      document.getElementById('status-bar').style.display = 'flex';
-      document.getElementById('level-num').innerText = currentLevel;
-      document.getElementById('score-num').innerText = score;
-
-      showScreen('play-screen');
-      loadQuestion();
-    }
-
-    function loadQuestion() {
-      const q = currentQuestions[currentQIndex];
-      document.getElementById('q-text').innerText = `प्र॰ ${currentQIndex + 1}: ${q.q}`;
-      document.getElementById('feedback-msg').innerText = '';
-
-      const container = document.getElementById('opts-container');
-      container.innerHTML = '';
-
-      q.opts.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'opt-btn';
-        btn.innerText = opt;
-        btn.onclick = () => selectOption(idx);
-        container.appendChild(btn);
-      });
-    }
-
-    function selectOption(selectedIdx) {
-      const q = currentQuestions[currentQIndex];
-      const feedback = document.getElementById('feedback-msg');
-      const btns = document.querySelectorAll('.opt-btn');
-
-      // Disable all buttons after selection
-      btns.forEach(b => b.style.pointerEvents = 'none');
-
-      if (selectedIdx === q.ans) {
-        feedback.style.color = '#81c784';
-        feedback.innerText = '✓ उत्तम! सही उत्तर।';
-        btns[selectedIdx].style.background = '#2e7d32';
-        btns[selectedIdx].style.borderColor = '#81c784';
-        score += 10;
-        document.getElementById('score-num').innerText = score;
-      } else {
-        feedback.style.color = '#e57373';
-        feedback.innerText = `✗ गलत उत्तर! सही उत्तर था: ${q.opts[q.ans]}`;
-        btns[selectedIdx].style.background = '#c62828';
-        btns[q.ans].style.background = '#2e7d32';
-      }
-
-      setTimeout(() => {
-        currentQIndex++;
-        if (currentQIndex < currentQuestions.length) {
-          loadQuestion();
-        } else {
-          finishLevel();
+        function startGame() {
+            score = 0;
+            currentLevel = 1;
+            currentQIndex = 0;
+            scoreDisplay.innerText = score;
+            levelDisplay.innerText = currentLevel;
+            levelModal.style.display = "none";
+            gameOverModal.style.display = "none";
+            activeQuestions = level1Questions;
+            loadQuestion();
         }
-      }, 1800);
-    }
 
-    function finishLevel() {
-      showScreen('end-screen');
-      const title = document.getElementById('end-title');
-      const desc = document.getElementById('end-desc');
-      const btn = document.getElementById('next-btn');
+        function loadQuestion() {
+            clearBalloons();
+            if (currentQIndex >= activeQuestions.length) {
+                if (currentLevel === 1) {
+                    showLevelTransition();
+                } else {
+                    endGame();
+                }
+                return;
+            }
 
-      if (currentLevel === 1) {
-        title.innerText = '⚔️ स्तर 1 पूर्ण! (Level 1 Completed)';
-        desc.innerText = `शानदार! आपने अध्याय बोध के प्रश्नों को सफलतापूर्वक पूरा किया। आपका वर्तमान स्कोर: ${score}`;
-        btn.innerText = 'स्तर 2 (व्याकरण) प्रारंभ करें';
-      } else {
-        title.innerText = '🏆 विजय! खेल समाप्त (Game Completed)';
-        desc.innerText = `बधाई हो! आपने दोनों स्तर (अध्याय और व्याकरण) सफलता से पूरे कर लिए हैं। आपका कुल स्कोर: ${score}/80`;
-        btn.innerText = 'पुनः खेलें (Play Again)';
-      }
-    }
+            const qData = activeQuestions[currentQIndex];
+            questionBox.innerText = `L${currentLevel} Q${currentQIndex + 1}: ${qData.q}`;
 
-    function nextAction() {
-      if (currentLevel === 1) {
-        startLevel(2);
-      } else {
-        score = 0;
-        startLevel(1);
-      }
-    }
-  </script>
+            let optionIndex = 0;
+            spawnBalloon(qData.options[optionIndex], qData.correct);
+            optionIndex++;
+
+            balloonInterval = setInterval(() => {
+                if (optionIndex < qData.options.length) {
+                    spawnBalloon(qData.options[optionIndex], qData.correct);
+                    optionIndex++;
+                } else {
+                    optionIndex = 0;
+                }
+            }, 1200);
+        }
+
+        function spawnBalloon(text, correctAnswer) {
+            const balloon = document.createElement("div");
+            balloon.className = "balloon";
+            
+            const maxLeft = gameContainer.offsetWidth - 120;
+            const randomLeft = Math.max(10, Math.floor(Math.random() * maxLeft));
+            balloon.style.left = randomLeft + "px";
+
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            balloon.style.backgroundColor = randomColor;
+
+            balloon.innerText = text;
+
+            const string = document.createElement("div");
+            string.className = "string";
+            balloon.appendChild(string);
+
+            balloon.onclick = function() {
+                popBalloon(balloon, text, correctAnswer);
+            };
+
+            balloon.addEventListener('animationend', () => {
+                balloon.remove();
+            });
+
+            gameContainer.appendChild(balloon);
+        }
+
+        function popBalloon(balloon, selectedText, correctAnswer) {
+            balloon.classList.add("pop");
+
+            setTimeout(() => {
+                balloon.remove();
+            }, 300);
+
+            if (selectedText === correctAnswer) {
+                score += 10;
+                scoreDisplay.innerText = score;
+                currentQIndex++;
+                clearInterval(balloonInterval);
+                setTimeout(loadQuestion, 500);
+            } else {
+                score = Math.max(0, score - 2);
+                scoreDisplay.innerText = score;
+            }
+        }
+
+        function clearBalloons() {
+            clearInterval(balloonInterval);
+            gameContainer.innerHTML = "";
+        }
+
+        function showLevelTransition() {
+            clearBalloons();
+            questionBox.innerText = "Level 1 पूरा!";
+            levelModal.style.display = "block";
+        }
+
+        function nextLevel() {
+            currentLevel = 2;
+            currentQIndex = 0;
+            levelDisplay.innerText = currentLevel;
+            activeQuestions = level2Questions;
+            levelModal.style.display = "none";
+            loadQuestion();
+        }
+
+        function endGame() {
+            clearBalloons();
+            questionBox.innerText = "खेल समाप्त!";
+            document.getElementById("final-score").innerText = `आपका कुल अंक: ${score}`;
+            gameOverModal.style.display = "block";
+        }
+
+        function restartGame() {
+            startGame();
+        }
+
+        window.onload = startGame;
+    </script>
 </body>
 </html>
