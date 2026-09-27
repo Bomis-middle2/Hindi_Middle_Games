@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>होली - सुंदर कविता व गतिविधियाँ</title>
+  <title>होली - सुंदर कविता व खेल</title>
   <style>
     * {
       box-sizing: border-box;
@@ -18,17 +18,12 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       min-height: 100vh;
       padding: 20px;
     }
 
-    h1 {
-      margin-bottom: 10px;
-      color: #c2185b;
-      text-align: center;
-    }
-
-    /* 1. START SCREEN (Center Logo ONLY Here) */
+    /* 1. START SCREEN */
     #start-screen {
       display: flex;
       flex-direction: column;
@@ -39,37 +34,36 @@
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0,0,0,0.15);
       width: 100%;
-      max-width: 700px;
-      padding: 40px 20px;
+      max-width: 650px;
+      padding: 50px 20px;
       text-align: center;
     }
 
     .start-logo {
-      max-width: 210px;
+      max-width: 220px;
       height: auto;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
 
-    .start-btn {
+    .btn-main {
       background-color: #c2185b;
       color: #ffffff;
       border: none;
-      padding: 12px 30px;
-      font-size: 1.2rem;
+      padding: 14px 32px;
+      font-size: 1.25rem;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
       transition: background 0.2s, transform 0.1s;
-      margin-top: 15px;
     }
 
-    .start-btn:hover {
+    .btn-main:hover {
       background-color: #880e4f;
       transform: scale(1.03);
     }
 
-    /* MAIN CONTAINER (Hidden initially) */
-    .main-container {
+    /* 2. GAME CONTAINER */
+    #game-container {
       display: none;
       background: #ffffff;
       border: 3px solid #f48fb1;
@@ -80,146 +74,55 @@
       padding: 20px;
     }
 
-    /* Tab Controls */
-    .tab-buttons {
+    .dashboard {
       display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      background-color: #f48fb1;
-      color: #ffffff;
-      border: none;
-      padding: 10px 18px;
-      font-size: 1rem;
-      border-radius: 6px;
-      cursor: pointer;
+      justify-content: space-between;
+      align-items: center;
+      background: #f8bbd0;
+      padding: 12px 20px;
+      border-radius: 8px;
       font-weight: bold;
-      transition: background 0.2s;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      color: #880e4f;
     }
 
-    .tab-btn.active, .tab-btn:hover {
-      background-color: #c2185b;
+    .level-title {
+      font-size: 1.2rem;
+      color: #c2185b;
+      margin-bottom: 15px;
+      text-align: center;
     }
 
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Poem & Content Section */
-    .card {
+    /* LEVEL 1: SENTENCE REPAIR GAME */
+    .sentence-box {
       background: #fff8e1;
-      border: 2px dashed #ffe082;
+      border: 2px dashed #f48fb1;
       padding: 20px;
       border-radius: 8px;
-      line-height: 1.8;
-      font-size: 1.05rem;
-    }
-
-    .card h2 {
-      color: #d81b60;
-      margin-bottom: 12px;
-      font-size: 1.3rem;
-      border-bottom: 2px solid #ff80ab;
-      padding-bottom: 5px;
-    }
-
-    .poem-text {
-      font-style: italic;
       text-align: center;
-      color: #880e4f;
-      margin-bottom: 15px;
-    }
-
-    .info-list {
-      margin-left: 20px;
-    }
-
-    .info-list li {
-      margin-bottom: 8px;
-    }
-
-    /* Color Mixer Interactive */
-    .mixer-box {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      align-items: center;
       margin-top: 15px;
     }
 
-    .color-inputs {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-
-    .color-select {
-      padding: 8px 12px;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: 2px solid #f48fb1;
-    }
-
-    .result-display {
-      width: 100%;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
+    .sentence-text {
+      font-size: 1.15rem;
       font-weight: bold;
-      font-size: 1.2rem;
-      color: #ffffff;
-      text-shadow: 1px 1px 2px #000;
-      transition: background 0.3s;
-    }
-
-    /* Interactive Non-MCQ Game Area */
-    .dashboard {
-      display: flex;
-      justify-content: space-around;
-      background: #f3e5f5;
-      padding: 10px;
-      border-radius: 8px;
-      font-weight: bold;
-      margin-bottom: 15px;
-      font-size: 1.05rem;
-    }
-
-    .quiz-box {
-      margin-top: 10px;
-      background: #fff8e1;
-      padding: 20px;
-      border-radius: 8px;
-      border: 2px dashed #f48fb1;
-      text-align: center;
-    }
-
-    .quiz-question {
-      font-size: 1.1rem;
-      font-weight: bold;
-      margin-bottom: 15px;
       color: #880e4f;
+      margin-bottom: 20px;
     }
 
-    .game-options-grid {
+    .options-grid {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
     }
 
-    .game-opt-btn {
+    .option-btn {
       background-color: #ffffff;
       border: 2px solid #f48fb1;
       color: #4a148c;
-      padding: 10px 18px;
+      padding: 10px 20px;
       border-radius: 6px;
       cursor: pointer;
       font-size: 1rem;
@@ -227,366 +130,254 @@
       transition: background 0.2s, transform 0.1s;
     }
 
-    .game-opt-btn:hover {
+    .option-btn:hover {
       background-color: #f8bbd0;
       transform: translateY(-2px);
     }
 
-    .text-input-group {
+    /* LEVEL 2: CATCH/SORT GAME */
+    #catch-game-area {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      background: #fff8e1;
+      border: 2px dashed #f48fb1;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .falling-word {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c2185b;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .baskets-container {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
       display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 10px;
+      justify-content: space-around;
+      padding: 0 5px;
     }
 
-    .text-input {
-      padding: 10px 14px;
-      border: 2px solid #f48fb1;
-      border-radius: 6px;
-      font-size: 1rem;
-      width: 65%;
-      outline: none;
-    }
-
-    .submit-btn {
-      background-color: #c2185b;
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
+    .basket-btn {
+      background: #f48fb1;
+      color: #ffffff;
+      border: 2px solid #c2185b;
+      padding: 10px 8px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
       cursor: pointer;
-      font-weight: bold;
+      flex: 1;
+      margin: 0 3px;
+      text-align: center;
+      transition: background 0.2s;
     }
 
-    .feedback {
-      margin-top: 12px;
-      font-weight: bold;
-      font-size: 1.05rem;
+    .basket-btn:hover {
+      background: #c2185b;
     }
 
-    .level-indicator {
-      background: #880e4f;
-      color: white;
-      padding: 4px 12px;
+    /* 3. END SCREEN */
+    #end-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 3px solid #f48fb1;
       border-radius: 12px;
-      font-size: 0.85rem;
-      display: inline-block;
-      margin-bottom: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 650px;
+      padding: 50px 20px;
+      text-align: center;
+    }
+
+    .congrats-text {
+      font-size: 2rem;
+      color: #c2185b;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+
+    .final-score {
+      font-size: 1.3rem;
+      margin-bottom: 30px;
+      color: #4a148c;
+    }
+
+    .feedback-msg {
+      height: 24px;
+      text-align: center;
+      font-weight: bold;
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
 
-  <!-- 1. START SCREEN WITH CENTERED LOGO ONLY -->
+  <!-- 1. START SCREEN -->
   <div id="start-screen">
-    <img src="assets/logo.png" alt="Innovine Logo" class="start-logo">
-    <h1 style="font-size: 1.6rem; color: #c2185b;">🎨 होली - रंगों का त्योहार 🎨</h1>
-    <p style="margin: 10px 0 20px; font-size: 1.05rem; color: #4a148c;">
-      कविता, रंग-मिश्रण गतिविधियों और मज़ेदार अभ्यासों के साथ होली का आनंद लें!
-    </p>
-    <button class="start-btn" onclick="startGameApp()">शुरू करें (Start)</button>
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" class="start-logo">
+    <button class="btn-main" onclick="startGame()">Start Game</button>
   </div>
 
-  <!-- 2. MAIN APPLICATION -->
-  <div class="main-container" id="main-app">
-    <h1>🎨 होली - रंगों का त्योहार 🎨</h1>
-
-    <div class="tab-buttons">
-      <button class="tab-btn active" onclick="switchTab('poem')">📜 कविता व भाव</button>
-      <button class="tab-btn" onclick="switchTab('facts')">🌍 अंतरराष्ट्रीय जुड़ाव</button>
-      <button class="tab-btn" onclick="switchTab('mixer')">🎨 रंग मिश्रण</button>
-      <button class="tab-btn" onclick="switchTab('quiz')">🎮 खेल-खेल में सीखें</button>
+  <!-- 2. GAME CONTAINER -->
+  <div id="game-container">
+    <div class="dashboard">
+      <div id="level-display">स्तर 1: वाक्य-सुधार (Sentence Repair)</div>
+      <div>अंक (Score): <span id="score">0</span></div>
     </div>
 
-    <!-- TAB 1: POEM -->
-    <div id="poem-tab" class="tab-content active">
-      <div class="card">
-        <h2>होली के रंगों का संदेश</h2>
-        <div class="poem-text">
-          "होली आई, होली आई,<br>
-          संग रंगों की सौगात लाई।<br>
-          पीला, हरा, नीला, लाल,<br>
-          गूँज उठा मंजीरे का ताल।"[cite: 4]
-        </div>
-        <ul class="info-list">
-          <li><strong>लाल रंग:</strong> प्रेम सिखाता है और मन में अपनापन जगाता है[cite: 4]।</li>
-          <li><strong>पीला रंग:</strong> विश्वास बढ़ाता है और जीवन में उजियारा लाता है[cite: 4]।</li>
-          <li><strong>हरा रंग:</strong> नई आशा भरता है और दिल में उत्साह सँवारता है[cite: 4]।</li>
-          <li><strong>केसरिया रंग:</strong> साहस और उमंग की शक्ति देता है[cite: 4]।</li>
-          <li><strong>मुख्य संदेश:</strong> जाति-धर्म की दीवारें तोड़कर मानवता, प्रेम और दया का प्रसार करना[cite: 4]।</li>
-        </ul>
+    <!-- LEVEL 1: SENTENCE REPAIR GAME -->
+    <div id="level-1-area">
+      <h2 class="level-title">सही शब्द चुनकर वाक्य पूरा करें</h2>
+      <p style="text-align: center; margin-bottom: 10px; font-size: 0.95rem;">वाक्य के रिक्त स्थान [____] के लिए सही उत्तर का चयन करें:</p>
+      
+      <div class="sentence-box">
+        <div class="sentence-text" id="l1-question">प्रश्न लोड हो रहा है...</div>
+        <div class="options-grid" id="l1-options"></div>
       </div>
+      <div class="feedback-msg" id="l1-feedback"></div>
     </div>
 
-    <!-- TAB 2: FACTS -->
-    <div id="facts-tab" class="tab-content">
-      <div class="card">
-        <h2>विश्व भर में होली (International Connect)</h2>
-        <ul class="info-list">
-          <li><strong>नेपाल:</strong> इसे 'फागु पूर्णिमा' कहते हैं; लोग पशु-पक्षियों पर रंग नहीं, बल्कि फूल बरसाते हैं[cite: 4]।</li>
-          <li><strong>मॉरीशस & जर्मनी:</strong> पानी बचाने के लिए सूखे गुलाल से होली मनाई जाती है[cite: 4]।</li>
-          <li><strong>ऑस्ट्रेलिया:</strong> इसे 'फेस्टिवल ऑफ कलर्स' कहा जाता है, जहाँ जल-संरक्षण पर ध्यान दिया जाता है[cite: 4]।</li>
-          <li><strong>बरसाना (भारत):</strong> यहाँ की विश्व प्रसिद्ध 'लठमार होली' खेली जाती है[cite: 4]।</li>
-          <li><strong>पारंपरिक रंग:</strong> नीम, हल्दी और कुमकुम से बने प्राकृतिक रंग त्वचा को कीटाणुओं से बचाते हैं[cite: 4]।</li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- TAB 3: COLOR MIXER -->
-    <div id="mixer-tab" class="tab-content">
-      <div class="card">
-        <h2>विचार-तरंग: रंग मिलाकर नया रंग बनाएँ[cite: 4]</h2>
-        <div class="mixer-box">
-          <div class="color-inputs">
-            <select id="color1" class="color-select" onchange="mixColors()">
-              <option value="red">लाल (Red)</option>
-              <option value="yellow">पीला (Yellow)</option>
-              <option value="blue">नीला (Blue)</option>
-            </select>
-            <span>+</span>
-            <select id="color2" class="color-select" onchange="mixColors()">
-              <option value="yellow">पीला (Yellow)</option>
-              <option value="red">लाल (Red)</option>
-              <option value="blue">नीला (Blue)</option>
-            </select>
-          </div>
-          <div id="mix-result" class="result-display" style="background-color: #ff9800;">
-            नया रंग: नारंगी (Orange)
-          </div>
+    <!-- LEVEL 2: NOUN CATCH GAME -->
+    <div id="level-2-area" style="display: none;">
+      <h2 class="level-title">संज्ञा भेद छाँटें (Sort the Nouns)</h2>
+      <p style="text-align: center; margin-bottom: 10px; font-size: 0.95rem;">गिरते हुए शब्द के लिए सही टोकरी पर क्लिक करें:</p>
+      
+      <div id="catch-game-area">
+        <div id="falling-word" class="falling-word">शब्द</div>
+        <div class="baskets-container">
+          <button class="basket-btn" onclick="checkBasket('व्यक्तिवाचक')">व्यक्तिवाचक</button>
+          <button class="basket-btn" onclick="checkBasket('जातिवाचक')">जातिवाचक</button>
+          <button class="basket-btn" onclick="checkBasket('भाववाचक')">भाववाचक</button>
+          <button class="basket-btn" onclick="checkBasket('द्रव्यवाचक')">द्रव्यवाचक</button>
         </div>
       </div>
-    </div>
-
-    <!-- TAB 4: NON-MCQ GAME -->
-    <div id="quiz-tab" class="tab-content">
-      <div class="dashboard">
-        <div>ज्ञान अंक 🌟: <span id="game-score">0</span></div>
-      </div>
-
-      <div class="quiz-box">
-        <span class="level-indicator" id="level-tag">स्तर 1</span>
-        <div class="quiz-question" id="quiz-q">प्रश्न लोड हो रहा है...</div>
-        <div id="quiz-interactive"></div>
-        <div class="feedback" id="quiz-fb"></div>
-      </div>
+      <div class="feedback-msg" id="l2-feedback"></div>
     </div>
   </div>
 
-  <!-- AUDIO SOUNDS -->
+  <!-- 3. END SCREEN -->
+  <div id="end-screen">
+    <div class="congrats-text">🎉 Congratulations! 🎉 Well Done!</div>
+    <div class="final-score">आपका कुल स्कोर: <span id="final-score-val">0</span></div>
+    <button class="btn-main" onclick="resetGame()">Replay</button>
+  </div>
+
+  <!-- AUDIO ELEMENTS -->
   <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
   <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
   <script>
-    // --- APP START LOGIC ---
-    function startGameApp() {
-      document.getElementById('start-screen').style.display = 'none';
-      document.getElementById('main-app').style.display = 'block';
-    }
+    let score = 0;
+    let l1Index = 0;
 
-    // --- TAB SWITCHING ---
-    function switchTab(tabName) {
-      const tabs = ['poem', 'facts', 'mixer', 'quiz'];
-      document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-      const index = tabs.indexOf(tabName);
-      document.querySelectorAll('.tab-btn')[index].classList.add('active');
-      document.getElementById(`${tabName}-tab`).classList.add('active');
-
-      if (tabName === 'quiz') initGame();
-    }
-
-    // --- COLOR MIXER LOGIC ---
-    function mixColors() {
-      const c1 = document.getElementById('color1').value;
-      const c2 = document.getElementById('color2').value;
-      const res = document.getElementById('mix-result');
-
-      if (c1 === c2) {
-        res.style.backgroundColor = getHex(c1);
-        res.innerText = `समान रंग: ${getName(c1)}`;
-      } else if ((c1 === 'red' && c2 === 'yellow') || (c1 === 'yellow' && c2 === 'red')) {
-        res.style.backgroundColor = '#ff9800';
-        res.innerText = 'नया रंग: नारंगी (Orange)';
-      } else if ((c1 === 'red' && c2 === 'blue') || (c1 === 'blue' && c2 === 'red')) {
-        res.style.backgroundColor = '#9c27b0';
-        res.innerText = 'नया रंग: बैंगनी (Purple)';
-      } else if ((c1 === 'yellow' && c2 === 'blue') || (c1 === 'blue' && c2 === 'yellow')) {
-        res.style.backgroundColor = '#4caf50';
-        res.innerText = 'नया रंग: हरा (Green)';
-      }
-    }
-
-    function getHex(c) {
-      if(c === 'red') return '#f44336';
-      if(c === 'yellow') return '#ffeb3b';
-      if(c === 'blue') return '#2196f3';
-    }
-
-    function getName(c) {
-      if(c === 'red') return 'लाल';
-      if(c === 'yellow') return 'पीला';
-      if(c === 'blue') return 'नीला';
-    }
-
-    // --- NON-MCQ GAME ENGINE & RANDOMIZATION ---
-    let gameScore = 0;
-    let currentTaskIndex = 0;
-    let shuffledTasks = [];
-
-    // UNIQUE INTERACTIVE GAME MECHANICS (Chapter 4 Content & Grammar)
-    const rawGameTasks = [
-      // === LEVEL 1: Chapter 4 Content & Word Meanings (NO MCQs) ===
+    // DATA FOR LEVEL 1 (Sentence Repair / Error Hunt)
+    const l1Data = [
       {
-        level: "स्तर 1: शब्द-सेतु (Word Unscramble)",
-        q: "अक्षरों को सही क्रम में लगाकर अर्थपूर्ण शब्द बनाएँ: [ जि - या - उ - रा ]",
-        type: "text",
-        ans: ["उजियारा"],
-        hint: "संकेत: इसका अर्थ 'उजाला' या 'प्रकाश' होता है"
-      },
-      {
-        level: "स्तर 1: अर्थ मिलाएँ (Word Meaning Hunt)",
-        q: "'सौगात' शब्द का सही अर्थ क्या है?",
-        type: "select-grid",
-        opts: ["भरोसा", "उपहार", "हिम्मत", "इंसानियत"],
-        ans: 1
-      },
-      {
-        level: "स्तर 1: लुप्त वर्ण भरें (Fill Missing Character)",
-        q: "शब्द पूरा करें: 'उ ज ि _ा रा' (अर्थ: प्रकाश)",
-        type: "text",
-        ans: ["या", "उजियारा"],
-        hint: "संकेत: 'या' वर्ण का प्रयोग करें"
-      },
-      {
-        level: "स्तर 1: सत्य / असत्य (True / False)",
-        q: "कथन: नेपाल में होली पर लोग पशु-पक्षियों को रंग लगाने के बजाय उन पर फूल बरसाते हैं।",
-        type: "binary",
-        opts: ["सत्य (True)", "असत्य (False)"],
+        q: "लाल रंग हमारे मन में [____] और अपनापन जगाता है।",
+        opts: ["प्रेम", "क्रोध", "डर"],
         ans: 0
       },
       {
-        level: "स्तर 1: एक-शब्द पहेली (One-Word Riddle)",
-        q: "जाति-धर्म की दीवारें तोड़कर कविता के अनुसार सबसे बड़ी क्या रही है?",
-        type: "text",
-        ans: ["मानवता", "इंसानियत"],
-        hint: "संकेत: इसका अर्थ 'इंसानियत' होता है"
-      },
-
-      // === LEVEL 2: Chapter 4 Grammar - Synonyms & Antonyms (NO MCQs) ===
-      {
-        level: "स्तर 2: व्याकरण - विलोम शब्द (Antonym Pairing)",
-        q: "'शत्रु' शब्द का सही विलोम (विपरीतार्थक) शब्द चुनें:",
-        type: "select-grid",
-        opts: ["सफ़लता", "मित्र", "निकट", "प्रेम"],
+        q: "नेपाल में होली पर पशु-पक्षियों पर रंग नहीं, [____] बरसाते हैं।",
+        opts: ["पानी", "फूल", "कीचड़"],
         ans: 1
       },
       {
-        level: "स्तर 2: व्याकरण - भिन्न शब्द पहचानें (Odd One Out)",
-        q: "इनमें से कौन-सा 'प्रेम' शब्द का पर्यायवाची नहीं है?",
-        type: "select-grid",
-        opts: ["प्यार", "स्नेह", "शत्रुता", "अनुराग"],
-        ans: 2
+        q: "होली का मुख्य संदेश जाति-धर्म की दीवारें तोड़कर [____] का प्रसार करना है।",
+        opts: ["मानवता", "अहंकार", "भेदभाव"],
+        ans: 0
       },
       {
-        level: "स्तर 2: व्याकरण - विपरीतार्थक शब्द टाइप करें (Antonym Builder)",
-        q: "'निकट' शब्द का विलोम शब्द क्या होगा?",
-        type: "text",
-        ans: ["दूर"],
-        hint: "संकेत: पास का उल्टा"
-      },
-      {
-        level: "स्तर 2: व्याकरण - अशुद्ध-शुद्ध पहचान (Error Detection)",
-        q: "'सफ़लता' शब्द का सही विलोम कौन-सा है?",
-        type: "select-grid",
-        opts: ["विफलता / असफलता", "निकटता", "पराधीनता"],
+        q: "बरसाना में विश्व प्रसिद्ध [____] होली खेली जाती है।",
+        opts: ["लठमार", "फूलों की", "कीचड़ की"],
         ans: 0
       }
     ];
 
-    // Helper: Randomization Array Shuffle
-    function shuffleArray(arr) {
-      return arr.sort(() => Math.random() - 0.5);
-    }
+    // DATA FOR LEVEL 2 (Nouns & Sorting)
+    const l2Data = [
+      { word: "होली", type: "व्यक्तिवाचक" },
+      { word: "रंग", type: "जातिवाचक" },
+      { word: "प्रेम", type: "भाववाचक" },
+      { word: "गुलाल", type: "द्रव्यवाचक" },
+      { word: "नेपाल", type: "व्यक्तिवाचक" },
+      { word: "त्योहार", type: "जातिवाचक" },
+      { word: "उत्साह", type: "भाववाचक" },
+      { word: "पानी", type: "द्रव्यवाचक" }
+    ];
+
+    let l2Index = 0;
+    let fallInterval = null;
+    let currentTop = 0;
 
     function playSound(isCorrect) {
-      const audioId = isCorrect ? 'audio-correct' : 'audio-wrong';
-      const audio = document.getElementById(audioId);
+      const audio = document.getElementById(isCorrect ? 'audio-correct' : 'audio-wrong');
       if (audio) {
         audio.currentTime = 0;
-        audio.play().catch(e => console.log('Audio playback prevented by browser'));
+        audio.play().catch(() => {});
       }
     }
 
-    function initGame() {
-      if (shuffledTasks.length === 0) {
-        shuffledTasks = shuffleArray([...rawGameTasks]);
-      }
-      loadTask();
+    function updateScore(points) {
+      score += points;
+      document.getElementById('score').innerText = score;
     }
 
-    function loadTask() {
-      const task = shuffledTasks[currentTaskIndex];
-      document.getElementById('level-tag').innerText = task.level;
-      document.getElementById('quiz-q').innerText = task.q;
-      
-      const container = document.getElementById('quiz-interactive');
-      container.innerHTML = '';
-      document.getElementById('quiz-fb').innerText = '';
-
-      if (task.type === 'binary' || task.type === 'select-grid') {
-        const grid = document.createElement('div');
-        grid.className = 'game-options-grid';
-
-        task.opts.forEach((opt, idx) => {
-          const btn = document.createElement('button');
-          btn.className = 'game-opt-btn';
-          btn.innerText = opt;
-          btn.onclick = () => checkOptionAnswer(idx);
-          grid.appendChild(btn);
-        });
-        container.appendChild(grid);
-      } else if (task.type === 'text') {
-        const group = document.createElement('div');
-        group.className = 'text-input-group';
-        
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.className = 'text-input';
-        input.id = 'text-ans';
-        input.placeholder = 'अपना उत्तर यहाँ लिखें...';
-
-        const submitBtn = document.createElement('button');
-        submitBtn.className = 'submit-btn';
-        submitBtn.innerText = 'जाँचें';
-        submitBtn.onclick = checkTextAnswer;
-
-        group.appendChild(input);
-        group.appendChild(submitBtn);
-        container.appendChild(group);
-
-        if(task.hint) {
-          const hintText = document.createElement('p');
-          hintText.style.fontSize = '0.85rem';
-          hintText.style.color = '#c2185b';
-          hintText.style.marginTop = '8px';
-          hintText.innerText = task.hint;
-          container.appendChild(hintText);
-        }
-      }
+    function startGame() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('game-container').style.display = 'block';
+      l1Index = 0;
+      loadL1Question();
     }
 
-    function checkOptionAnswer(selectedIdx) {
-      const task = shuffledTasks[currentTaskIndex];
-      const fb = document.getElementById('quiz-fb');
+    /* --- LEVEL 1 LOGIC (Sentence Repair) --- */
+    function loadL1Question() {
+      if (l1Index >= l1Data.length) {
+        startLevel2();
+        return;
+      }
 
-      if (selectedIdx === task.ans) {
+      const item = l1Data[l1Index];
+      document.getElementById('l1-question').innerText = item.q;
+      const optsContainer = document.getElementById('l1-options');
+      optsContainer.innerHTML = '';
+      document.getElementById('l1-feedback').innerText = '';
+
+      item.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkL1Answer(idx);
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function checkL1Answer(selectedIdx) {
+      const item = l1Data[l1Index];
+      const fb = document.getElementById('l1-feedback');
+
+      if (selectedIdx === item.ans) {
         playSound(true);
         fb.style.color = 'green';
-        fb.innerText = 'शानदार! सही उत्तर 🎉 (+20 अंक)';
-        gameScore += 20;
-        document.getElementById('game-score').innerText = gameScore;
-        nextTask();
+        fb.innerText = 'बिल्कुल सही! 🎉 (+10)';
+        updateScore(10);
+        l1Index++;
+        setTimeout(loadL1Question, 1200);
       } else {
         playSound(false);
         fb.style.color = 'red';
@@ -594,30 +385,80 @@
       }
     }
 
-    function checkTextAnswer() {
-      const task = shuffledTasks[currentTaskIndex];
-      const userAns = document.getElementById('text-ans').value.trim().toLowerCase();
-      const fb = document.getElementById('quiz-fb');
+    /* --- LEVEL 2 LOGIC (Noun Catch / Sort) --- */
+    function startLevel2() {
+      document.getElementById('level-1-area').style.display = 'none';
+      document.getElementById('level-2-area').style.display = 'block';
+      document.getElementById('level-display').innerText = 'स्तर 2: व्याकरण (संज्ञा वर्गीकरण)';
+      l2Index = 0;
+      spawnFallingWord();
+    }
 
-      const isCorrect = task.ans.some(ans => ans.toLowerCase() === userAns);
+    function spawnFallingWord() {
+      if (l2Index >= l2Data.length) {
+        endGame();
+        return;
+      }
 
-      if (isCorrect) {
+      const wordElem = document.getElementById('falling-word');
+      wordElem.innerText = l2Data[l2Index].word;
+      currentTop = 0;
+      wordElem.style.top = currentTop + 'px';
+
+      clearInterval(fallInterval);
+      fallInterval = setInterval(() => {
+        currentTop += 2;
+        wordElem.style.top = currentTop + 'px';
+
+        if (currentTop >= 280) {
+          clearInterval(fallInterval);
+          playSound(false);
+          document.getElementById('l2-feedback').style.color = 'red';
+          document.getElementById('l2-feedback').innerText = 'समय समाप्त! अगला शब्द...';
+          l2Index++;
+          setTimeout(spawnFallingWord, 1000);
+        }
+      }, 50);
+    }
+
+    function checkBasket(selectedType) {
+      if (l2Index >= l2Data.length) return;
+
+      clearInterval(fallInterval);
+      const correctType = l2Data[l2Index].type;
+      const fb = document.getElementById('l2-feedback');
+
+      if (selectedType === correctType) {
         playSound(true);
         fb.style.color = 'green';
-        fb.innerText = 'बिल्कुल सही! 🎉 (+20 अंक)';
-        gameScore += 20;
-        document.getElementById('game-score').innerText = gameScore;
-        nextTask();
+        fb.innerText = 'सही वर्गीकरण! 🎉 (+10)';
+        updateScore(10);
       } else {
         playSound(false);
         fb.style.color = 'red';
-        fb.innerText = 'गलत उत्तर, दोबारा सोचें!';
+        fb.innerText = `गलत! सही उत्तर '${correctType}' था।`;
       }
+
+      l2Index++;
+      setTimeout(spawnFallingWord, 1200);
     }
 
-    function nextTask() {
-      currentTaskIndex = (currentTaskIndex + 1) % shuffledTasks.length;
-      setTimeout(loadTask, 1600);
+    /* --- END GAME --- */
+    function endGame() {
+      clearInterval(fallInterval);
+      document.getElementById('game-container').style.display = 'none';
+      document.getElementById('end-screen').style.display = 'flex';
+      document.getElementById('final-score-val').innerText = score;
+    }
+
+    function resetGame() {
+      score = 0;
+      document.getElementById('score').innerText = '0';
+      document.getElementById('end-screen').style.display = 'none';
+      document.getElementById('level-2-area').style.display = 'none';
+      document.getElementById('level-1-area').style.display = 'block';
+      document.getElementById('level-display').innerText = 'स्तर 1: वाक्य-सुधार (Sentence Repair)';
+      document.getElementById('start-screen').style.display = 'flex';
     }
   </script>
 </body>
