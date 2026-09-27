@@ -277,7 +277,7 @@
     <div class="instruction-list">
       <h3 style="margin-top: 0; color: var(--primary-color);">Mission Briefing</h3>
       <ul>
-        <li><strong>Level 1 (Matrix Decryption):</strong> Read the question and locate the target answer. You get <strong>2 attempts</strong> per question. If failed twice, the correct answer is revealed and the game proceeds!</li>
+        <li><strong>Level 1 (Matrix Decryption):</strong> Read the question and locate the target answer. Every answer is a <strong>single word</strong>. You get <strong>2 attempts</strong> per question.</li>
         <li><strong>Level 2 (Category Sorting):</strong> Classify words into Anusvaar or Anunasik buckets.</li>
         <li><strong>Dynamic System:</strong> Questions are randomized on every attempt!</li>
       </ul>
@@ -351,7 +351,7 @@
   const soundCorrect = new Audio('assets/correct.mp3');
   const soundWrong = new Audio('assets/wrong.mp3');
 
-  // Chapter 1 Source Data
+  // Chapter 1 Source Data (Single-word answers for Level 1)
   const rawGameData = {
     level1: [
       {
@@ -365,30 +365,29 @@
       },
       {
         clue: "‘चहकना’ शब्द का सही अर्थ क्या है?",
-        target: "पक्षियों का खुश होकर मधुर आवाज करना",
+        target: "कूजना",
         grid: [
-          ["प", "क्षि", "योँ", "का", "खु"],
-          ["श", "हो", "क", "र", "म"],
-          ["धु", "र", "आ", "वा", "ज"],
-          ["क", "र", "ना", "सो", "ने"]
+          ["कू", "ज", "ना", "गा", "ना"],
+          ["च", "ह", "क", "ना", "सो"],
+          ["ने", "र", "म", "धु", "र"]
         ]
       },
       {
         clue: "कविता में किसके फूलने की बात कही गई है?",
-        target: "कमल के दल",
+        target: "कमल",
         grid: [
-          ["क", "म", "ल", "के", "दल"],
-          ["गु", "ला", "ब", "फू", "ल"],
-          ["च", "मे", "ली", "आ", "म"]
+          ["क", "म", "ल", "गु", "ला"],
+          ["ब", "च", "मे", "ली", "फू"],
+          ["ल", "आ", "म", "द", "ल"]
         ]
       },
       {
         clue: "सुबह-सुबह किसकी चहक सुनाई दी?",
-        target: "चिड़िया की",
+        target: "चिड़िया",
         grid: [
-          ["चि", "ड़ि", "या", "की", "को"],
-          ["य", "ल", "तो", "ते", "मो"],
-          ["र", "प", "क्षी", "गा", "ना"]
+          ["चि", "ड़ि", "या", "को", "य"],
+          ["ल", "तो", "ता", "मो", "र"],
+          ["प", "क्षी", "गा", "ना", "ह"]
         ]
       },
       {
