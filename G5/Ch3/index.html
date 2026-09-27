@@ -22,8 +22,8 @@
       padding: 20px;
     }
 
-    /* START SCREEN (Centered Logo Only) */
-    #start-screen {
+    /* START SCREEN & END SCREEN (Centered Logo Only) */
+    #start-screen, #end-screen {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -38,13 +38,17 @@
       text-align: center;
     }
 
-    .start-logo {
+    #end-screen {
+      display: none;
+    }
+
+    .start-logo, .end-logo {
       max-width: 220px;
       height: auto;
       margin-bottom: 25px;
     }
 
-    .start-btn {
+    .start-btn, .replay-btn {
       background-color: #f57c00;
       color: #ffffff;
       border: none;
@@ -57,7 +61,7 @@
       margin-top: 15px;
     }
 
-    .start-btn:hover {
+    .start-btn:hover, .replay-btn:hover {
       background-color: #e65100;
       transform: scale(1.03);
     }
@@ -212,7 +216,7 @@
 </head>
 <body>
 
-  <!-- START SCREEN WITH UPDATED LOGO PATH -->
+  <!-- START SCREEN -->
   <div id="start-screen">
     <img src="assets/innovine-logo.png" alt="Innovine Logo" class="start-logo">
     <h1 style="color: #bf360c; margin-bottom: 10px;">🛕 कोणार्क सूर्य मंदिर - 2 स्तरीय गेम 🛕</h1>
@@ -260,6 +264,12 @@
     <button class="next-lvl-btn" id="next-btn" onclick="startLevel2()">Level 2 पर जाएँ ➔</button>
   </div>
 
+  <!-- END SCREEN (Logo only with play again button) -->
+  <div id="end-screen">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" class="end-logo">
+    <button class="replay-btn" onclick="restartGame()">पुनः खेलें (Replay)</button>
+  </div>
+
   <!-- AUDIO SOUNDS -->
   <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
   <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
@@ -279,8 +289,21 @@
 
     function startGame() {
       document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('end-screen').style.display = 'none';
       document.getElementById('game-app').style.display = 'block';
       initLevel1();
+    }
+
+    function restartGame() {
+      score = 0;
+      matchedCount = 0;
+      selectedLeft = null;
+      currentWordIndex = 0;
+      document.getElementById('score-display').innerText = '0';
+      document.getElementById('level1-game').style.display = 'block';
+      document.getElementById('level2-game').style.display = 'none';
+      document.getElementById('feedback').innerText = '';
+      startGame();
     }
 
     // ================= LEVEL 1: MATCHING MECHANIC =================
@@ -389,10 +412,8 @@
 
     function spawnWord() {
       if (currentWordIndex >= wordsData.length) {
-        document.getElementById('falling-item').style.display = 'none';
-        document.getElementById('feedback').style.color = 'green';
-        document.getElementById('feedback').innerText = `गेम समाप्त! आपका कुल स्कोर: ${score} 🏆`;
         clearInterval(wordInterval);
+        showEndScreen();
         return;
       }
 
@@ -425,15 +446,20 @@
         score += 20;
         document.getElementById('score-display').innerText = score;
         fb.style.color = 'green';
-        fb.innerText = `सही पहचान! '${wordsData[currentWordIndex].word}' - ${correctType} है। 🎉`;
+        fb.innerText = `सही पहचान! 🎉`;
       } else {
         playAudio(false);
         fb.style.color = 'red';
-        fb.innerText = `गलत! सही उत्तर '${correctType}' था।`;
+        fb.innerText = `गलत उत्तर!`;
       }
 
       currentWordIndex++;
-      setTimeout(spawnWord, 800);
+      setTimeout(spawnWord, 600);
+    }
+
+    function showEndScreen() {
+      document.getElementById('game-app').style.display = 'none';
+      document.getElementById('end-screen').style.display = 'flex';
     }
   </script>
 </body>
