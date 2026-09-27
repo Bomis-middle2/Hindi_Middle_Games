@@ -34,7 +34,7 @@
       border-radius: 16px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
       width: 100%;
-      max-width: 650px;
+      max-width: 680px;
       text-align: center;
       border: 1px solid #1f2937;
       box-sizing: border-box;
@@ -117,7 +117,7 @@
       gap: 10px;
       margin: 20px 0;
       width: 100%;
-      max-width: 380px;
+      max-width: 420px;
     }
 
     .matrix-cell {
@@ -128,7 +128,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2em;
+      font-size: 1.15em;
       font-weight: bold;
       cursor: pointer;
       user-select: none;
@@ -264,7 +264,7 @@
     <div class="instruction-list">
       <h3 style="margin-top: 0; color: var(--primary-color);">Mission Briefing</h3>
       <ul>
-        <li><strong>Level 1 (Matrix Decryption):</strong> Read the clue and locate the correct word or meaning in the matrix by selecting its characters in sequence.</li>
+        <li><strong>Level 1 (Matrix Decryption):</strong> Read the question/clue and locate the correct word or meaning in the matrix by selecting its characters in order.</li>
         <li><strong>Level 2 (Category Sorting):</strong> Select a word chip and assign it to its correct grammatical category bucket (Anusvaar vs Anunasik).</li>
         <li><strong>Dynamic System:</strong> Questions are randomized on every attempt!</li>
       </ul>
@@ -281,7 +281,7 @@
     <!-- Level 1 Matrix UI -->
     <div id="level1-ui" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
       <div class="mission-box">
-        <div class="clue-label">TARGET DEFINITION / CLUE:</div>
+        <div class="clue-label">QUESTION / CLUE:</div>
         <div class="target-clue" id="target-clue">--</div>
       </div>
       
@@ -334,7 +334,7 @@
   const soundCorrect = new Audio('assets/correct.mp3');
   const soundWrong = new Audio('assets/wrong.mp3');
 
-  // Chapter 1 Source Data (Including your requested questions)
+  // Chapter 1 Source Data (Constructed strictly from PDF content)
   const rawGameData = {
     level1: [
       {
@@ -357,12 +357,66 @@
         ]
       },
       {
-        clue: "सुबह का समय (प्रातः काल)",
-        target: "भोर",
+        clue: "कविता में किसके फूलने की बात कही गई है?",
+        target: "कमल के दल",
         grid: [
-          ["न", "भ", "भोर", "क", "म"],
-          ["ल", "जल", "सूर", "ज", "कि"],
-          ["र", "ण", "छ", "वि", "न्या"]
+          ["क", "म", "ल", "के", "दल"],
+          ["गु", "ला", "ब", "फू", "ल"],
+          ["च", "मे", "ली", "आ", "म"]
+        ]
+      },
+      {
+        clue: "सुबह-सुबह किसकी चहक सुनाई दी?",
+        target: "चिड़िया की",
+        grid: [
+          ["चि", "ड़ि", "या", "की", "को"],
+          ["य", "ल", "तो", "ते", "मो"],
+          ["र", "प", "क्षी", "गा", "ना"]
+        ]
+      },
+      {
+        clue: "सूरज उगने पर जल में कैसी छाया पड़ी?",
+        target: "सुनहरी",
+        grid: [
+          ["सु", "न", "ह", "री", "चाँ"],
+          ["दी", "नी", "ली", "ह", "री"],
+          ["छा", "या", "रू", "प", "जल"]
+        ]
+      },
+      {
+        clue: "‘न्यारी’ शब्द का सही अर्थ क्या है?",
+        target: "अनोखी",
+        grid: [
+          ["अ", "नो", "खी", "ला", "ली"],
+          ["सु", "ं", "द", "र", "छ"],
+          ["वि", "रू", "प", "न्या", "री"]
+        ]
+      },
+      {
+        clue: "‘छवि’ शब्द का सही अर्थ क्या है?",
+        target: "रूप",
+        grid: [
+          ["रू", "प", "रं", "ग", "छा"],
+          ["या", "ला", "ली", "अ", "नो"],
+          ["खी", "न", "भ", "सु", "ं"]
+        ]
+      },
+      {
+        clue: "‘भोर’ का सही अर्थ क्या है?",
+        target: "सुबह",
+        grid: [
+          ["सु", "ब", "ह", "शा", "म"],
+          ["रा", "त", "दिन", "सूर", "ज"],
+          ["कि", "र", "ण", "उ", "जा"]
+        ]
+      },
+      {
+        clue: "‘लाली’ शब्द का सही अर्थ क्या है?",
+        target: "लालिमा",
+        grid: [
+          ["ला", "लि", "मा", "न्या", "री"],
+          ["अ", "नो", "खी", "छ", "वि"],
+          ["रू", "प", "रं", "ग", "श"]
         ]
       }
     ],
@@ -373,7 +427,9 @@
         { text: "चंचल", type: "Anusvaar" },
         { text: "मुँह", type: "Anunasik" },
         { text: "कंपन", type: "Anusvaar" },
-        { text: "कुआँ", type: "Anunasik" }
+        { text: "कुआँ", type: "Anunasik" },
+        { text: "झंडा", type: "Anusvaar" },
+        { text: "भँवरा", type: "Anunasik" }
       ]
     }
   };
@@ -388,7 +444,7 @@
   let randomizedLevel1Data = [];
   let randomizedLevel2Words = [];
 
-  // Fisher-Yates Array Randomizer Utility
+  // Fisher-Yates Array Randomizer
   function shuffleArray(array) {
     const arr = [...array];
     for (let i = arr.length - 1; i > 0; i--) {
@@ -405,7 +461,7 @@
   }
 
   function startGame() {
-    // Randomize Question Data on Game Initialization
+    // Shuffle Level 1 & Level 2 Data on Start
     randomizedLevel1Data = shuffleArray(rawGameData.level1);
     randomizedLevel2Words = shuffleArray(rawGameData.level2.words);
 
@@ -420,7 +476,7 @@
     if (currentLevel === 1) {
       document.getElementById("level1-ui").classList.remove("hidden");
       document.getElementById("level2-ui").classList.add("hidden");
-      document.getElementById("level-indicator").innerText = "Level 1: Matrix Grid Decryptor";
+      document.getElementById("level-indicator").innerText = `Level 1: Matrix Decryptor (${currentQuestionIndex + 1}/${randomizedLevel1Data.length})`;
       setupMatrixLevel();
     } else {
       document.getElementById("level1-ui").classList.add("hidden");
@@ -468,7 +524,6 @@
 
   function verifyGridSelection() {
     const qData = randomizedLevel1Data[currentQuestionIndex];
-    // Remove space normalization if multi-word answer
     const constructedWord = selectedCells.map(c => c.dataset.char).join("").replace(/\s+/g, "");
     const targetWord = qData.target.replace(/\s+/g, "");
 
