@@ -22,8 +22,8 @@
       padding: 20px;
     }
 
-    /* START SCREEN & END SCREEN (Centered Logo Only) */
-    #start-screen, #end-screen {
+    /* START SCREEN */
+    #start-screen {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -34,31 +34,56 @@
       box-shadow: 0 8px 16px rgba(0,0,0,0.15);
       width: 100%;
       max-width: 750px;
-      padding: 40px 20px;
+      padding: 50px 20px;
       text-align: center;
     }
 
-    #end-screen {
-      display: none;
+    .center-logo {
+      max-width: 250px;
+      height: auto;
+      margin-bottom: 30px;
     }
 
-    .start-logo, .end-logo {
-      max-width: 220px;
-      height: auto;
-      margin-bottom: 25px;
+    /* END SCREEN (NO LOGO) */
+    #end-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 3px solid #ffb74d;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 750px;
+      padding: 60px 20px;
+      text-align: center;
+    }
+
+    .congrats-title {
+      font-size: 2.2rem;
+      color: #2e7d32;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    .congrats-subtitle {
+      font-size: 1.6rem;
+      color: #f57c00;
+      font-weight: bold;
+      margin-bottom: 30px;
     }
 
     .start-btn, .replay-btn {
       background-color: #f57c00;
       color: #ffffff;
       border: none;
-      padding: 12px 30px;
+      padding: 12px 35px;
       font-size: 1.2rem;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
       transition: background 0.2s, transform 0.1s;
-      margin-top: 15px;
     }
 
     .start-btn:hover, .replay-btn:hover {
@@ -216,13 +241,9 @@
 </head>
 <body>
 
-  <!-- START SCREEN -->
+  <!-- START SCREEN (LOGO ONLY) -->
   <div id="start-screen">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo" class="start-logo">
-    <h1 style="color: #bf360c; margin-bottom: 10px;">🛕 कोणार्क सूर्य मंदिर - 2 स्तरीय गेम 🛕</h1>
-    <p style="margin-bottom: 20px; font-size: 1.05rem;">
-      मंदिर के इतिहास (Level 1) और संज्ञा व्याकरण (Level 2) के 2 विभिन्न गेम्स खेलें!
-    </p>
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" class="center-logo">
     <button class="start-btn" onclick="startGame()">गेम शुरू करें</button>
   </div>
 
@@ -264,9 +285,10 @@
     <button class="next-lvl-btn" id="next-btn" onclick="startLevel2()">Level 2 पर जाएँ ➔</button>
   </div>
 
-  <!-- END SCREEN (Logo only with play again button) -->
+  <!-- END SCREEN (CONGRATULATIONS WELL DONE - NO LOGO) -->
   <div id="end-screen">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo" class="end-logo">
+    <div class="congrats-title">🎉 Congratulations! 🎉</div>
+    <div class="congrats-subtitle">Well Done!</div>
     <button class="replay-btn" onclick="restartGame()">पुनः खेलें (Replay)</button>
   </div>
 
