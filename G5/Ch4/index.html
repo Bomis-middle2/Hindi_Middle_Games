@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>होली - सुंदर कविता व खेल</title>
+  <title>पाठ 4: होली - व्याकरण अभ्यास खेल</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,8 +13,8 @@
     }
 
     body {
-      background-color: #fce4ec;
-      color: #4a148c;
+      background-color: #e8f5e9;
+      color: #1b5e20;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -30,7 +30,7 @@
       align-items: center;
       justify-content: center;
       background: #ffffff;
-      border: 3px solid #f48fb1;
+      border: 3px solid #81c784;
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0,0,0,0.15);
       width: 100%;
@@ -46,7 +46,7 @@
     }
 
     .btn-main {
-      background-color: #c2185b;
+      background-color: #2e7d32;
       color: #ffffff;
       border: none;
       padding: 14px 32px;
@@ -58,7 +58,7 @@
     }
 
     .btn-main:hover {
-      background-color: #880e4f;
+      background-color: #1b5e20;
       transform: scale(1.03);
     }
 
@@ -66,7 +66,7 @@
     #game-container {
       display: none;
       background: #ffffff;
-      border: 3px solid #f48fb1;
+      border: 3px solid #81c784;
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0,0,0,0.15);
       width: 100%;
@@ -78,36 +78,36 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #f8bbd0;
+      background: #c8e6c9;
       padding: 12px 20px;
       border-radius: 8px;
       font-weight: bold;
       font-size: 1.1rem;
       margin-bottom: 20px;
-      color: #880e4f;
+      color: #1b5e20;
     }
 
     .level-title {
       font-size: 1.2rem;
-      color: #c2185b;
+      color: #2e7d32;
       margin-bottom: 15px;
       text-align: center;
     }
 
-    /* LEVEL 1: SENTENCE REPAIR GAME */
-    .sentence-box {
-      background: #fff8e1;
-      border: 2px dashed #f48fb1;
+    /* LEVEL 1: GRAMMAR MCQ (पर्यायवाची एवं विलोम) */
+    .quiz-card {
+      background: #f1f8e9;
+      border: 2px dashed #81c784;
       padding: 20px;
       border-radius: 8px;
       text-align: center;
       margin-top: 15px;
     }
 
-    .sentence-text {
+    .quiz-question {
       font-size: 1.15rem;
       font-weight: bold;
-      color: #880e4f;
+      color: #1b5e20;
       margin-bottom: 20px;
     }
 
@@ -120,8 +120,8 @@
 
     .option-btn {
       background-color: #ffffff;
-      border: 2px solid #f48fb1;
-      color: #4a148c;
+      border: 2px solid #81c784;
+      color: #1b5e20;
       padding: 10px 20px;
       border-radius: 6px;
       cursor: pointer;
@@ -131,17 +131,17 @@
     }
 
     .option-btn:hover {
-      background-color: #f8bbd0;
+      background-color: #c8e6c9;
       transform: translateY(-2px);
     }
 
-    /* LEVEL 2: CATCH/SORT GAME */
+    /* LEVEL 2: SORTING GAME (पर्यायवाची/विलोम वर्गीकरण) */
     #catch-game-area {
       position: relative;
       width: 100%;
       height: 380px;
-      background: #fff8e1;
-      border: 2px dashed #f48fb1;
+      background: #f1f8e9;
+      border: 2px dashed #81c784;
       border-radius: 8px;
       overflow: hidden;
     }
@@ -151,13 +151,14 @@
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      background: #c2185b;
+      background: #2e7d32;
       color: white;
       padding: 8px 16px;
       border-radius: 20px;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      white-space: nowrap;
     }
 
     .baskets-container {
@@ -166,26 +167,26 @@
       width: 100%;
       display: flex;
       justify-content: space-around;
-      padding: 0 5px;
+      padding: 0 10px;
     }
 
     .basket-btn {
-      background: #f48fb1;
+      background: #81c784;
       color: #ffffff;
-      border: 2px solid #c2185b;
-      padding: 10px 8px;
+      border: 2px solid #2e7d32;
+      padding: 12px 16px;
       border-radius: 8px;
       font-weight: bold;
-      font-size: 0.9rem;
+      font-size: 1rem;
       cursor: pointer;
       flex: 1;
-      margin: 0 3px;
+      margin: 0 8px;
       text-align: center;
       transition: background 0.2s;
     }
 
     .basket-btn:hover {
-      background: #c2185b;
+      background: #2e7d32;
     }
 
     /* 3. END SCREEN */
@@ -195,7 +196,7 @@
       align-items: center;
       justify-content: center;
       background: #ffffff;
-      border: 3px solid #f48fb1;
+      border: 3px solid #81c784;
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0,0,0,0.15);
       width: 100%;
@@ -206,7 +207,7 @@
 
     .congrats-text {
       font-size: 2rem;
-      color: #c2185b;
+      color: #2e7d32;
       margin-bottom: 20px;
       font-weight: bold;
     }
@@ -214,7 +215,7 @@
     .final-score {
       font-size: 1.3rem;
       margin-bottom: 30px;
-      color: #4a148c;
+      color: #1b5e20;
     }
 
     .feedback-msg {
@@ -236,34 +237,32 @@
   <!-- 2. GAME CONTAINER -->
   <div id="game-container">
     <div class="dashboard">
-      <div id="level-display">स्तर 1: वाक्य-सुधार (Sentence Repair)</div>
+      <div id="level-display">स्तर 1: पर्यायवाची एवं विलोम शब्द</div>
       <div>अंक (Score): <span id="score">0</span></div>
     </div>
 
-    <!-- LEVEL 1: SENTENCE REPAIR GAME -->
+    <!-- LEVEL 1: GRAMMAR MCQ -->
     <div id="level-1-area">
-      <h2 class="level-title">सही शब्द चुनकर वाक्य पूरा करें</h2>
-      <p style="text-align: center; margin-bottom: 10px; font-size: 0.95rem;">वाक्य के रिक्त स्थान [____] के लिए सही उत्तर का चयन करें:</p>
+      <h2 class="level-title">व्याकरण बोध (सही विकल्प चुनें)</h2>
+      <p style="text-align: center; margin-bottom: 10px; font-size: 0.95rem;">पाठ 4 (होली) के आधार पर सही उत्तर चुनें:</p>
       
-      <div class="sentence-box">
-        <div class="sentence-text" id="l1-question">प्रश्न लोड हो रहा है...</div>
+      <div class="quiz-card">
+        <div class="quiz-question" id="l1-question">प्रश्न लोड हो रहा है...</div>
         <div class="options-grid" id="l1-options"></div>
       </div>
       <div class="feedback-msg" id="l1-feedback"></div>
     </div>
 
-    <!-- LEVEL 2: NOUN CATCH GAME -->
+    <!-- LEVEL 2: SORTING GAME -->
     <div id="level-2-area" style="display: none;">
-      <h2 class="level-title">संज्ञा भेद छाँटें (Sort the Nouns)</h2>
-      <p style="text-align: center; margin-bottom: 10px; font-size: 0.95rem;">गिरते हुए शब्द के लिए सही टोकरी पर क्लिक करें:</p>
+      <h2 class="level-title">शब्द-भेद छाँटें (Sort Words)</h2>
+      <p style="text-align: center; margin-bottom: 10px; font-size: 0.95rem;">गिरते हुए शब्द युग्म के लिए सही व्याकरण भेद चुनें:</p>
       
       <div id="catch-game-area">
-        <div id="falling-word" class="falling-word">शब्द</div>
+        <div id="falling-word" class="falling-word">शब्द युग्म</div>
         <div class="baskets-container">
-          <button class="basket-btn" onclick="checkBasket('व्यक्तिवाचक')">व्यक्तिवाचक</button>
-          <button class="basket-btn" onclick="checkBasket('जातिवाचक')">जातिवाचक</button>
-          <button class="basket-btn" onclick="checkBasket('भाववाचक')">भाववाचक</button>
-          <button class="basket-btn" onclick="checkBasket('द्रव्यवाचक')">द्रव्यवाचक</button>
+          <button class="basket-btn" onclick="checkBasket('पर्यायवाची शब्द')">पर्यायवाची शब्द</button>
+          <button class="basket-btn" onclick="checkBasket('विलोम शब्द')">विलोम शब्द</button>
         </div>
       </div>
       <div class="feedback-msg" id="l2-feedback"></div>
@@ -285,40 +284,40 @@
     let score = 0;
     let l1Index = 0;
 
-    // DATA FOR LEVEL 1 (Sentence Repair / Error Hunt)
+    // LEVEL 1 DATA: Based on Chapter 4 Grammar (Synonyms & Antonyms from PDF Page 38)
     const l1Data = [
       {
-        q: "लाल रंग हमारे मन में [____] और अपनापन जगाता है।",
-        opts: ["प्रेम", "क्रोध", "डर"],
+        q: "'मित्र' शब्द का सही पर्यायवाची शब्द क्या होगा?",
+        opts: ["सखा / दोस्त", "शत्रु", "रिपु"],
         ans: 0
       },
       {
-        q: "नेपाल में होली पर पशु-पक्षियों पर रंग नहीं, [____] बरसाते हैं।",
-        opts: ["पानी", "फूल", "कीचड़"],
+        q: "'निकट' शब्द का सही विलोम (विपरीतार्थक) शब्द क्या है?",
+        opts: ["पास", "दूर", "समीप"],
         ans: 1
       },
       {
-        q: "होली का मुख्य संदेश जाति-धर्म की दीवारें तोड़कर [____] का प्रसार करना है।",
-        opts: ["मानवता", "अहंकार", "भेदभाव"],
+        q: "'प्रेम' शब्द का पर्यायवाची शब्द चुनिए:",
+        opts: ["प्यार / स्नेह", "नफ़रत", "क्रोध"],
         ans: 0
       },
       {
-        q: "बरसाना में विश्व प्रसिद्ध [____] होली खेली जाती है।",
-        opts: ["लठमार", "फूलों की", "कीचड़ की"],
-        ans: 0
+        q: "'सफ़लता' शब्द का सही विलोम शब्द क्या है?",
+        opts: ["जय", "विजय", "असफ़लता"],
+        ans: 2
       }
     ];
 
-    // DATA FOR LEVEL 2 (Nouns & Sorting)
+    // LEVEL 2 DATA: Sorting pairs based on PDF Chapter 4 (Synonym vs Antonym)
     const l2Data = [
-      { word: "होली", type: "व्यक्तिवाचक" },
-      { word: "रंग", type: "जातिवाचक" },
-      { word: "प्रेम", type: "भाववाचक" },
-      { word: "गुलाल", type: "द्रव्यवाचक" },
-      { word: "नेपाल", type: "व्यक्तिवाचक" },
-      { word: "त्योहार", type: "जातिवाचक" },
-      { word: "उत्साह", type: "भाववाचक" },
-      { word: "पानी", type: "द्रव्यवाचक" }
+      { word: "शत्रु = रिपु", type: "पर्यायवाची शब्द" },
+      { word: "जीवन ↔ मरण", type: "विलोम शब्द" },
+      { word: "आज़ादी = स्वतंत्रता", type: "पर्यायवाची शब्द" },
+      { word: "अपरिचित ↔ परिचित", type: "विलोम शब्द" },
+      { word: "उपहार = सौगात", type: "पर्यायवाची शब्द" },
+      { word: "प्रेम ↔ नफ़रत", type: "विलोम शब्द" },
+      { word: "उजियारा = प्रकाश", type: "पर्यायवाची शब्द" },
+      { word: "सफ़लता ↔ असफ़लता", type: "विलोम शब्द" }
     ];
 
     let l2Index = 0;
@@ -345,7 +344,7 @@
       loadL1Question();
     }
 
-    /* --- LEVEL 1 LOGIC (Sentence Repair) --- */
+    /* --- LEVEL 1 LOGIC (MCQ) --- */
     function loadL1Question() {
       if (l1Index >= l1Data.length) {
         startLevel2();
@@ -385,11 +384,11 @@
       }
     }
 
-    /* --- LEVEL 2 LOGIC (Noun Catch / Sort) --- */
+    /* --- LEVEL 2 LOGIC (Synonym / Antonym Catch Game) --- */
     function startLevel2() {
       document.getElementById('level-1-area').style.display = 'none';
       document.getElementById('level-2-area').style.display = 'block';
-      document.getElementById('level-display').innerText = 'स्तर 2: व्याकरण (संज्ञा वर्गीकरण)';
+      document.getElementById('level-display').innerText = 'स्तर 2: पर्यायवाची व विलोम वर्गीकरण';
       l2Index = 0;
       spawnFallingWord();
     }
@@ -457,7 +456,7 @@
       document.getElementById('end-screen').style.display = 'none';
       document.getElementById('level-2-area').style.display = 'none';
       document.getElementById('level-1-area').style.display = 'block';
-      document.getElementById('level-display').innerText = 'स्तर 1: वाक्य-सुधार (Sentence Repair)';
+      document.getElementById('level-display').innerText = 'स्तर 1: पर्यायवाची एवं विलोम शब्द';
       document.getElementById('start-screen').style.display = 'flex';
     }
   </script>
