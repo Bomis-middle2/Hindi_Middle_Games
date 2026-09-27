@@ -28,7 +28,49 @@
       text-align: center;
     }
 
+    /* 1. START SCREEN (Center Logo ONLY Here) */
+    #start-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 3px solid #ffb74d;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 750px;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .start-logo {
+      max-width: 220px;
+      height: auto;
+      margin-bottom: 25px;
+    }
+
+    .start-btn {
+      background-color: #f57c00;
+      color: #ffffff;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 15px;
+    }
+
+    .start-btn:hover {
+      background-color: #e65100;
+      transform: scale(1.03);
+    }
+
+    /* MAIN CONTAINER (Hidden initially) */
     .main-container {
+      display: none;
       background: #ffffff;
       border: 3px solid #ffb74d;
       border-radius: 12px;
@@ -72,7 +114,7 @@
       display: block;
     }
 
-    /* Booklet Styling & Logo Header */
+    /* Booklet Styling */
     .booklet-page {
       border: 2px dashed #ffb74d;
       background: #fffde7;
@@ -97,12 +139,6 @@
       color: #d84315;
       font-size: 1.3rem;
       font-weight: bold;
-    }
-
-    .innovine-logo {
-      height: 40px;
-      width: auto;
-      object-fit: contain;
     }
 
     .booklet-body {
@@ -141,7 +177,7 @@
     .canvas-area {
       position: relative;
       width: 100%;
-      height: 220px;
+      height: 180px;
       background: linear-gradient(to bottom, #ffe0b2 50%, #d7ccc8 50%);
       border-radius: 8px;
       overflow: hidden;
@@ -150,15 +186,15 @@
 
     .sun-chariot {
       position: absolute;
-      bottom: 30px;
+      bottom: 25px;
       left: 20px;
-      font-size: 45px;
+      font-size: 40px;
       user-select: none;
     }
 
     .wheel {
       position: absolute;
-      font-size: 40px;
+      font-size: 38px;
       cursor: pointer;
       user-select: none;
       transition: transform 0.3s;
@@ -171,37 +207,41 @@
     .quiz-box {
       margin-top: 20px;
       background: #fff3e0;
-      padding: 15px;
+      padding: 20px;
       border-radius: 8px;
       border: 1px dashed #ffb74d;
       text-align: center;
     }
 
     .quiz-question {
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       font-weight: bold;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
+      color: #d84315;
     }
 
-    .quiz-options {
+    .game-options-grid {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .opt-btn {
+    .game-opt-btn {
       background-color: #ffffff;
-      border: 1.5px solid #ffb74d;
+      border: 2px solid #ffb74d;
       color: #4e342e;
-      padding: 8px;
-      border-radius: 4px;
+      padding: 10px 18px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 0.95rem;
-      transition: background 0.2s;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: background 0.2s, transform 0.1s;
     }
 
-    .opt-btn:hover {
+    .game-opt-btn:hover {
       background-color: #ffe0b2;
+      transform: translateY(-2px);
     }
 
     .text-input-group {
@@ -212,56 +252,68 @@
     }
 
     .text-input {
-      padding: 8px 12px;
-      border: 1.5px solid #ffb74d;
-      border-radius: 4px;
+      padding: 10px 14px;
+      border: 2px solid #ffb74d;
+      border-radius: 6px;
       font-size: 1rem;
-      width: 70%;
+      width: 65%;
+      outline: none;
     }
 
     .submit-btn {
       background-color: #f57c00;
       color: white;
       border: none;
-      padding: 8px 15px;
-      border-radius: 4px;
+      padding: 10px 18px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
     }
 
     .feedback {
-      margin-top: 10px;
+      margin-top: 12px;
       font-weight: bold;
+      font-size: 1.05rem;
     }
 
     .level-indicator {
       background: #e65100;
       color: white;
-      padding: 4px 10px;
+      padding: 4px 12px;
       border-radius: 12px;
       font-size: 0.85rem;
       display: inline-block;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
 
-  <h1>🛕 कोणार्क सूर्य मंदिर (Konark Sun Temple) 🛕</h1>
+  <!-- 1. START SCREEN WITH CENTERED LOGO ONLY -->
+  <div id="start-screen">
+    <img src="assets/logo.png" alt="Innovine Logo" class="start-logo">
+    <h1 style="font-size: 1.6rem; color: #bf360c;">🛕 कोणार्क सूर्य मंदिर (Konark Sun Temple) 🛕</h1>
+    <p style="margin: 10px 0 20px; font-size: 1.05rem; color: #4e342e;">
+      डिजिटल पुस्तिका पढ़ें, पहिए एकत्र करें और मजेदार अभ्यासों द्वारा मंदिर के इतिहास व व्याकरण को समझें!
+    </p>
+    <button class="start-btn" onclick="startGameApp()">शुरू करें (Start)</button>
+  </div>
 
-  <div class="main-container">
+  <!-- 2. MAIN APPLICATION -->
+  <div class="main-container" id="main-app">
+    <h1>🛕 कोणार्क सूर्य मंदिर 🛕</h1>
+
     <div class="tab-buttons">
       <button class="tab-btn active" onclick="switchTab('booklet')">📖 डिजिटल पुस्तिका (Booklet)</button>
       <button class="tab-btn" onclick="switchTab('game')">🎮 मंदिर ज्ञान गेम (Game)</button>
     </div>
 
-    <!-- TAB 1: BOOKLET (SCREEN 1) -->
+    <!-- TAB 1: BOOKLET -->
     <div id="booklet-tab" class="tab-content active">
       <div class="booklet-page">
         <div>
           <div class="booklet-header">
             <div class="booklet-title" id="page-title">पृष्ठ 1: परिचय व स्थान</div>
-            <img src="assets/logo.png" alt="Innovine Logo" class="innovine-logo">
           </div>
           <div class="booklet-body" id="page-content">
             <!-- Dynamic Content -->
@@ -275,7 +327,7 @@
       </div>
     </div>
 
-    <!-- TAB 2: GAME -->
+    <!-- TAB 2: NON-MCQ GAME -->
     <div id="game-tab" class="tab-content">
       <div class="dashboard">
         <div>संग्रहीत पहिए ☸️: <span id="wheel-count">0</span> / 24</div>
@@ -284,11 +336,10 @@
 
       <div class="canvas-area" id="game-canvas">
         <div class="sun-chariot">🛕 🐎🐎🐎</div>
-        <!-- Collectible wheels will be generated here -->
       </div>
 
       <div class="quiz-box">
-        <span class="level-indicator" id="level-tag">स्तर 1: शब्द-पहेली खेल</span>
+        <span class="level-indicator" id="level-tag">स्तर 1</span>
         <div class="quiz-question" id="quiz-q">प्रश्न लोड हो रहा है...</div>
         <div id="quiz-interactive"></div>
         <div class="feedback" id="quiz-fb"></div>
@@ -296,7 +347,17 @@
     </div>
   </div>
 
+  <!-- AUDIO SOUNDS -->
+  <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+  <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
   <script>
+    // --- APP START LOGIC ---
+    function startGameApp() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('main-app').style.display = 'block';
+    }
+
     // --- TAB SWITCHING ---
     function switchTab(tabName) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -319,7 +380,7 @@
         content: `
           <p><strong>स्थान:</strong> कोणार्क, पूरी ज़िला, ओडिशा (बंगाल की खाड़ी के तट पर)।</p><br>
           <p><strong>नाम का अर्थ:</strong> 'कोण' (कोना) + 'अर्क' (सूर्य) = सूर्य का कोना।</p><br>
-          <p><strong>अन्य नाम:</strong> इसे 'ब्लैक पैगोडा' (Black Pagoda) भी कहा जाता है, क्योंकि दूर से इसका टॉवर काला दिखाई देता है ।</p>
+          <p><strong>अन्य नाम:</strong> इसे 'ब्लैक पैगोडा' (Black Pagoda) भी कहा जाता है, क्योंकि दूर से इसका टॉवर काला दिखाई देता है।</p>
         `
       },
       {
@@ -375,75 +436,92 @@
 
     renderPage();
 
-    // --- GAME LOGIC ---
+    // --- NON-MCQ GAME ENGINE & RANDOMIZATION ---
     let wheelsCollected = 0;
     let gameScore = 0;
     let currentTaskIndex = 0;
+    let shuffledTasks = [];
 
-    // GAME TASKS: Level 1 (Non-MCQ interactive tasks) & Level 2 (Grammar MCQ)
-    const gameTasks = [
-      // LEVEL 1: Non-MCQ Interactive Games
+    // UNIQUE INTERACTIVE GAME MECHANICS (Level 1: Content | Level 2: Noun Grammar - NO MCQs)
+    const rawGameTasks = [
+      // === LEVEL 1: Chapter Content & Word Games (NO MCQs) ===
       {
-        level: 1,
-        title: "स्तर 1: अनसुझाव शब्द गेम (Word Unscramble)",
-        q: "अक्षरों को सही क्रम में रखकर पाठ से संबंधित शब्द बनाएँ: 'त - या - रा'",
+        level: "स्तर 1: शब्द-सुधार खेल (Word Unscramble)",
+        q: "अक्षरों को सही क्रम में लगाकर शब्द बनाएँ: [ त - या - रा ]",
         type: "text",
         ans: ["यात्रा"],
-        hint: "संकेत: इसका अर्थ है 'सफ़र'"[cite: 4]
+        hint: "संकेत: इसका अर्थ 'सफ़र' होता है"[cite: 4]
       },
       {
-        level: 1,
-        title: "स्तर 1: लुप्त अक्षर भरें (Fill in Missing Letter)",
-        q: "शब्द पूरा कीजिए: 'वि _ा ल' (अर्थ: बहुत बड़ा)",
+        level: "स्तर 1: लुप्त वर्ण भरें (Fill Missing Character)",
+        q: "शब्द पूरा करें: 'वि _ा ल' (अर्थ: बहुत बड़ा)",
         type: "text",
         ans: ["श", "विशाल"],
-        hint: "संकेत: 'श' अक्षर का प्रयोग करें"
+        hint: "संकेत: 'श' वर्ण भरें"
       },
       {
-        level: 1,
-        title: "स्तर 1: एक शब्द में उत्तर (One-Word Riddle)",
-        q: "वह स्थान जिसे 1984 में यूनेस्को ने 'विश्व धरोहर' घोषित किया?",
-        type: "text",
-        ans: ["कोणार्क", "कोणार्क सूर्य मंदिर", "कोणार्क मंदिर"],
-        hint: "संकेत: सूर्य मंदिर किस स्थान पर है?"[cite: 4]
+        level: "स्तर 1: सत्य / असत्य (True / False)",
+        q: "कथन: कोणार्क मंदिर में 24 विशाल पहिए हैं जो दिन के 24 घंटों के प्रतीक हैं।",
+        type: "binary",
+        opts: ["सत्य (True)", "असत्य (False)"],
+        ans: 0
+      },
+      {
+        level: "स्तर 1: एक-शब्द पहेली (One-Word Riddle)",
+        q: "ओडिशा के इस मंदिर को और किस नाम से जाना जाता है?",
+        type: "select-grid",
+        opts: ["स्वर्ण मंदिर", "ब्लैक पैगोडा", "अक्षरधाम", "सूर्य महल"],
+        ans: 1
       },
 
-      // LEVEL 2: Grammar Concepts from Chapter (संज्ञा और उसके भेद)
+      // === LEVEL 2: Grammar - Nouns & Types (संज्ञा और उसके भेद - NO MCQs) ===
       {
-        level: 2,
-        title: "स्तर 2: व्याकरण बोध (संज्ञा के भेद)",
-        q: "'राजा नरसिंह देव' शब्द किस प्रकार की संज्ञा है?",
-        type: "mcq",
+        level: "स्तर 2: व्याकरण - संज्ञा वर्गीकरण (Noun Classification)",
+        q: "'राजा नरसिंह देव' किस प्रकार की संज्ञा है?",
+        type: "select-grid",
         opts: ["जातिवाचक संज्ञा", "व्यक्तिवाचक संज्ञा", "भाववाचक संज्ञा", "द्रव्यवाचक संज्ञा"],
         ans: 1
       },
       {
-        level: 2,
-        title: "स्तर 2: व्याकरण बोध (संज्ञा के भेद)",
-        q: "'मंदिर' और 'रथ' शब्द संज्ञा के किस भेद के अंतर्गत आते हैं?",
-        type: "mcq",
-        opts: ["व्यक्तिवाचक संज्ञा", "जातिवाचक संज्ञा", "भाववाचक संज्ञा", "समुदायवाचक संज्ञा"],
+        level: "स्तर 2: व्याकरण - संज्ञा पहचान (Noun Type Identification)",
+        q: "'मंदिर' और 'घोड़े' शब्द संज्ञा के किस भेद के अंतर्गत आते हैं?",
+        type: "select-grid",
+        opts: ["व्यक्तिवाचक संज्ञा", "जातिवाचक संज्ञा", "भाववाचक संज्ञा", "समूहवाचक संज्ञा"],
         ans: 1
       },
       {
-        level: 2,
-        title: "स्तर 2: व्याकरण बोध (संज्ञा के भेद)",
-        q: "'गर्व' और 'सुंदरता' शब्द में कौन-सी संज्ञा है?",
-        type: "mcq",
-        opts: ["भाववाचक संज्ञा", "जातिवाचक संज्ञा", "द्रव्यवाचक संज्ञा", "व्यक्तिवाचक संज्ञा"],
-        ans: 0
+        level: "स्तर 2: व्याकरण - भाववाचक संज्ञा ढूँढें (Find Abstract Noun)",
+        q: "इनमें से कौन-सा शब्द 'भाववाचक संज्ञा' का सही उदाहरण है?",
+        type: "select-grid",
+        opts: ["लोहा", "सुंदरता", "सूर्य", "रथ"],
+        ans: 1
       },
       {
-        level: 2,
-        title: "स्तर 2: व्याकरण बोध (संज्ञा के भेद)",
-        q: "'लोहा' और 'सोना' शब्द संज्ञा के किस भेद को दर्शाते हैं?",
-        type: "mcq",
-        opts: ["व्यक्तिवाचक संज्ञा", "समुदायवाचक संज्ञा", "द्रव्यवाचक संज्ञा", "भाववाचक संज्ञा"],
-        ans: 2
+        level: "स्तर 2: व्याकरण - द्रव्यवाचक संज्ञा टाइप करें (Noun Typing Game)",
+        q: "मंदिर निर्माण में प्रयुक्त 'लोहा' या 'सोना' संज्ञा का कौन-सा भेद है?",
+        type: "text",
+        ans: ["द्रव्यवाचक", "द्रव्यवाचक संज्ञा"],
+        hint: "संकेत: धातु या सामग्री को दर्शाने वाली संज्ञा"
       }
     ];
 
+    function shuffleArray(arr) {
+      return arr.sort(() => Math.random() - 0.5);
+    }
+
+    function playSound(isCorrect) {
+      const audioId = isCorrect ? 'audio-correct' : 'audio-wrong';
+      const audio = document.getElementById(audioId);
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(e => console.log('Audio playback prevented'));
+      }
+    }
+
     function initGame() {
+      if (shuffledTasks.length === 0) {
+        shuffledTasks = shuffleArray([...rawGameTasks]);
+      }
       spawnWheel();
       loadTask();
     }
@@ -457,7 +535,7 @@
       wheel.className = 'wheel';
       wheel.innerHTML = '☸️';
       wheel.style.left = `${Math.random() * (canvas.clientWidth - 60) + 10}px`;
-      wheel.style.top = `${Math.random() * 110 + 20}px`;
+      wheel.style.top = `${Math.random() * 80 + 20}px`;
 
       wheel.onclick = () => {
         wheelsCollected = Math.min(24, wheelsCollected + 1);
@@ -472,25 +550,26 @@
     }
 
     function loadTask() {
-      const task = gameTasks[currentTaskIndex];
-      document.getElementById('level-tag').innerText = task.title;
+      const task = shuffledTasks[currentTaskIndex];
+      document.getElementById('level-tag').innerText = task.level;
       document.getElementById('quiz-q').innerText = task.q;
       
       const container = document.getElementById('quiz-interactive');
       container.innerHTML = '';
       document.getElementById('quiz-fb').innerText = '';
 
-      if (task.type === 'mcq') {
-        const optsContainer = document.createElement('div');
-        optsContainer.className = 'quiz-options';
+      if (task.type === 'binary' || task.type === 'select-grid') {
+        const grid = document.createElement('div');
+        grid.className = 'game-options-grid';
+
         task.opts.forEach((opt, idx) => {
           const btn = document.createElement('button');
-          btn.className = 'opt-btn';
+          btn.className = 'game-opt-btn';
           btn.innerText = opt;
-          btn.onclick = () => checkMCQAnswer(idx);
-          optsContainer.appendChild(btn);
+          btn.onclick = () => checkOptionAnswer(idx);
+          grid.appendChild(btn);
         });
-        container.appendChild(optsContainer);
+        container.appendChild(grid);
       } else if (task.type === 'text') {
         const group = document.createElement('div');
         group.className = 'text-input-group';
@@ -514,51 +593,55 @@
           const hintText = document.createElement('p');
           hintText.style.fontSize = '0.85rem';
           hintText.style.color = '#e65100';
-          hintText.style.marginTop = '6px';
+          hintText.style.marginTop = '8px';
           hintText.innerText = task.hint;
           container.appendChild(hintText);
         }
       }
     }
 
-    function checkMCQAnswer(selectedIdx) {
-      const task = gameTasks[currentTaskIndex];
+    function checkOptionAnswer(selectedIdx) {
+      const task = shuffledTasks[currentTaskIndex];
       const fb = document.getElementById('quiz-fb');
 
       if (selectedIdx === task.ans) {
+        playSound(true);
         fb.style.color = 'green';
-        fb.innerText = 'शानदार! सही उत्तर 🎉 (+20 ज्ञान अंक)';
+        fb.innerText = 'शानदार! सही उत्तर 🎉 (+20 अंक)';
         gameScore += 20;
         document.getElementById('game-score').innerText = gameScore;
         nextTask();
       } else {
+        playSound(false);
         fb.style.color = 'red';
         fb.innerText = 'गलत उत्तर, पुनः प्रयास करें!';
       }
     }
 
     function checkTextAnswer() {
-      const task = gameTasks[currentTaskIndex];
+      const task = shuffledTasks[currentTaskIndex];
       const userAns = document.getElementById('text-ans').value.trim().toLowerCase();
       const fb = document.getElementById('quiz-fb');
 
       const isCorrect = task.ans.some(ans => ans.toLowerCase() === userAns);
 
       if (isCorrect) {
+        playSound(true);
         fb.style.color = 'green';
-        fb.innerText = 'बिल्कुल सही! 🎉 (+20 ज्ञान अंक)';
+        fb.innerText = 'बिल्कुल सही! 🎉 (+20 अंक)';
         gameScore += 20;
         document.getElementById('game-score').innerText = gameScore;
         nextTask();
       } else {
+        playSound(false);
         fb.style.color = 'red';
         fb.innerText = 'गलत उत्तर, दोबारा सोचें!';
       }
     }
 
     function nextTask() {
-      currentTaskIndex = (currentTaskIndex + 1) % gameTasks.length;
-      setTimeout(loadTask, 1500);
+      currentTaskIndex = (currentTaskIndex + 1) % shuffledTasks.length;
+      setTimeout(loadTask, 1600);
     }
   </script>
 </body>
