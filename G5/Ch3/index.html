@@ -34,7 +34,7 @@
       border-radius: 12px;
       box-shadow: 0 8px 16px rgba(0,0,0,0.15);
       width: 100%;
-      max-width: 700px;
+      max-width: 750px;
       padding: 20px;
     }
 
@@ -44,6 +44,7 @@
       gap: 10px;
       margin-bottom: 20px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .tab-btn {
@@ -127,7 +128,7 @@
     .canvas-area {
       position: relative;
       width: 100%;
-      height: 280px;
+      height: 220px;
       background: linear-gradient(to bottom, #ffe0b2 50%, #d7ccc8 50%);
       border-radius: 8px;
       overflow: hidden;
@@ -136,9 +137,9 @@
 
     .sun-chariot {
       position: absolute;
-      bottom: 40px;
+      bottom: 30px;
       left: 20px;
-      font-size: 50px;
+      font-size: 45px;
       user-select: none;
     }
 
@@ -163,10 +164,17 @@
       text-align: center;
     }
 
-    .quiz-question {
+    .quiz-title {
       font-size: 1.1rem;
       font-weight: bold;
-      margin-bottom: 10px;
+      color: #e65100;
+      margin-bottom: 8px;
+    }
+
+    .quiz-question {
+      font-size: 1.05rem;
+      font-weight: bold;
+      margin-bottom: 12px;
     }
 
     .quiz-options {
@@ -190,9 +198,44 @@
       background-color: #ffe0b2;
     }
 
-    .feedback {
-      margin-top: 8px;
+    .text-input-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .text-input {
+      padding: 8px 12px;
+      border: 1.5px solid #ffb74d;
+      border-radius: 4px;
+      font-size: 1rem;
+      width: 70%;
+    }
+
+    .submit-btn {
+      background-color: #f57c00;
+      color: white;
+      border: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
       font-weight: bold;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    .level-indicator {
+      background: #e65100;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      display: inline-block;
+      margin-bottom: 8px;
     }
   </style>
 </head>
@@ -236,8 +279,9 @@
       </div>
 
       <div class="quiz-box">
+        <span class="level-indicator" id="level-tag">स्तर 1: शब्द-पहेली खेल</span>
         <div class="quiz-question" id="quiz-q">प्रश्न लोड हो रहा है...</div>
-        <div class="quiz-options" id="quiz-opts"></div>
+        <div id="quiz-interactive"></div>
         <div class="feedback" id="quiz-fb"></div>
       </div>
     </div>
@@ -266,7 +310,7 @@
         content: `
           <p><strong>स्थान:</strong> कोणार्क, पूरी ज़िला, ओडिशा (बंगाल की खाड़ी के तट पर)।</p><br>
           <p><strong>नाम का अर्थ:</strong> 'कोण' (कोना) + 'अर्क' (सूर्य) = सूर्य का कोना।</p><br>
-          <p><strong>अन्य नाम:</strong> इसे 'ब्लैक पैगोडा' (Black Pagoda) भी कहा जाता है, क्योंकि दूर से इसका टॉवर काला दिखाई देता है ।</p>
+          <p><strong>अन्य नाम:</strong> इसे 'ब्लैक पैगोडा' (Black Pagoda) भी कहा जाता है, क्योंकि दूर से इसका टॉवर काला दिखाई देता है।</p>
         `
       },
       {
@@ -276,7 +320,7 @@
             <li><strong>रथ का आकार:</strong> पूरा मंदिर एक विशाल रथ के रूप में निर्मित है, जिसे 7 बेताब घोड़े खींच रहे हैं (सप्ताह के 7 दिन)।</li>
             <li><strong>24 विशाल पहिए:</strong> रथ में 10 फ़ीट ऊँचे 24 पहिए हैं, जो दिन के 24 घंटों के प्रतीक हैं।</li>
             <li><strong>8 तीलियाँ:</strong> हर पहिए में 8 तीलियाँ हैं, जो दिन के 8 पहर को दर्शाती हैं।</li>
-            <li><strong>समय का ज्ञान:</strong> प्राचीन काल में लोग पहियों की छाया देखकर सटीक समय का अंदाज़ा लगाते थे[cite: 3]।</li>
+            <li><strong>समय का ज्ञान:</strong> प्राचीन काल में लोग पहियों की छाया देखकर सटीक समय का अंदाज़ा लगाते थे।</li>
           </ul>
         `
       },
@@ -284,10 +328,10 @@
         title: "पृष्ठ 3: सांस्कृतिक महत्त्व व अंतर्राष्ट्रीय जुड़ाव",
         content: `
           <ul>
-            <li><strong>निर्माता:</strong> 13वीं शताब्दी में गंग वंश के राजा नरसिंह देव प्रथम ने इसे बनवाया[cite: 3]।</li>
-            <li><strong>मुख्य वास्तुकार:</strong> इस मंदिर के मुख्य वास्तुकार बिसु महाराणा थे[cite: 3]।</li>
-            <li><strong>यूनेस्को विश्व धरोहर:</strong> 1984 में यूनेस्को द्वारा विश्व धरोहर स्थल घोषित किया गया[cite: 3]।</li>
-            <li><strong>कलिंग वास्तुकला:</strong> यह कलिंग वास्तुकला शैली का सर्वोत्तम और अनूठा उदाहरण है[cite: 3]।</li>
+            <li><strong>निर्माता:</strong> 13वीं शताब्दी में गंग वंश के राजा नरसिंह देव प्रथम ने इसे बनवाया।</li>
+            <li><strong>मुख्य वास्तुकार:</strong> इस मंदिर के मुख्य वास्तुकार बिसु महाराणा थे[cite: 4]।</li>
+            <li><strong>यूनेस्को विश्व धरोहर:</strong> 1984 में यूनेस्को द्वारा विश्व धरोहर स्थल घोषित किया गया[cite: 4]।</li>
+            <li><strong>कलिंग वास्तुकला:</strong> यह कलिंग वास्तुकला शैली का सर्वोत्तम और अनूठा उदाहरण है[cite: 4]।</li>
           </ul>
         `
       },
@@ -295,9 +339,9 @@
         title: "पृष्ठ 4: 3 रोचक तथ्य (Interesting Facts)",
         content: `
           <ol style="margin-left: 20px; line-height: 1.8;">
-            <li><strong>चुंबकीय लोहा:</strong> मुख्य मंदिर के शिखर निर्माण में 52 टन चुंबकीय लोहे का इस्तेमाल किया गया था[cite: 3]।</li>
-            <li><strong>सटीक सूर्योदय:</strong> मंदिर की स्थिति इतनी सटीक है कि हर दिन सूर्योदय की पहली किरण मुख्य मूर्ति पर पड़ती थी[cite: 3]।</li>
-            <li><strong>संगीत की ध्वनियाँ:</strong> हवा चलने पर पत्थरों की विशेष बनावट के कारण संगीत की ध्वनियाँ उत्पन्न होती हैं[cite: 3]।</li>
+            <li><strong>चुंबकीय लोहा:</strong> मुख्य मंदिर के शिखर निर्माण में 52 टन चुंबकीय लोहे का इस्तेमाल किया गया था[cite: 4]।</li>
+            <li><strong>सटीक सूर्योदय:</strong> मंदिर की स्थिति इतनी सटीक है कि हर दिन सूर्योदय की पहली किरण मुख्य मूर्ति पर पड़ती थी[cite: 4]।</li>
+            <li><strong>संगीत की ध्वनियाँ:</strong> हवा चलने पर पत्थरों की विशेष बनावट के कारण संगीत की ध्वनियाँ उत्पन्न होती हैं[cite: 4]।</li>
           </ol>
         `
       }
@@ -320,45 +364,79 @@
       renderPage();
     }
 
-    // Init Page 1
     renderPage();
 
     // --- GAME LOGIC ---
     let wheelsCollected = 0;
     let gameScore = 0;
-    let currentQuizIndex = 0;
+    let currentTaskIndex = 0;
 
-    const quizData = [
+    // GAME TASKS: Level 1 (Non-MCQ interactive tasks) & Level 2 (Grammar MCQ)
+    const gameTasks = [
+      // LEVEL 1: Non-MCQ Interactive Games
       {
-        q: "कोणार्क सूर्य मंदिर किस राज्य में स्थित है?",
-        opts: ["ओडिशा", "पश्चिम बंगाल", "राजस्थान", "बिहार"],
-        ans: 0
+        level: 1,
+        title: "स्तर 1: अनसुझाव शब्द गेम (Word Unscramble)",
+        q: "अक्षरों को सही क्रम में रखकर पाठ से संबंधित शब्द बनाएँ: 'त - या - रा'",
+        type: "text",
+        ans: ["यात्रा"],
+        hint: "संकेत: इसका अर्थ है 'सफ़र'"[cite: 4]
       },
       {
-        q: "मंदिर का निर्माण किस राजा ने करवाया था?",
-        opts: ["चंद्रगुप्त", "अकबर", "राजा नरसिंह देव प्रथम", "अशोक"],
-        ans: 2
+        level: 1,
+        title: "स्तर 1: लुप्त अक्षर भरें (Fill in Missing Letter)",
+        q: "शब्द पूरा कीजिए: 'वि _ा ल' (अर्थ: बहुत बड़ा)",
+        type: "text",
+        ans: ["श", "विशाल"],
+        hint: "संकेत: 'श' अक्षर का प्रयोग करें"
       },
       {
-        q: "सूर्य मंदिर को अन्य किस नाम से जाना जाता है?",
-        opts: ["रेड पैलेस", "ब्लैक पैगोडा", "व्हाइट टॉवर", "गोल्डन टेम्पल"],
+        level: 1,
+        title: "स्तर 1: एक शब्द में उत्तर (One-Word Riddle)",
+        q: "वह स्थान जिसे 1984 में यूनेस्को ने 'विश्व धरोहर' घोषित किया?",
+        type: "text",
+        ans: ["कोणार्क", "कोणार्क सूर्य मंदिर", "कोणार्क मंदिर"],
+        hint: "संकेत: सूर्य मंदिर किस स्थान पर है?"[cite: 4]
+      },
+
+      // LEVEL 2: Grammar Concepts from Chapter (संज्ञा और उसके भेद)
+      {
+        level: 2,
+        title: "स्तर 2: व्याकरण बोध (संज्ञा के भेद)",
+        q: "'राजा नरसिंह देव' शब्द किस प्रकार की संज्ञा है?",
+        type: "mcq",
+        opts: ["जातिवाचक संज्ञा", "व्यक्तिवाचक संज्ञा", "भाववाचक संज्ञा", "द्रव्यवाचक संज्ञा"],
         ans: 1
       },
       {
-        q: "रथ में कुल कितने विशाल पत्थर के पहिए हैं?",
-        opts: ["7", "12", "24", "52"],
-        ans: 2
+        level: 2,
+        title: "स्तर 2: व्याकरण बोध (संज्ञा के भेद)",
+        q: "'मंदिर' और 'रथ' शब्द संज्ञा के किस भेद के अंतर्गत आते हैं?",
+        type: "mcq",
+        opts: ["व्यक्तिवाचक संज्ञा", "जातिवाचक संज्ञा", "भाववाचक संज्ञा", "समुदायवाचक संज्ञा"],
+        ans: 1
       },
       {
-        q: "मंदिर के मुख्य वास्तुकार कौन थे?",
-        opts: ["रवींद्रनाथ टैगोर", "शुभंकर", "बिसु महाराणा", "नरसिंह देव"],
+        level: 2,
+        title: "स्तर 2: व्याकरण बोध (संज्ञा के भेद)",
+        q: "'गर्व' और 'सुंदरता' शब्द में कौन-सी संज्ञा है?",
+        type: "mcq",
+        opts: ["भाववाचक संज्ञा", "जातिवाचक संज्ञा", "द्रव्यवाचक संज्ञा", "व्यक्तिवाचक संज्ञा"],
+        ans: 0
+      },
+      {
+        level: 2,
+        title: "स्तर 2: व्याकरण बोध (संज्ञा के भेद)",
+        q: "'लोहा' और 'सोना' शब्द संज्ञा के किस भेद को दर्शाते हैं?",
+        type: "mcq",
+        opts: ["व्यक्तिवाचक संज्ञा", "समुदायवाचक संज्ञा", "द्रव्यवाचक संज्ञा", "भाववाचक संज्ञा"],
         ans: 2
       }
     ];
 
     function initGame() {
       spawnWheel();
-      loadQuestion();
+      loadTask();
     }
 
     function spawnWheel() {
@@ -370,7 +448,7 @@
       wheel.className = 'wheel';
       wheel.innerHTML = '☸️';
       wheel.style.left = `${Math.random() * (canvas.clientWidth - 60) + 10}px`;
-      wheel.style.top = `${Math.random() * 140 + 20}px`;
+      wheel.style.top = `${Math.random() * 110 + 20}px`;
 
       wheel.onclick = () => {
         wheelsCollected = Math.min(24, wheelsCollected + 1);
@@ -384,37 +462,94 @@
       canvas.appendChild(wheel);
     }
 
-    function loadQuestion() {
-      const qObj = quizData[currentQuizIndex];
-      document.getElementById('quiz-q').innerText = `प्र॰ ${currentQuizIndex + 1}: ${qObj.q}`;
-      const optsContainer = document.getElementById('quiz-opts');
-      optsContainer.innerHTML = '';
+    function loadTask() {
+      const task = gameTasks[currentTaskIndex];
+      document.getElementById('level-tag').innerText = task.title;
+      document.getElementById('quiz-q').innerText = task.q;
+      
+      const container = document.getElementById('quiz-interactive');
+      container.innerHTML = '';
       document.getElementById('quiz-fb').innerText = '';
 
-      qObj.opts.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'opt-btn';
-        btn.innerText = opt;
-        btn.onclick = () => checkAnswer(idx);
-        optsContainer.appendChild(btn);
-      });
+      if (task.type === 'mcq') {
+        const optsContainer = document.createElement('div');
+        optsContainer.className = 'quiz-options';
+        task.opts.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'opt-btn';
+          btn.innerText = opt;
+          btn.onclick = () => checkMCQAnswer(idx);
+          optsContainer.appendChild(btn);
+        });
+        container.appendChild(optsContainer);
+      } else if (task.type === 'text') {
+        const group = document.createElement('div');
+        group.className = 'text-input-group';
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'text-input';
+        input.id = 'text-ans';
+        input.placeholder = 'अपना उत्तर यहाँ लिखें...';
+
+        const submitBtn = document.createElement('button');
+        submitBtn.className = 'submit-btn';
+        submitBtn.innerText = 'जाँचें';
+        submitBtn.onclick = checkTextAnswer;
+
+        group.appendChild(input);
+        group.appendChild(submitBtn);
+        container.appendChild(group);
+
+        if(task.hint) {
+          const hintText = document.createElement('p');
+          hintText.style.fontSize = '0.85rem';
+          hintText.style.color = '#e65100';
+          hintText.style.marginTop = '6px';
+          hintText.innerText = task.hint;
+          container.appendChild(hintText);
+        }
+      }
     }
 
-    function checkAnswer(selectedIdx) {
-      const qObj = quizData[currentQuizIndex];
+    function checkMCQAnswer(selectedIdx) {
+      const task = gameTasks[currentTaskIndex];
       const fb = document.getElementById('quiz-fb');
 
-      if (selectedIdx === qObj.ans) {
+      if (selectedIdx === task.ans) {
         fb.style.color = 'green';
-        fb.innerText = 'सही उत्तर! 🎉 (+20 ज्ञान अंक)';
+        fb.innerText = 'शानदार! सही उत्तर 🎉 (+20 ज्ञान अंक)';
         gameScore += 20;
         document.getElementById('game-score').innerText = gameScore;
-        currentQuizIndex = (currentQuizIndex + 1) % quizData.length;
-        setTimeout(loadQuestion, 1500);
+        nextTask();
       } else {
         fb.style.color = 'red';
         fb.innerText = 'गलत उत्तर, पुनः प्रयास करें!';
       }
+    }
+
+    function checkTextAnswer() {
+      const task = gameTasks[currentTaskIndex];
+      const userAns = document.getElementById('text-ans').value.trim().toLowerCase();
+      const fb = document.getElementById('quiz-fb');
+
+      const isCorrect = task.ans.some(ans => ans.toLowerCase() === userAns);
+
+      if (isCorrect) {
+        fb.style.color = 'green';
+        fb.innerText = 'बिल्कुल सही! 🎉 (+20 ज्ञान अंक)';
+        gameScore += 20;
+        document.getElementById('game-score').innerText = gameScore;
+        nextTask();
+      } else {
+        fb.style.color = 'red';
+        fb.innerText = 'गलत उत्तर, दोबारा सोचें!';
+      }
+    }
+
+    function nextTask() {
+      currentTaskIndex = (currentTaskIndex + 1) % gameTasks.length;
+      setTimeout(loadTask, 1500);
     }
   </script>
 </body>
