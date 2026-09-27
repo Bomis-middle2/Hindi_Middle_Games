@@ -72,7 +72,7 @@
       display: block;
     }
 
-    /* Booklet Styling */
+    /* Booklet Styling & Logo Header */
     .booklet-page {
       border: 2px dashed #ffb74d;
       background: #fffde7;
@@ -84,12 +84,25 @@
       justify-content: space-between;
     }
 
+    .booklet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #ffe082;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+
     .booklet-title {
       color: #d84315;
       font-size: 1.3rem;
-      margin-bottom: 10px;
-      border-bottom: 2px solid #ffe082;
-      padding-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .innovine-logo {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
     }
 
     .booklet-body {
@@ -162,13 +175,6 @@
       border-radius: 8px;
       border: 1px dashed #ffb74d;
       text-align: center;
-    }
-
-    .quiz-title {
-      font-size: 1.1rem;
-      font-weight: bold;
-      color: #e65100;
-      margin-bottom: 8px;
     }
 
     .quiz-question {
@@ -249,11 +255,14 @@
       <button class="tab-btn" onclick="switchTab('game')">🎮 मंदिर ज्ञान गेम (Game)</button>
     </div>
 
-    <!-- TAB 1: BOOKLET -->
+    <!-- TAB 1: BOOKLET (SCREEN 1) -->
     <div id="booklet-tab" class="tab-content active">
       <div class="booklet-page">
         <div>
-          <div class="booklet-title" id="page-title">पृष्ठ 1: परिचय व स्थान</div>
+          <div class="booklet-header">
+            <div class="booklet-title" id="page-title">पृष्ठ 1: परिचय व स्थान</div>
+            <img src="assets/logo.png" alt="Innovine Logo" class="innovine-logo">
+          </div>
           <div class="booklet-body" id="page-content">
             <!-- Dynamic Content -->
           </div>
@@ -310,7 +319,7 @@
         content: `
           <p><strong>स्थान:</strong> कोणार्क, पूरी ज़िला, ओडिशा (बंगाल की खाड़ी के तट पर)।</p><br>
           <p><strong>नाम का अर्थ:</strong> 'कोण' (कोना) + 'अर्क' (सूर्य) = सूर्य का कोना।</p><br>
-          <p><strong>अन्य नाम:</strong> इसे 'ब्लैक पैगोडा' (Black Pagoda) भी कहा जाता है, क्योंकि दूर से इसका टॉवर काला दिखाई देता है।</p>
+          <p><strong>अन्य नाम:</strong> इसे 'ब्लैक पैगोडा' (Black Pagoda) भी कहा जाता है, क्योंकि दूर से इसका टॉवर काला दिखाई देता है ।</p>
         `
       },
       {
@@ -318,9 +327,9 @@
         content: `
           <ul>
             <li><strong>रथ का आकार:</strong> पूरा मंदिर एक विशाल रथ के रूप में निर्मित है, जिसे 7 बेताब घोड़े खींच रहे हैं (सप्ताह के 7 दिन)।</li>
-            <li><strong>24 विशाल पहिए:</strong> रथ में 10 फ़ीट ऊँचे 24 पहिए हैं, जो दिन के 24 घंटों के प्रतीक हैं।</li>
-            <li><strong>8 तीलियाँ:</strong> हर पहिए में 8 तीलियाँ हैं, जो दिन के 8 पहर को दर्शाती हैं।</li>
-            <li><strong>समय का ज्ञान:</strong> प्राचीन काल में लोग पहियों की छाया देखकर सटीक समय का अंदाज़ा लगाते थे।</li>
+            <li><strong>24 विशाल पहिए:</strong> रथ में 10 फ़ीट ऊँचे 24 पहिए हैं, जो दिन के 24 घंटों के प्रतीक हैं[cite: 4]।</li>
+            <li><strong>8 तीलियाँ:</strong> हर पहिए में 8 तीलियाँ हैं, जो दिन के 8 पहर को दर्शाती हैं[cite: 4]।</li>
+            <li><strong>समय का ज्ञान:</strong> प्राचीन काल में लोग पहियों की छाया देखकर सटीक समय का अंदाज़ा लगाते थे[cite: 4]।</li>
           </ul>
         `
       },
@@ -328,7 +337,7 @@
         title: "पृष्ठ 3: सांस्कृतिक महत्त्व व अंतर्राष्ट्रीय जुड़ाव",
         content: `
           <ul>
-            <li><strong>निर्माता:</strong> 13वीं शताब्दी में गंग वंश के राजा नरसिंह देव प्रथम ने इसे बनवाया।</li>
+            <li><strong>निर्माता:</strong> 13वीं शताब्दी में गंग वंश के राजा नरसिंह देव प्रथम ने इसे बनवाया[cite: 4]।</li>
             <li><strong>मुख्य वास्तुकार:</strong> इस मंदिर के मुख्य वास्तुकार बिसु महाराणा थे[cite: 4]।</li>
             <li><strong>यूनेस्को विश्व धरोहर:</strong> 1984 में यूनेस्को द्वारा विश्व धरोहर स्थल घोषित किया गया[cite: 4]।</li>
             <li><strong>कलिंग वास्तुकला:</strong> यह कलिंग वास्तुकला शैली का सर्वोत्तम और अनूठा उदाहरण है[cite: 4]।</li>
