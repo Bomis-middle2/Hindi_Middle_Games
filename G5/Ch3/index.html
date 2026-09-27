@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>कोणार्क सूर्य मंदिर - 2 स्तरीय गेम</title>
+  <title>कोणार्क की यात्रा - व्याकरण एवं पाठ्य अभ्यास खेल</title>
   <style>
     * {
       box-sizing: border-box;
@@ -44,7 +44,7 @@
       margin-bottom: 30px;
     }
 
-    /* END SCREEN (NO LOGO) */
+    /* END SCREEN */
     #end-screen {
       display: none;
       flex-direction: column;
@@ -71,7 +71,14 @@
       font-size: 1.6rem;
       color: #f57c00;
       font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .final-score-text {
+      font-size: 1.3rem;
+      color: #4e342e;
       margin-bottom: 30px;
+      font-weight: bold;
     }
 
     .start-btn, .replay-btn {
@@ -150,7 +157,7 @@
       transition: all 0.2s;
     }
 
-    .draggable-card:hover {
+    .draggable-card:hover, .target-card:hover {
       background: #ffe0b2;
       transform: scale(1.02);
     }
@@ -166,13 +173,14 @@
       border: 2px solid #388e3c;
       color: #2e7d32;
       cursor: default;
+      pointer-events: none;
     }
 
     /* LEVEL 2: CATCH/SORTING GAME STYLES */
     .sorting-canvas {
       position: relative;
       width: 100%;
-      height: 320px;
+      height: 340px;
       background: #fffde7;
       border: 2px solid #ffe082;
       border-radius: 8px;
@@ -182,12 +190,16 @@
 
     .falling-word {
       position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
       background: #f57c00;
       color: white;
-      padding: 8px 16px;
+      padding: 8px 18px;
       border-radius: 20px;
       font-weight: bold;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      white-space: nowrap;
     }
 
     .baskets-container {
@@ -202,19 +214,20 @@
     .basket {
       background: #8d6e63;
       color: white;
-      padding: 10px 8px;
+      padding: 12px 6px;
       border-radius: 8px;
       text-align: center;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       font-weight: bold;
       width: 23%;
       cursor: pointer;
       border: 2px solid #4e342e;
-      transition: background 0.2s;
+      transition: background 0.2s, transform 0.1s;
     }
 
     .basket:hover {
       background: #5d4037;
+      transform: translateY(-2px);
     }
 
     .feedback-msg {
@@ -241,7 +254,7 @@
 </head>
 <body>
 
-  <!-- START SCREEN (LOGO ONLY) -->
+  <!-- START SCREEN -->
   <div id="start-screen">
     <img src="assets/innovine-logo.png" alt="Innovine Logo" class="center-logo">
     <button class="start-btn" onclick="startGame()">गेम शुरू करें</button>
@@ -257,7 +270,7 @@
     <!-- LEVEL 1: MATCHING GAME -->
     <div id="level1-game">
       <p style="text-align: center; font-weight: bold; margin-bottom: 10px;">
-        बाएँ तरफ के शब्द पर क्लिक करें और फिर उसके सही विवरण (दाएँ) पर क्लिक करके मिलाएँ:
+        बाएँ तरफ के तथ्य पर क्लिक करें और फिर उसके सही अर्थ (दाएँ) पर क्लिक करके मिलाएँ:
       </p>
       <div class="match-board">
         <div class="match-column" id="left-column"></div>
@@ -268,7 +281,7 @@
     <!-- LEVEL 2: SORTING GAME -->
     <div id="level2-game" style="display: none;">
       <p style="text-align: center; font-weight: bold;">
-        ऊपर से गिरते शब्द की सही 'संज्ञा श्रेणी' वाली टोकरी पर क्लिक करें:
+        ऊपर से गिरते शब्द के सही 'संज्ञा भेद' की टोकरी पर क्लिक करें:
       </p>
       <div class="sorting-canvas" id="canvas-area">
         <div class="falling-word" id="falling-item">शब्द</div>
@@ -285,10 +298,11 @@
     <button class="next-lvl-btn" id="next-btn" onclick="startLevel2()">Level 2 पर जाएँ ➔</button>
   </div>
 
-  <!-- END SCREEN (CONGRATULATIONS WELL DONE - NO LOGO) -->
+  <!-- END SCREEN -->
   <div id="end-screen">
     <div class="congrats-title">🎉 Congratulations! 🎉</div>
     <div class="congrats-subtitle">Well Done!</div>
+    <div class="final-score-text">आपका कुल स्कोर: <span id="final-score-val">0</span> / 180</div>
     <button class="replay-btn" onclick="restartGame()">पुनः खेलें (Replay)</button>
   </div>
 
@@ -329,6 +343,7 @@
     }
 
     // ================= LEVEL 1: MATCHING MECHANIC =================
+    // Facts from Chapter 3: Konark Ki Yatra
     const matchData = [
       { id: 1, left: "24 पहिए", right: "दिन के 24 घंटे" },
       { id: 2, left: "7 घोड़े", right: "सप्ताह के 7 दिन" },
@@ -406,11 +421,12 @@
     }
 
     // ================= LEVEL 2: CATCH/SORTING MECHANIC =================
+    // Nouns from Chapter 3 Grammar (Page 30-31)
     const wordsData = [
-      { word: "नरसिंह देव", type: "व्यक्तिवाचक" },
-      { word: "कोणार्क", type: "व्यक्तिवाचक" },
+      { word: "राजा नरसिंह देव", type: "व्यक्तिवाचक" },
+      { word: "भुवनेश्वर", type: "व्यक्तिवाचक" },
       { word: "मंदिर", type: "जातिवाचक" },
-      { word: "घोड़ा", type: "जातिवाचक" },
+      { word: "पहिया", type: "जातिवाचक" },
       { word: "सुंदरता", type: "भाववाचक" },
       { word: "गर्व", type: "भाववाचक" },
       { word: "लोहा", type: "द्रव्यवाचक" },
@@ -444,44 +460,49 @@
       item.innerText = wordsData[currentWordIndex].word;
       posY = 0;
       item.style.top = posY + 'px';
-      item.style.left = Math.random() * 60 + 20 + '%';
+      
+      // Keep within bounds
+      const randomLeft = Math.floor(Math.random() * 60) + 20;
+      item.style.left = randomLeft + '%';
 
       clearInterval(wordInterval);
       wordInterval = setInterval(() => {
         posY += 2;
         item.style.top = posY + 'px';
-        if (posY > 220) {
+        if (posY > 230) {
           posY = 0;
-          item.style.left = Math.random() * 60 + 20 + '%';
+          item.style.left = Math.floor(Math.random() * 60) + 20 + '%';
         }
-      }, 30);
+      }, 35);
     }
 
     function checkSort(selectedType) {
       if (currentWordIndex >= wordsData.length) return;
 
+      clearInterval(wordInterval);
       const correctType = wordsData[currentWordIndex].type;
       const fb = document.getElementById('feedback');
 
       if (selectedType.trim() === correctType.trim()) {
         playAudio(true);
-        score += 20;
+        score += 10;
         document.getElementById('score-display').innerText = score;
         fb.style.color = 'green';
-        fb.innerText = `सही पहचान! 🎉`;
+        fb.innerText = `सही पहचान! 🎉 (+10 अंक)`;
       } else {
         playAudio(false);
         fb.style.color = 'red';
-        fb.innerText = `गलत उत्तर!`;
+        fb.innerText = `गलत! सही उत्तर: ${correctType}`;
       }
 
       currentWordIndex++;
-      setTimeout(spawnWord, 600);
+      setTimeout(spawnWord, 1000);
     }
 
     function showEndScreen() {
       document.getElementById('game-app').style.display = 'none';
       document.getElementById('end-screen').style.display = 'flex';
+      document.getElementById('final-score-val').innerText = score;
     }
   </script>
 </body>
