@@ -106,12 +106,20 @@
       letter-spacing: 2px;
     }
 
+    .hint-text {
+      font-size: 0.9em;
+      color: #cbd5e1;
+      margin-top: 5px;
+      font-style: italic;
+    }
+
     /* Code Breaker Displays */
     .slots-container {
       display: flex;
       gap: 8px;
       justify-content: center;
       margin: 20px 0;
+      flex-wrap: wrap;
     }
 
     .slot {
@@ -240,10 +248,10 @@
   <div id="instruction-screen" class="screen hidden">
     <h2>Mission Briefing</h2>
     <ul class="instruction-list">
-      <li><strong>Level 1 (Secret Code Breaker):</strong> Decrypt the hidden English meaning of Hindi vocabulary by assembling the correct letters.</li>
-      <li><strong>Level 2 (Pattern Finder - Odd One Out):</strong> Analyze word patterns to identify the grammatical outlier.</li>
+      <li><strong>Level 1 (Secret Code Breaker):</strong> Decrypt the English meaning of key chapter words by selecting letters in the correct sequence.</li>
+      <li><strong>Level 2 (Pattern Finder - Odd One Out):</strong> Analyze word structures and identify grammatical outliers.</li>
       <li><strong>Rules:</strong> You have <strong>2 attempts</strong> per question.</li>
-      <li>Sound effects will guide your security clearances!</li>
+      <li>Audio cues will notify you of security clearances!</li>
     </ul>
     <button class="btn" onclick="startGame()">Start Operation</button>
   </div>
@@ -260,6 +268,7 @@
       <div class="mission-box">
         <div style="font-size: 0.9em; color: #94a3b8;">DECRYPT HINDI WORD:</div>
         <div class="target-word" id="target-hindi">--</div>
+        <div class="hint-text" id="target-hint">--</div>
       </div>
       <div class="slots-container" id="slots-container"></div>
       <div class="letter-bank" id="letter-bank"></div>
@@ -296,31 +305,63 @@
   const soundCorrect = new Audio('assets/correct.mp3');
   const soundWrong = new Audio('assets/wrong.mp3');
 
-  // Chapter 1 Data (Jago Pyaare)
+  // Chapter 1 Data (Jago Pyaare & Environmental Terms)
   const gameData = {
     level1: [
-      { hindi: "नभ", answer: "SKY", bank: ["S", "K", "Y", "A", "O", "R"] },
-      { hindi: "भोर", answer: "MORNING", bank: ["M", "O", "R", "N", "I", "N", "G", "E", "T"] },
-      { hindi: "छवि", answer: "FORM", bank: ["F", "O", "R", "M", "S", "H", "A", "P"] },
-      { hindi: "न्यारी", answer: "UNIQUE", bank: ["U", "N", "I", "Q", "U", "E", "R", "A", "S"] }
+      { 
+        hindi: "ऑक्सीजन", 
+        answer: "OXYGEN", 
+        hint: "💡 Hint: The vital gas given by trees essential for life.",
+        bank: ["O", "X", "Y", "G", "E", "N", "A", "T", "R"] 
+      },
+      { 
+        hindi: "अनमोल", 
+        answer: "PRICELESS", 
+        hint: "💡 Hint: Something so valuable that it cannot be priced.",
+        bank: ["P", "R", "I", "C", "E", "L", "E", "S", "S", "O", "M"] 
+      },
+      { 
+        hindi: "जलवायु", 
+        answer: "CLIMATE", 
+        hint: "💡 Hint: Long-term weather patterns of a region.",
+        bank: ["C", "L", "I", "M", "A", "T", "E", "O", "S", "N"] 
+      },
+      { 
+        hindi: "पुण्य", 
+        answer: "VIRTUE", 
+        hint: "💡 Hint: Good or noble deed / Sacred act.",
+        bank: ["V", "I", "R", "T", "U", "E", "L", "A", "Y"] 
+      },
+      { 
+        hindi: "नभ", 
+        answer: "SKY", 
+        hint: "💡 Hint: The atmosphere above us where birds fly.",
+        bank: ["S", "K", "Y", "A", "O", "R"] 
+      },
+      { 
+        hindi: "भोर", 
+        answer: "MORNING", 
+        hint: "💡 Hint: Early dawn when the sun rises.",
+        bank: ["M", "O", "R", "N", "I", "N", "G", "E", "T"] 
+      }
     ],
     level2: [
       { 
         prompt: "Find the word that does NOT use Anusvaar (ं):", 
         options: ["गंगा", "चंचल", "आँख", "कंपन"], 
-        answer: "आँख", // Uses Anunasik (ँ)
+        answer: "आँख",
         reason: "'आँख' uses Anunasik (ँ), whereas others use Anusvaar (ं)."
       },
       { 
         prompt: "Find the word that does NOT use Anunasik (ँ):", 
         options: ["मुँह", "धुँधला", "सुंदर", "कुआँ"], 
-        answer: "सुंदर", // Uses Anusvaar (ं)
+        answer: "सुंदर",
         reason: "'सुंदर' uses Anusvaar (ं), whereas others use Anunasik (ँ)."
       },
       { 
         prompt: "Identify the word that is NOT a Noun (संज्ञा) from the chapter:", 
         options: ["चिड़िया", "सूरज", "कमल", "सुंदर"], 
-        answer: "सुंदर", // Adjective (विशेषण)
+        answer: "सुंदर",
         reason: "'सुंदर' is an Adjective (विशेषण); the rest are Nouns (संज्ञा)."
       }
     ]
@@ -371,6 +412,7 @@
   function setupCodeBreaker() {
     const qData = gameData.level1[currentQuestionIndex];
     document.getElementById("target-hindi").innerText = qData.hindi;
+    document.getElementById("target-hint").innerText = qData.hint;
     currentSolution = qData.answer.split("");
     userSlots = new Array(currentSolution.length).fill("");
 
