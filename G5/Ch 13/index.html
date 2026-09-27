@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>फ्लाइंग सिख: मिल्खा सिंह - 2 Level Game</title>
+  <title>फ्लाइंग सिख: मिल्खा सिंह - 3 Level Game</title>
   <style>
     * {
       box-sizing: border-box;
@@ -31,6 +31,21 @@
       max-width: 700px;
       padding: 24px;
       box-shadow: 0 10px 30px rgba(245, 158, 11, 0.25);
+    }
+
+    /* Logo Container & Styling */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .brand-logo {
+      max-width: 150px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0px 4px 8px rgba(245, 158, 11, 0.3));
     }
 
     .header {
@@ -150,14 +165,44 @@
     .btn:hover {
       transform: scale(1.03);
     }
+
+    /* Connect the Dots Canvas Styling */
+    #canvas-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    canvas {
+      background: #0f172a;
+      border: 2px dashed #fbbf24;
+      border-radius: 12px;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .instruction {
+      color: #38bdf8;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
 
   <div id="game-card">
+    <!-- BRAND LOGO FROM ASSETS FOLDER -->
+    <div class="logo-container">
+      <img src="assets/logo.png" alt="Innovine Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='block';">
+      <h2 id="alt-logo" style="display:none; color:#fbbf24;">INNOVINE</h2>
+    </div>
+
     <div class="header">
       <h1>🏃‍♂️ पाठ 13: 'फ्लाइंग सिख' - मिल्खा सिंह 🥇</h1>
-      <p>प्रेरणादायक कहानी और व्याकरण (विराम-चिह्न) - 2 स्तर का खेल</p>
+      <p>कहानी, व्याकरण और खेल - 3 स्तर का खेल</p>
     </div>
 
     <div class="status-bar" id="status-bar" style="display: none;">
@@ -169,21 +214,35 @@
     <div id="start-screen" class="screen active intro-box">
       <h2>🚀 "बस, एक चक्कर और!" - खेल में आपका स्वागत है</h2>
       <div class="level-desc">
-        <strong>स्तर 1: पाठ बोध (Story & Achievement Quiz)</strong><br>
-        मिल्खा सिंह की प्रतिभा, एशियाई खेल, ओलंपिक और 'फ्लाइंग सिख' नाम से जुड़े प्रश्न।
+        <strong>स्तर 1: पाठ बोध (Story Quiz)</strong><br>
+        मिल्खा सिंह की प्रतिभा, एशियाई खेल, शब्दावली और प्रेरणादायक यात्रा।
       </div>
       <div class="level-desc">
         <strong>स्तर 2: व्याकरण अभ्यास (Punctuation Quiz)</strong><br>
-        वाक्यों में सही विराम-चिह्न (पूर्णविराम, प्रश्नवाचक, विस्मयादिबोधक, उद्धरण चिन्ह आदि) की पहचान।
+        वाक्यों में सही विराम-चिह्न (पूर्णविराम, प्रश्नवाचक, विस्मयादिबोधक आदि) की पहचान।
+      </div>
+      <div class="level-desc">
+        <strong>स्तर 3: बिंदु जोड़ो (Connect the Dots Game)</strong><br>
+        1 से लेकर सभी बिंदुओं को क्रम से जोड़कर विजेता का स्टार (सितारा) बनाएँ!
       </div>
       <button class="btn" onclick="startLevel(1)">स्तर 1 प्रारंभ करें</button>
     </div>
 
-    <!-- GAME PLAY SCREEN -->
+    <!-- GAME PLAY SCREEN (QUIZ) -->
     <div id="play-screen" class="screen">
       <div class="q-box" id="q-text">प्रश्न यहाँ दिखेगा...</div>
       <div class="options-grid" id="opts-container"></div>
       <div class="feedback" id="feedback-msg"></div>
+    </div>
+
+    <!-- CONNECT THE DOTS SCREEN (LEVEL 3) -->
+    <div id="dots-screen" class="screen">
+      <div class="q-box">कदम-दर-कदम: बिंदुओं को 1 से शुरू करके क्रम से क्लिक/टच करके जोड़ें!</div>
+      <div class="instruction" id="dots-instruction">अगला बिंदु: 1 पर क्लिक करें</div>
+      <div id="canvas-container">
+        <canvas id="dotsCanvas" width="340" height="340"></canvas>
+      </div>
+      <div class="feedback" id="dots-feedback"></div>
     </div>
 
     <!-- LEVEL COMPLETE / GAME OVER SCREEN -->
@@ -195,8 +254,84 @@
   </div>
 
   <script>
-    // LEVEL 1: STORY & SCIENCE QUESTIONS
+    // Web Audio API Sound Effects
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.3);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'click') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, now);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
+      } else if (type === 'win') {
+        [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+          const noteOsc = audioCtx.createOscillator();
+          const noteGain = audioCtx.createGain();
+          noteOsc.connect(noteGain);
+          noteGain.connect(audioCtx.destination);
+          
+          noteOsc.type = 'sine';
+          noteOsc.frequency.setValueAtTime(freq, now + idx * 0.1);
+          noteGain.gain.setValueAtTime(0.2, now + idx * 0.1);
+          noteGain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.25);
+          
+          noteOsc.start(now + idx * 0.1);
+          noteOsc.stop(now + idx * 0.1 + 0.25);
+        });
+      }
+    }
+
+    // LEVEL 1: STORY QUESTIONS
     const level1Data = [
+      {
+        q: "खिलाड़ियों को अभ्यास करवाने वाला व्यक्ति कौन होता है?",
+        opts: ["खिलाड़ी", "दर्शक", "प्रशिक्षक", "निर्णायक"],
+        ans: 2
+      },
+      {
+        q: "कौन-सा वाक्य 'उत्साह' शब्द का सही प्रयोग दर्शाता है?",
+        opts: [
+          "हारने पर बच्चों में उत्साह था।",
+          "बच्चों ने उत्साह से दौड़ में भाग लिया।",
+          "बच्चों ने उत्साह को मेज पर रखा।",
+          "उत्साह एक खेल का मैदान है।"
+        ],
+        ans: 1
+      },
       {
         q: "मिल्खा सिंह को विशेष प्रशिक्षण का अवसर कहाँ मिला?",
         opts: ["विद्यालय में", "भारतीय सेना में", "रोम में", "कार्डिफ़ में"],
@@ -254,16 +389,22 @@
     }
 
     function startLevel(lvl) {
+      playSound('click');
       currentLevel = lvl;
       currentQIndex = 0;
-      currentQuestions = (lvl === 1) ? level1Data : level2Data;
 
       document.getElementById('status-bar').style.display = 'flex';
       document.getElementById('level-num').innerText = currentLevel;
       document.getElementById('score-num').innerText = score;
 
-      showScreen('play-screen');
-      loadQuestion();
+      if (lvl === 1 || lvl === 2) {
+        currentQuestions = (lvl === 1) ? level1Data : level2Data;
+        showScreen('play-screen');
+        loadQuestion();
+      } else if (lvl === 3) {
+        showScreen('dots-screen');
+        initConnectTheDots();
+      }
     }
 
     function loadQuestion() {
@@ -291,6 +432,7 @@
       btns.forEach(b => b.style.pointerEvents = 'none');
 
       if (selectedIdx === q.ans) {
+        playSound('correct');
         feedback.style.color = '#4ade80';
         feedback.innerText = '✓ शाबाश! बिल्कुल सही उत्तर।';
         btns[selectedIdx].style.background = '#166534';
@@ -298,6 +440,7 @@
         score += 10;
         document.getElementById('score-num').innerText = score;
       } else {
+        playSound('wrong');
         feedback.style.color = '#f87171';
         feedback.innerText = `✗ गलत उत्तर! सही उत्तर था: ${q.opts[q.ans]}`;
         btns[selectedIdx].style.background = '#991b1b';
@@ -314,7 +457,116 @@
       }, 1800);
     }
 
+    // LEVEL 3: CONNECT THE DOTS LOGIC
+    let dots = [
+      { x: 170, y: 30 },  // 1
+      { x: 210, y: 120 }, // 2
+      { x: 310, y: 120 }, // 3
+      { x: 230, y: 180 }, // 4
+      { x: 260, y: 280 }, // 5
+      { x: 170, y: 220 }, // 6
+      { x: 80,  y: 280 }, // 7
+      { x: 110, y: 180 }, // 8
+      { x: 30,  y: 120 }, // 9
+      { x: 130, y: 120 }  // 10
+    ];
+    let nextDotIndex = 0;
+    let connectedDots = [];
+
+    function initConnectTheDots() {
+      nextDotIndex = 0;
+      connectedDots = [];
+      document.getElementById('dots-feedback').innerText = '';
+      document.getElementById('dots-instruction').innerText = 'अगला बिंदु: 1 पर क्लिक करें';
+      
+      const canvas = document.getElementById('dotsCanvas');
+      canvas.onclick = handleCanvasClick;
+      drawDotsGame();
+    }
+
+    function drawDotsGame() {
+      const canvas = document.getElementById('dotsCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw lines between already connected dots
+      if (connectedDots.length > 1) {
+        ctx.beginPath();
+        ctx.strokeStyle = '#fbbf24';
+        ctx.lineWidth = 4;
+        ctx.moveTo(connectedDots[0].x, connectedDots[0].y);
+        for (let i = 1; i < connectedDots.length; i++) {
+          ctx.lineTo(connectedDots[i].x, connectedDots[i].y);
+        }
+        if (connectedDots.length === dots.length) {
+          ctx.lineTo(connectedDots[0].x, connectedDots[0].y); // Close the star
+        }
+        ctx.stroke();
+      }
+
+      // Draw all dots and numbers
+      dots.forEach((dot, idx) => {
+        ctx.beginPath();
+        ctx.arc(dot.x, dot.y, 8, 0, Math.PI * 2);
+        if (idx < nextDotIndex) {
+          ctx.fillStyle = '#4ade80'; // Completed
+        } else if (idx === nextDotIndex) {
+          ctx.fillStyle = '#f59e0b'; // Current active dot
+        } else {
+          ctx.fillStyle = '#94a3b8'; // Remaining
+        }
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+
+        // Label numbers
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 14px Segoe UI';
+        ctx.fillText((idx + 1).toString(), dot.x + 12, dot.y + 5);
+      });
+    }
+
+    function handleCanvasClick(e) {
+      const canvas = document.getElementById('dotsCanvas');
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      const targetDot = dots[nextDotIndex];
+      const dist = Math.hypot(clickX - targetDot.x, clickY - targetDot.y);
+
+      if (dist < 22) { // Hit radius
+        playSound('correct');
+        connectedDots.push(targetDot);
+        nextDotIndex++;
+
+        if (nextDotIndex < dots.length) {
+          document.getElementById('dots-instruction').innerText = `अद्भुत! अगला बिंदु: ${nextDotIndex + 1} पर क्लिक करें`;
+        } else {
+          // Finished level 3
+          score += 30;
+          document.getElementById('score-num').innerText = score;
+          document.getElementById('dots-instruction').innerText = '🎉 बहुत बढ़िया! आपने विजेता का चमकता सितारा पूरा कर लिया!';
+          drawDotsGame();
+          playSound('win');
+          setTimeout(() => {
+            finishLevel();
+          }, 1500);
+          return;
+        }
+        drawDotsGame();
+      } else {
+        playSound('wrong');
+        document.getElementById('dots-feedback').innerText = '✗ गलत बिंदु! कृपया सही क्रमांक वाला बिंदु चुनें।';
+        setTimeout(() => {
+          document.getElementById('dots-feedback').innerText = '';
+        }, 1200);
+      }
+    }
+
     function finishLevel() {
+      playSound('win');
       showScreen('end-screen');
       const title = document.getElementById('end-title');
       const desc = document.getElementById('end-desc');
@@ -324,16 +576,24 @@
         title.innerText = '🏃‍♂️ स्तर 1 पूर्ण! (Level 1 Completed)';
         desc.innerText = `अद्भुत! आपने मिल्खा सिंह जी की जीवन-गाथा से जुड़े प्रश्नों का सही उत्तर दिया। आपका स्कोर: ${score}`;
         btn.innerText = 'स्तर 2 (विराम-चिह्न) प्रारंभ करें';
+      } else if (currentLevel === 2) {
+        title.innerText = '📝 स्तर 2 पूर्ण! (Level 2 Completed)';
+        desc.innerText = `शानदार! आपने व्याकरण और विराम-चिह्नों का सही अभ्यास किया। आपका स्कोर: ${score}`;
+        btn.innerText = 'स्तर 3 (बिंदु जोड़ो खेल) प्रारंभ करें';
       } else {
+        const maxScore = (level1Data.length + level2Data.length) * 10 + 30;
         title.innerText = '🏆 बधाई हो! खेल समाप्त';
-        desc.innerText = `शानदार प्रदर्शन! आपने पाठ बोध और हिंदी व्याकरण (विराम-चिह्न) दोनों स्तर सफलता से पूरे कर लिए। अंतिम स्कोर: ${score}/80`;
+        desc.innerText = `उत्कृष्ट प्रदर्शन! आपने कहानी, व्याकरण और बिंदु जोड़ो (Connect the Dots) तीनों स्तर सफलतापूर्वक पूरे कर लिए। अंतिम स्कोर: ${score}/${maxScore}`;
         btn.innerText = 'पुनः खेलें (Play Again)';
       }
     }
 
     function nextAction() {
+      playSound('click');
       if (currentLevel === 1) {
         startLevel(2);
+      } else if (currentLevel === 2) {
+        startLevel(3);
       } else {
         score = 0;
         startLevel(1);
@@ -342,4 +602,3 @@
   </script>
 </body>
 </html>
-
