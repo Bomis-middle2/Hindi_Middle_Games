@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>मातृभूमि - interactive Poem & Learning App</title>
+  <title>मातृभूमि - सेतू निर्माण खेल (Bridge Building Game)</title>
   <style>
     * {
       box-sizing: border-box;
@@ -19,340 +19,254 @@
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      padding: 20px;
+      padding: 15px;
     }
 
     h1 {
-      margin-bottom: 6px;
       color: #1b5e20;
+      margin-bottom: 5px;
       text-align: center;
-      font-size: 2rem;
+      font-size: 1.8rem;
     }
 
-    p.author {
+    p.sub {
       color: #2e7d32;
-      font-size: 1.05rem;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       text-align: center;
     }
 
-    .main-container {
+    .game-card {
       background: #ffffff;
       border: 3px solid #81c784;
-      border-radius: 14px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       width: 100%;
-      max-width: 750px;
-      padding: 24px;
-    }
-
-    /* Tab Controls */
-    .tab-buttons {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 22px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .tab-btn {
-      background-color: #c8e6c9;
-      color: #1b5e20;
-      border: none;
-      padding: 10px 18px;
-      font-size: 0.95rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.2s ease;
-    }
-
-    .tab-btn.active, .tab-btn:hover {
-      background-color: #2e7d32;
-      color: #ffffff;
-      transform: translateY(-2px);
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    /* Card & Text Styles */
-    .card {
-      background: #f1f8e9;
-      border: 2px dashed #aed581;
+      max-width: 650px;
       padding: 20px;
-      border-radius: 10px;
-      line-height: 1.8;
-      font-size: 1.05rem;
-    }
-
-    .card h2 {
-      color: #2e7d32;
-      margin-bottom: 15px;
-      font-size: 1.3rem;
-      border-bottom: 2px solid #81c784;
-      padding-bottom: 6px;
-    }
-
-    .poem-box {
-      background: #ffffff;
-      border: 1px solid #c8e6c9;
-      border-radius: 10px;
-      padding: 20px;
-      text-align: center;
-      font-size: 1.1rem;
-      line-height: 2;
-      color: #1b5e20;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.03);
-    }
-
-    .stanza {
-      margin-bottom: 20px;
-    }
-
-    .stanza:last-child {
-      margin-bottom: 0;
-    }
-
-    .info-list {
-      margin-left: 20px;
-    }
-
-    .info-list li {
-      margin-bottom: 10px;
-    }
-
-    /* Grammar Section */
-    .grammar-item {
-      background: #ffffff;
-      border-left: 4px solid #4caf50;
-      padding: 12px 16px;
-      margin-bottom: 12px;
-      border-radius: 0 6px 6px 0;
-    }
-
-    .grammar-item label {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 6px;
-    }
-
-    .grammar-item select {
-      padding: 6px 12px;
-      font-size: 0.95rem;
-      border-radius: 6px;
-      border: 1.5px solid #81c784;
-      outline: none;
-    }
-
-    .feedback-msg {
-      margin-top: 6px;
-      font-size: 0.9rem;
-      font-weight: bold;
-    }
-
-    /* Quiz Section */
-    .quiz-box {
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 10px;
-      border: 1.5px solid #aed581;
-      text-align: center;
-    }
-
-    .quiz-question {
-      font-size: 1.15rem;
-      font-weight: bold;
-      margin-bottom: 16px;
-      color: #1b5e20;
-    }
-
-    .quiz-options {
       display: flex;
       flex-direction: column;
+      align-items: center;
+    }
+
+    /* Level Indicator */
+    .level-badge {
+      background: #2e7d32;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      margin-bottom: 15px;
+    }
+
+    /* Bridge Canvas / Animation Area */
+    .bridge-scene {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(to bottom, #87ceeb 0%, #e0f7fa 60%, #4fc3f7 100%);
+      border-radius: 12px;
+      border: 2px solid #0288d1;
+      overflow: hidden;
+      margin-bottom: 15px;
+    }
+
+    .cliff {
+      position: absolute;
+      bottom: 0;
+      width: 80px;
+      height: 70px;
+      background: #795548;
+      border-top: 6px solid #4caf50;
+    }
+
+    .left-cliff { left: 0; }
+    .right-cliff { right: 0; }
+
+    .flag {
+      position: absolute;
+      right: 15px;
+      bottom: 70px;
+      font-size: 28px;
+    }
+
+    .player {
+      position: absolute;
+      bottom: 70px;
+      left: 15px;
+      font-size: 32px;
+      transition: left 0.8s ease-in-out;
+      z-index: 5;
+    }
+
+    .water {
+      position: absolute;
+      bottom: 0;
+      left: 80px;
+      right: 80px;
+      height: 45px;
+      background: #0288d1;
+      opacity: 0.8;
+      text-align: center;
+      line-height: 45px;
+      color: white;
+      font-size: 0.85rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    /* Bridge Pieces Container */
+    .bridge-container {
+      position: absolute;
+      bottom: 50px;
+      left: 80px;
+      width: calc(100% - 160px);
+      height: 20px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .bridge-plank {
+      flex: 1;
+      height: 100%;
+      background: #d7ccc8;
+      border: 2px solid #5d4037;
+      border-radius: 4px;
+      opacity: 0.2;
+      transition: all 0.4s ease;
+    }
+
+    .bridge-plank.active {
+      background: #8d6e63;
+      opacity: 1;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    }
+
+    /* Question Box */
+    .question-box {
+      background: #f1f8e9;
+      border: 2px dashed #aed581;
+      border-radius: 10px;
+      padding: 15px;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 15px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .question-text {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #1b5e20;
+    }
+
+    /* Options */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
+      width: 100%;
+      margin-bottom: 15px;
     }
 
     .opt-btn {
-      background-color: #f1f8e9;
+      background: #ffffff;
       border: 2px solid #a5d6a7;
       color: #1b5e20;
-      padding: 10px;
-      border-radius: 6px;
+      padding: 12px 10px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
       cursor: pointer;
-      font-size: 1rem;
-      font-weight: 500;
-      transition: background 0.2s;
+      transition: all 0.2s;
     }
 
     .opt-btn:hover {
-      background-color: #c8e6c9;
+      background: #c8e6c9;
+      transform: translateY(-2px);
     }
 
-    .quiz-feedback {
-      margin-top: 15px;
+    .opt-btn.correct {
+      background: #4caf50 !important;
+      color: white !important;
+      border-color: #1b5e20 !important;
+    }
+
+    .opt-btn.wrong {
+      background: #ef5350 !important;
+      color: white !important;
+      border-color: #b71c1c !important;
+    }
+
+    .feedback {
+      font-size: 1rem;
       font-weight: bold;
-      font-size: 1.05rem;
+      min-height: 28px;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .next-btn {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      font-size: 1rem;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: none;
+      transition: background 0.2s;
+    }
+
+    .next-btn:hover {
+      background: #1b5e20;
     }
   </style>
 </head>
 <body>
 
-  <h1>🏞️ कविता: मातृभूमि 🏔️</h1>
-  <p class="author">रचयिता: सोहनलाल द्विवेदी</p>
+  <h1>🏞️ मातृभूमि - सेतू निर्माण खेल 🌉</h1>
+  <p class="sub">प्रश्नों का सही उत्तर देकर पुल बनाएँ और नदी पार करें!</p>
 
-  <div class="main-container">
-    <div class="tab-buttons">
-      <button class="tab-btn active" onclick="switchTab('poem')">📜 संपूर्ण कविता</button>
-      <button class="tab-btn" onclick="switchTab('facts')">🌍 अंतरराष्ट्रीय जुड़ाव</button>
-      <button class="tab-btn" onclick="switchTab('grammar')">✏️ सर्वनाम अभ्यास</button>
-      <button class="tab-btn" onclick="switchTab('quiz')">🎯 काव्यांश प्रश्नोत्तरी</button>
-    </div>
+  <div class="game-card">
+    <div class="level-badge" id="level-title">स्तर 1: अध्याय ज्ञान (काव्यांश)</div>
 
-    <!-- TAB 1: POEM -->
-    <div id="poem-tab" class="tab-content active">
-      <div class="card">
-        <h2>मातृभूमि का सौंदर्य</h2>
-        <div class="poem-box">
-          <div class="stanza">
-            ऊँचा खड़ा हिमालय<br>
-            आकाश चूमता है,<br>
-            नीचे चरण तले झुक,<br>
-            नित सिंधु झूमता है।<br>
-            गंगा यमुन त्रिवेणी<br>
-            नदियाँ लहर रही हैं,<br>
-            जगमग छटा निराली<br>
-            पग पग छहर रही है।
-          </div>
-          <hr style="border: 0; border-top: 1px dashed #aed581; margin: 15px 0;">
-          <div class="stanza">
-            वह पुण्य भूमि मेरी,<br>
-            वह स्वर्ण भूमि मेरी।<br>
-            वह जन्मभूमि मेरी,<br>
-            वह मातृभूमि मेरी।
-          </div>
-          <hr style="border: 0; border-top: 1px dashed #aed581; margin: 15px 0;">
-          <div class="stanza">
-            झरने अनेक झरते<br>
-            जिसकी पहाड़ियों में,<br>
-            चिड़ियाँ चहक रही हैं,<br>
-            हो मस्त झाड़ियों में।<br>
-            अमराइयाँ घनी हैं<br>
-            कोयल पुकारती है,<br>
-            बहती मलय पवन है,<br>
-            तन मन सँवारती है।
-          </div>
-          <hr style="border: 0; border-top: 1px dashed #aed581; margin: 15px 0;">
-          <div class="stanza">
-            वह धर्मभूमि मेरी,<br>
-            वह कर्मभूमि मेरी।<br>
-            वह जन्मभूमि मेरी,<br>
-            वह मातृभूमि मेरी।
-          </div>
-        </div>
+    <!-- Bridge Animation Scene -->
+    <div class="bridge-scene">
+      <div class="cliff left-cliff"></div>
+      <div class="cliff right-cliff"></div>
+      <div class="flag">🇮🇳</div>
+      <div class="player" id="player">🏃</div>
+      <div class="water">गंगा नदी 🌊</div>
+      <div class="bridge-container">
+        <div class="bridge-plank" id="plank-0"></div>
+        <div class="bridge-plank" id="plank-1"></div>
+        <div class="bridge-plank" id="plank-2"></div>
+        <div class="bridge-plank" id="plank-3"></div>
+        <div class="bridge-plank" id="plank-4"></div>
       </div>
     </div>
 
-    <!-- TAB 2: FACTS -->
-    <div id="facts-tab" class="tab-content">
-      <div class="card">
-        <h2>ज्ञानवर्धन व अंतरराष्ट्रीय जुड़ाव (International Connect)</h2>
-        <ul class="info-list">
-          <li><strong>हिमालय (एशिया की छत):</strong> हिमालय पर्वत 7 देशों की सीमाओं में फैला है (भारत, नेपाल, भूटान, पाकिस्तान, अफगानिस्तान, चीन, म्यांमार)।</li>
-          <li><strong>विश्व धरोहर स्थल (UNESCO):</strong> भारत की प्राकृतिक सुंदरता के कारण यूनेस्को ने 'नंदा देवी राष्ट्रीय उद्यान' और 'पुष्प घाटी' को विश्व धरोहर घोषित किया है।</li>
-          <li><strong>गंगा नदी का विस्तार:</strong> गोमुख (गंगोत्री हिमनद) से निकलकर यह बांग्लादेश (जहाँ इसे 'पद्मा' कहते हैं) तक बहती है।</li>
-          <li><strong>मलय पवन:</strong> दक्षिण भारत के मलय पर्वत से आने वाली शीतल और सुगंधित हवा को मलय पवन कहा जाता है।</li>
-        </ul>
-      </div>
+    <!-- Question & Options -->
+    <div class="question-box">
+      <div class="question-text" id="question-text">प्रश्न लोड हो रहा है...</div>
     </div>
 
-    <!-- TAB 3: GRAMMAR -->
-    <div id="grammar-tab" class="tab-content">
-      <div class="card">
-        <h2>सर्वनाम पहचानिए (Grammar Practice)</h2>
-        <p style="margin-bottom: 15px;">वाक्यों में रेखांकित शब्दों के सर्वनाम भेद का सही चयन करें:</p>
-        
-        <div class="grammar-item">
-          <label>1. <u>हम</u> सभी को देशभक्ति की भावना रखनी चाहिए।</label>
-          <select onchange="checkGrammar(this, 'पुरुषवाचक')">
-            <option value="">-- भेद चुनें --</option>
-            <option value="पुरुषवाचक">पुरुषवाचक सर्वनाम</option>
-            <option value="निजवाचक">निजवाचक सर्वनाम</option>
-            <option value="प्रश्नवाचक">प्रश्नवाचक सर्वनाम</option>
-          </select>
-          <div class="feedback-msg"></div>
-        </div>
+    <div class="options-grid" id="options-container"></div>
 
-        <div class="grammar-item">
-          <label>2. दरवाज़े पर <u>कोई</u> खड़ा है।</label>
-          <select onchange="checkGrammar(this, 'अनिश्चयवाचक')">
-            <option value="">-- भेद चुनें --</option>
-            <option value="निश्चयवाचक">निश्चयवाचक सर्वनाम</option>
-            <option value="अनिश्चयवाचक">अनिश्चयवाचक सर्वनाम</option>
-            <option value="संबंधवाचक">संबंधवाचक सर्वनाम</option>
-          </select>
-          <div class="feedback-msg"></div>
-        </div>
+    <div class="feedback" id="feedback-text"></div>
 
-        <div class="grammar-item">
-          <label>3. <u>जो</u> मातृभूमि की सेवा करेगा, <u>वह</u> सच्चा वीर है।</label>
-          <select onchange="checkGrammar(this, 'संबंधवाचक')">
-            <option value="">-- भेद चुनें --</option>
-            <option value="पुरुषवाचक">पुरुषवाचक सर्वनाम</option>
-            <option value="संबंधवाचक">संबंधवाचक सर्वनाम</option>
-            <option value="निजवाचक">निजवाचक सर्वनाम</option>
-          </select>
-          <div class="feedback-msg"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 4: QUIZ -->
-    <div id="quiz-tab" class="tab-content">
-      <div class="quiz-box">
-        <div class="quiz-question" id="quiz-q">प्रश्न लोड हो रहा है...</div>
-        <div class="quiz-options" id="quiz-opts"></div>
-        <div class="quiz-feedback" id="quiz-fb"></div>
-      </div>
-    </div>
+    <button class="next-btn" id="next-btn" onclick="nextQuestion()">आगे बढ़ें ➔</button>
   </div>
 
   <script>
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-      const tabs = ['poem', 'facts', 'grammar', 'quiz'];
-      const index = tabs.indexOf(tabName);
-      
-      document.querySelectorAll('.tab-btn')[index].classList.add('active');
-      document.getElementById(`${tabName}-tab`).classList.add('active');
-
-      if(tabName === 'quiz') loadQuiz();
-    }
-
-    // Grammar Checking
-    function checkGrammar(selectElem, correctAns) {
-      const msgElem = selectElem.nextElementSibling;
-      if (selectElem.value === correctAns) {
-        msgElem.style.color = '#2e7d32';
-        msgElem.innerText = '✓ सही उत्तर!';
-      } else if (selectElem.value !== "") {
-        msgElem.style.color = '#c62828';
-        msgElem.innerText = '✗ गलत! पुनः प्रयास करें।';
-      } else {
-        msgElem.innerText = '';
-      }
-    }
-
-    // Quiz Data
-    const quizData = [
+    // LEVEL 1 DATABASE (Chapter - Matrubhumi)
+    const level1Data = [
       {
         q: "'त्रिवेणी' से क्या आशय है?",
         opts: ["तीन नदियों का संगम", "तीन पहाड़ों का समूह", "तीन समुद्रों का मिलाप", "तीन अमराइयाँ"],
@@ -360,52 +274,200 @@
       },
       {
         q: "कविता में 'अमराइयाँ घनी हैं' किसका संकेत देता है?",
-        opts: ["फसलों के खेत", "फूलों का बाग", "आम के बाग", "सघन जंगल"],
+        opts: ["फूलों का बाग", "फसलों के खेत", "आम के बाग", "सघन जंगल"],
         ans: 2
       },
       {
         q: "हिमालय को कविता में किस रूप में प्रस्तुत किया गया है?",
-        opts: ["नर्तक", "पहरेदार", "माली", "संत"],
-        ans: 1
+        opts: ["एक पहरेदार के रूप में", "एक नर्तक के रूप में", "एक माली के रूप में", "एक संत के रूप में"],
+        ans: 0
       },
       {
         q: "गंगा नदी बांग्लादेश में किस नाम से जानी जाती है?",
         opts: ["यमुना", "सरस्वती", "पद्मा", "सिंधु"],
         ans: 2
+      },
+      {
+        q: "'जगमग छटा निराली' काव्यांश में किसका वर्णन किया गया है?",
+        opts: ["पहाड़ों का", "नदियों का", "बादलों का", "झरनों का"],
+        ans: 1
+      },
+      {
+        q: "दक्षिण भारत के मलय पर्वत से आने वाली ठंडी हवा को क्या कहते हैं?",
+        opts: ["मलय पवन", "शीतल पवन", "आँधी", "पछुआ"],
+        ans: 0
+      },
+      {
+        q: "हिमालय पर्वत कुल कितने देशों की सीमाओं में फैला है?",
+        opts: ["5 देश", "7 देश", "3 देश", "10 देश"],
+        ans: 1
       }
     ];
 
-    let qIndex = 0;
+    // LEVEL 2 DATABASE (Grammar - Pronoun/Sarvanam)
+    const level2Data = [
+      {
+        q: "'हम सभी को देशभक्ति की भावना रखनी चाहिए।' - रेखांकित शब्द में कौन-सा सर्वनाम है?",
+        opts: ["पुरुषवाचक सर्वनाम", "निजवाचक सर्वनाम", "प्रश्नवाचक सर्वनाम", "अनिश्चयवाचक सर्वनाम"],
+        ans: 0
+      },
+      {
+        q: "'दरवाज़े पर कोई खड़ा है।' - वाक्य में 'कोई' शब्द किस सर्वनाम का उदाहरण है?",
+        opts: ["निश्चयवाचक", "अनिश्चयवाचक", "संबंधवाचक", "निजवाचक"],
+        ans: 1
+      },
+      {
+        q: "'जो मातृभूमि की सेवा करेगा, वह सच्चा वीर है।' - वाक्य में कौन-सा सर्वनाम है?",
+        opts: ["पुरुषवाचक", "संबंधवाचक", "निजवाचक", "प्रश्नवाचक"],
+        ans: 1
+      },
+      {
+        q: "'यह हमारा भारत देश है।' - वाक्य में 'यह' कौन-सा सर्वनाम है?",
+        opts: ["निश्चयवाचक सर्वनाम", "अनिश्चयवाचक सर्वनाम", "प्रश्नवाचक सर्वनाम", "निजवाचक सर्वनाम"],
+        ans: 0
+      },
+      {
+        q: "'मैं स्वयं मातृभूमि के लिए लड़ूँगा।' - वाक्य में 'स्वयं' किस सर्वनाम का भेद है?",
+        opts: ["पुरुषवाचक", "निजवाचक सर्वनाम", "संबंधवाचक", "प्रश्नवाचक"],
+        ans: 1
+      },
+      {
+        q: "'कौन कहता है भारत महान नहीं?' - वाक्य में 'कौन' किस सर्वनाम का प्रकार है?",
+        opts: ["प्रश्नवाचक सर्वनाम", "निजवाचक सर्वनाम", "अनिश्चयवाचक सर्वनाम", "संबंधवाचक सर्वनाम"],
+        ans: 0
+      }
+    ];
 
-    function loadQuiz() {
-      const q = quizData[qIndex];
-      document.getElementById('quiz-q').innerText = `प्र॰ ${qIndex + 1}: ${q.q}`;
-      const opts = document.getElementById('quiz-opts');
-      opts.innerHTML = '';
-      document.getElementById('quiz-fb').innerText = '';
+    let currentLevel = 1;
+    let activeQuestions = [];
+    let qIndex = 0;
+    let bridgeProgress = 0;
+    let isAnswered = false;
+
+    // Helper: Shuffle Array
+    function shuffleArray(array) {
+      return [...array].sort(() => Math.random() - 0.5);
+    }
+
+    function initLevel() {
+      qIndex = 0;
+      bridgeProgress = 0;
+      isAnswered = false;
+      resetBridgeUI();
+
+      if (currentLevel === 1) {
+        document.getElementById('level-title').innerText = "स्तर 1: अध्याय ज्ञान (मातृभूमि कविता)";
+        activeQuestions = shuffleArray(level1Data).slice(0, 5);
+      } else {
+        document.getElementById('level-title').innerText = "स्तर 2: व्याकरण अभ्यास (सर्वनाम एवं भेद)";
+        activeQuestions = shuffleArray(level2Data).slice(0, 5);
+      }
+
+      loadQuestion();
+    }
+
+    function resetBridgeUI() {
+      for (let i = 0; i < 5; i++) {
+        document.getElementById(`plank-${i}`).classList.remove('active');
+      }
+      document.getElementById('player').style.left = '15px';
+    }
+
+    function loadQuestion() {
+      isAnswered = false;
+      const q = activeQuestions[qIndex];
+      
+      document.getElementById('question-text').innerText = `प्र॰ ${qIndex + 1}/5: ${q.q}`;
+      document.getElementById('feedback-text').innerText = '';
+      document.getElementById('next-btn').style.display = 'none';
+
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
 
       q.opts.forEach((opt, idx) => {
         const btn = document.createElement('button');
         btn.className = 'opt-btn';
         btn.innerText = opt;
-        btn.onclick = () => checkQuiz(idx);
-        opts.appendChild(btn);
+        btn.onclick = () => checkAnswer(idx, btn);
+        optionsContainer.appendChild(btn);
       });
     }
 
-    function checkQuiz(selected) {
-      const q = quizData[qIndex];
-      const fb = document.getElementById('quiz-fb');
-      if (selected === q.ans) {
-        fb.style.color = '#2e7d32';
-        fb.innerText = 'शाबाश! सही उत्तर 🌟';
-        qIndex = (qIndex + 1) % quizData.length;
-        setTimeout(loadQuiz, 1500);
+    function checkAnswer(selectedIdx, btnElement) {
+      if (isAnswered) return;
+      isAnswered = true;
+
+      const q = activeQuestions[qIndex];
+      const allBtns = document.querySelectorAll('.option-btn');
+
+      if (selectedIdx === q.ans) {
+        btnElement.classList.add('correct');
+        document.getElementById('feedback-text').style.color = '#2e7d32';
+        document.getElementById('feedback-text').innerText = 'सही उत्तर! 🌉 सेतू का एक लकड़ी का तख्ता जुड़ गया।';
+        
+        // Update Bridge
+        document.getElementById(`plank-${bridgeProgress}`).classList.add('active');
+        bridgeProgress++;
+
+        // Move Player
+        const startLeft = 15;
+        const totalDistance = 470; // Position to reach right cliff
+        const newPos = startLeft + (bridgeProgress * (totalDistance / 5));
+        document.getElementById('player').style.left = newPos + 'px';
+
       } else {
-        fb.style.color = '#c62828';
-        fb.innerText = 'गलत उत्तर! पुनः प्रयास करें।';
+        btnElement.classList.add('wrong');
+        document.getElementById('feedback-text').style.color = '#c62828';
+        document.getElementById('feedback-text').innerText = `गलत उत्तर! सही उत्तर: ${q.opts[q.ans]}`;
+      }
+
+      document.getElementById('next-btn').style.display = 'inline-block';
+    }
+
+    function nextQuestion() {
+      qIndex++;
+      if (qIndex < 5) {
+        loadQuestion();
+      } else {
+        finishLevel();
       }
     }
+
+    function finishLevel() {
+      const fb = document.getElementById('feedback-text');
+      const nextBtn = document.getElementById('next-btn');
+      
+      if (currentLevel === 1) {
+        document.getElementById('question-text').innerHTML = `🎉 <strong>स्तर 1 पूरा हुआ!</strong> आपने काव्यांश का ज्ञान साबित कर दिया।`;
+        document.getElementById('options-container').innerHTML = '';
+        fb.style.color = '#1b5e20';
+        fb.innerText = 'अब व्याकरण (सर्वनाम) के प्रश्नों से अगला पुल बनाएँ!';
+        nextBtn.innerText = 'स्तर 2 शुरू करें (सर्वनाम) ➔';
+        nextBtn.style.display = 'inline-block';
+        nextBtn.onclick = () => {
+          currentLevel = 2;
+          nextBtn.onclick = nextQuestion;
+          nextBtn.innerText = 'आगे बढ़ें ➔';
+          initLevel();
+        };
+      } else {
+        document.getElementById('question-text').innerHTML = `🏆 <strong>बधाई हो! आपने दोनों स्तर पार कर लिए!</strong><br>आपने सफलतापूर्वक पूरा पुल बनाकर मातृभूमि के झंडे तक पहुँच बनाई। 🇮🇳`;
+        document.getElementById('options-container').innerHTML = '';
+        fb.style.color = '#2e7d32';
+        fb.innerText = 'उत्कृष्ट प्रदर्शन!';
+        nextBtn.innerText = 'पुनः खेलें 🔄';
+        nextBtn.style.display = 'inline-block';
+        nextBtn.onclick = () => {
+          currentLevel = 1;
+          nextBtn.innerText = 'आगे बढ़ें ➔';
+          nextBtn.onclick = nextQuestion;
+          initLevel();
+        };
+      }
+    }
+
+    // Initialize Game
+    initLevel();
   </script>
 </body>
 </html>
