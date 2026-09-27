@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>गुल्लक - बचत और व्याकरण खेल</title>
+  <title>गुल्लक - व्याकरण अभ्यास खेल</title>
   <style>
     * {
       box-sizing: border-box;
@@ -94,51 +94,48 @@
       text-align: center;
     }
 
-    /* LEVEL 1: MATCHING GAME */
-    .matching-grid {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
+    /* LEVEL 1: GRAMMAR MCQ (लिंग-वचन) */
+    .quiz-card {
+      background: #f1f8e9;
+      border: 2px dashed #81c784;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
       margin-top: 15px;
     }
 
-    .match-column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .match-btn {
-      background-color: #f1f8e9;
-      border: 2px solid #aed581;
-      padding: 12px;
-      border-radius: 6px;
-      font-size: 1rem;
-      cursor: pointer;
-      text-align: center;
-      font-weight: 600;
+    .quiz-question {
+      font-size: 1.15rem;
+      font-weight: bold;
       color: #1b5e20;
-      transition: all 0.2s;
+      margin-bottom: 20px;
     }
 
-    .match-btn:hover {
-      background-color: #dedae2;
+    .options-grid {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .match-btn.selected {
-      background-color: #aed581;
-      border-color: #2e7d32;
+    .option-btn {
+      background-color: #ffffff;
+      border: 2px solid #81c784;
+      color: #1b5e20;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: background 0.2s, transform 0.1s;
     }
 
-    .match-btn.matched {
+    .option-btn:hover {
       background-color: #c8e6c9;
-      border-color: #388e3c;
-      color: #2e7d32;
-      cursor: default;
+      transform: translateY(-2px);
     }
 
-    /* LEVEL 2: CATCH/SORT GAME */
+    /* LEVEL 2: CATCH/SORT GAME (संज्ञा भेद) */
     #catch-game-area {
       position: relative;
       width: 100%;
@@ -239,26 +236,26 @@
   <!-- 2. GAME CONTAINER -->
   <div id="game-container">
     <div class="dashboard">
-      <div id="level-display">स्तर 1: व्याकरण मिलान (लिंग व वचन)</div>
+      <div id="level-display">स्तर 1: लिंग एवं वचन (Grammar)</div>
       <div>अंक (Score): <span id="score">0</span></div>
     </div>
 
-    <!-- LEVEL 1: MATCHING GAME -->
+    <!-- LEVEL 1: GRAMMAR MCQ -->
     <div id="level-1-area">
-      <h2 class="level-title">सही जोड़े मिलाएँ (Match the Pairs)</h2>
-      <p style="text-align: center; margin-bottom: 15px; font-size: 0.95rem;">बाएँ स्तंभ के शब्द को दाएँ स्तंभ के सही व्याकरण भेद से मिलाएँ:</p>
+      <h2 class="level-title">व्याकरण बोध (सही विकल्प चुनें)</h2>
+      <p style="text-align: center; margin-bottom: 10px; font-size: 0.95rem;">पाठ्यांश के आधार पर सही व्याकरण भेद चुनें:</p>
       
-      <div class="matching-grid">
-        <div class="match-column" id="left-col"></div>
-        <div class="match-column" id="right-col"></div>
+      <div class="quiz-card">
+        <div class="quiz-question" id="l1-question">प्रश्न लोड हो रहा है...</div>
+        <div class="options-grid" id="l1-options"></div>
       </div>
       <div class="feedback-msg" id="l1-feedback"></div>
     </div>
 
-    <!-- LEVEL 2: NOUN CATCH GAME -->
+    <!-- LEVEL 2: NOUN SORTING GAME -->
     <div id="level-2-area" style="display: none;">
       <h2 class="level-title">संज्ञा भेद छाँटें (Sort the Nouns)</h2>
-      <p style="text-align: center; margin-bottom: 10px; font-size: 0.95rem;">पाठ्य-पुस्तक से गिरते हुए शब्द के लिए सही टोकरी पर क्लिक करें:</p>
+      <p style="text-align: center; margin-bottom: 10px; font-size: 0.95rem;">पाठ से गिरते हुए शब्द के लिए सही संज्ञा-टोकरी पर क्लिक करें:</p>
       
       <div id="catch-game-area">
         <div id="falling-word" class="falling-word">शब्द</div>
@@ -286,26 +283,40 @@
 
   <script>
     let score = 0;
-    let selectedLeft = null;
-    let selectedRight = null;
-    let matchedPairs = 0;
+    let l1Index = 0;
 
-    // DATA FOR LEVEL 1 (Chapter 5: Gender & Number Matching)
+    // LEVEL 1 DATA: Based strictly on Chapter 5 (Gullak) Grammar - Gender & Number
     const l1Data = [
-      { id: 1, term: "सिक्का", def: "पुल्लिंग (एकवचन)" },
-      { id: 2, term: "किताब", def: "स्त्रीलिंग (एकवचन)" },
-      { id: 3, term: "नानी", def: "स्त्रीलिंग (एकवचन)" },
-      { id: 4, term: "सिक्के", def: "पुल्लिंग (बहुवचन)" }
+      {
+        q: "'सिक्का' शब्द का सही लिंग क्या है?",
+        opts: ["पुल्लिंग", "स्त्रीलिंग"],
+        ans: 0
+      },
+      {
+        q: "'दादी ने एक सिक्के दिया' - इस वाक्य में वचन-संबंधी क्या सुधार होगा?",
+        opts: ["एक सिक्का दिया", "एक सिक्कों दिया", "एक सिक्का दिए"],
+        ans: 0
+      },
+      {
+        q: "'पापा ने दो किताब दी' - सही बहुवचन रूप क्या होगा?",
+        opts: ["दो किताबें दीं", "दो किताब दिया", "दो किताबों दी"],
+        ans: 0
+      },
+      {
+        q: "'नानी' शब्द का लिंग भेद पहचानिए:",
+        opts: ["स्त्रीलिंग", "पुल्लिंग"],
+        ans: 0
+      }
     ];
 
-    // DATA FOR LEVEL 2 (Chapter 5: Noun Classification)
+    // LEVEL 2 DATA: Based on Chapter 5 vocabulary & Noun types
     const l2Data = [
       { word: "तुर्की", type: "व्यक्तिवाचक" },
       { word: "गुल्लक", type: "जातिवाचक" },
       { word: "समृद्धि", type: "भाववाचक" },
       { word: "सोना", type: "द्रव्यवाचक" },
       { word: "जापान", type: "व्यक्तिवाचक" },
-      { word: "सिक्का", type: "जातिवाचक" },
+      { word: "किताब", type: "जातिवाचक" },
       { word: "उमंग", type: "भाववाचक" },
       { word: "मिट्टी", type: "द्रव्यवाचक" }
     ];
@@ -330,84 +341,51 @@
     function startGame() {
       document.getElementById('start-screen').style.display = 'none';
       document.getElementById('game-container').style.display = 'block';
-      initLevel1();
+      l1Index = 0;
+      loadL1Question();
     }
 
-    /* --- LEVEL 1 LOGIC --- */
-    function initLevel1() {
-      matchedPairs = 0;
-      selectedLeft = null;
-      selectedRight = null;
-      const leftCol = document.getElementById('left-col');
-      const rightCol = document.getElementById('right-col');
-      leftCol.innerHTML = '';
-      rightCol.innerHTML = '';
+    /* --- LEVEL 1 LOGIC (MCQ) --- */
+    function loadL1Question() {
+      if (l1Index >= l1Data.length) {
+        startLevel2();
+        return;
+      }
 
-      const shuffledDefs = [...l1Data].sort(() => Math.random() - 0.5);
+      const item = l1Data[l1Index];
+      document.getElementById('l1-question').innerText = item.q;
+      const optsContainer = document.getElementById('l1-options');
+      optsContainer.innerHTML = '';
+      document.getElementById('l1-feedback').innerText = '';
 
-      l1Data.forEach(item => {
-        const btn = document.createElement('div');
-        btn.className = 'match-btn';
-        btn.innerText = item.term;
-        btn.dataset.id = item.id;
-        btn.onclick = () => selectLeft(btn);
-        leftCol.appendChild(btn);
-      });
-
-      shuffledDefs.forEach(item => {
-        const btn = document.createElement('div');
-        btn.className = 'match-btn';
-        btn.innerText = item.def;
-        btn.dataset.id = item.id;
-        btn.onclick = () => selectRight(btn);
-        rightCol.appendChild(btn);
+      item.opts.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt;
+        btn.onclick = () => checkL1Answer(idx);
+        optsContainer.appendChild(btn);
       });
     }
 
-    function selectLeft(btn) {
-      if (btn.classList.contains('matched')) return;
-      document.querySelectorAll('#left-col .match-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedLeft = btn;
-      checkMatching();
-    }
+    function checkL1Answer(selectedIdx) {
+      const item = l1Data[l1Index];
+      const fb = document.getElementById('l1-feedback');
 
-    function selectRight(btn) {
-      if (btn.classList.contains('matched')) return;
-      document.querySelectorAll('#right-col .match-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      selectedRight = btn;
-      checkMatching();
-    }
-
-    function checkMatching() {
-      if (selectedLeft && selectedRight) {
-        const fb = document.getElementById('l1-feedback');
-        if (selectedLeft.dataset.id === selectedRight.dataset.id) {
-          playSound(true);
-          selectedLeft.className = 'match-btn matched';
-          selectedRight.className = 'match-btn matched';
-          fb.style.color = 'green';
-          fb.innerText = 'सही जोड़ा! 🎉 (+10)';
-          updateScore(10);
-          matchedPairs++;
-
-          if (matchedPairs === l1Data.length) {
-            setTimeout(startLevel2, 1200);
-          }
-        } else {
-          playSound(false);
-          fb.style.color = 'red';
-          fb.innerText = 'गलत जोड़ा, पुनः प्रयास करें!';
-          selectedLeft.classList.remove('selected');
-          selectedRight.classList.remove('selected');
-        }
-        selectedLeft = null;
-        selectedRight = null;
+      if (selectedIdx === item.ans) {
+        playSound(true);
+        fb.style.color = 'green';
+        fb.innerText = 'बिल्कुल सही! 🎉 (+10)';
+        updateScore(10);
+        l1Index++;
+        setTimeout(loadL1Question, 1200);
+      } else {
+        playSound(false);
+        fb.style.color = 'red';
+        fb.innerText = 'गलत उत्तर, पुनः प्रयास करें!';
       }
     }
 
-    /* --- LEVEL 2 LOGIC --- */
+    /* --- LEVEL 2 LOGIC (Nouns Catch Game) --- */
     function startLevel2() {
       document.getElementById('level-1-area').style.display = 'none';
       document.getElementById('level-2-area').style.display = 'block';
@@ -479,7 +457,7 @@
       document.getElementById('end-screen').style.display = 'none';
       document.getElementById('level-2-area').style.display = 'none';
       document.getElementById('level-1-area').style.display = 'block';
-      document.getElementById('level-display').innerText = 'स्तर 1: व्याकरण मिलान (लिंग व वचन)';
+      document.getElementById('level-display').innerText = 'स्तर 1: लिंग एवं वचन (Grammar)';
       document.getElementById('start-screen').style.display = 'flex';
     }
   </script>
