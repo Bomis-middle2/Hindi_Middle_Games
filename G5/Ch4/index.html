@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>होली का त्योहार - सुंदर कविता व गतिविधियाँ</title>
+  <title>होली - सुंदर कविता व गतिविधियाँ</title>
   <style>
     * {
       box-sizing: border-box;
@@ -28,7 +28,49 @@
       text-align: center;
     }
 
+    /* 1. START SCREEN (Center Logo ONLY Here) */
+    #start-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border: 3px solid #f48fb1;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      width: 100%;
+      max-width: 700px;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .start-logo {
+      max-width: 210px;
+      height: auto;
+      margin-bottom: 25px;
+    }
+
+    .start-btn {
+      background-color: #c2185b;
+      color: #ffffff;
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s, transform 0.1s;
+      margin-top: 15px;
+    }
+
+    .start-btn:hover {
+      background-color: #880e4f;
+      transform: scale(1.03);
+    }
+
+    /* MAIN CONTAINER (Hidden initially) */
     .main-container {
+      display: none;
       background: #ffffff;
       border: 3px solid #f48fb1;
       border-radius: 12px;
@@ -44,6 +86,7 @@
       gap: 10px;
       margin-bottom: 20px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .tab-btn {
@@ -137,59 +180,122 @@
       transition: background 0.3s;
     }
 
-    /* Quiz Game */
+    /* Interactive Non-MCQ Game Area */
+    .dashboard {
+      display: flex;
+      justify-content: space-around;
+      background: #f3e5f5;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      font-size: 1.05rem;
+    }
+
     .quiz-box {
       margin-top: 10px;
-      background: #f3e5f5;
-      padding: 15px;
+      background: #fff8e1;
+      padding: 20px;
       border-radius: 8px;
-      border: 1px dashed #ba68c8;
+      border: 2px dashed #f48fb1;
       text-align: center;
     }
 
     .quiz-question {
       font-size: 1.1rem;
       font-weight: bold;
-      margin-bottom: 12px;
+      margin-bottom: 15px;
+      color: #880e4f;
     }
 
-    .quiz-options {
+    .game-options-grid {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    .opt-btn {
+    .game-opt-btn {
       background-color: #ffffff;
-      border: 1.5px solid #ab47bc;
+      border: 2px solid #f48fb1;
       color: #4a148c;
-      padding: 8px;
-      border-radius: 4px;
+      padding: 10px 18px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 0.95rem;
-      transition: background 0.2s;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: background 0.2s, transform 0.1s;
     }
 
-    .opt-btn:hover {
-      background-color: #e1bee7;
+    .game-opt-btn:hover {
+      background-color: #f8bbd0;
+      transform: translateY(-2px);
+    }
+
+    .text-input-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .text-input {
+      padding: 10px 14px;
+      border: 2px solid #f48fb1;
+      border-radius: 6px;
+      font-size: 1rem;
+      width: 65%;
+      outline: none;
+    }
+
+    .submit-btn {
+      background-color: #c2185b;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
     }
 
     .feedback {
-      margin-top: 10px;
+      margin-top: 12px;
       font-weight: bold;
+      font-size: 1.05rem;
+    }
+
+    .level-indicator {
+      background: #880e4f;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      display: inline-block;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
 
-  <h1>🎨 होली - रंगों का त्योहार 🎨</h1>
+  <!-- 1. START SCREEN WITH CENTERED LOGO ONLY -->
+  <div id="start-screen">
+    <img src="assets/logo.png" alt="Innovine Logo" class="start-logo">
+    <h1 style="font-size: 1.6rem; color: #c2185b;">🎨 होली - रंगों का त्योहार 🎨</h1>
+    <p style="margin: 10px 0 20px; font-size: 1.05rem; color: #4a148c;">
+      कविता, रंग-मिश्रण गतिविधियों और मज़ेदार अभ्यासों के साथ होली का आनंद लें!
+    </p>
+    <button class="start-btn" onclick="startGameApp()">शुरू करें (Start)</button>
+  </div>
 
-  <div class="main-container">
+  <!-- 2. MAIN APPLICATION -->
+  <div class="main-container" id="main-app">
+    <h1>🎨 होली - रंगों का त्योहार 🎨</h1>
+
     <div class="tab-buttons">
       <button class="tab-btn active" onclick="switchTab('poem')">📜 कविता व भाव</button>
       <button class="tab-btn" onclick="switchTab('facts')">🌍 अंतरराष्ट्रीय जुड़ाव</button>
       <button class="tab-btn" onclick="switchTab('mixer')">🎨 रंग मिश्रण</button>
-      <button class="tab-btn" onclick="switchTab('quiz')">🎮 प्रश्नोत्तरी</button>
+      <button class="tab-btn" onclick="switchTab('quiz')">🎮 खेल-खेल में सीखें</button>
     </div>
 
     <!-- TAB 1: POEM -->
@@ -251,33 +357,46 @@
       </div>
     </div>
 
-    <!-- TAB 4: QUIZ -->
+    <!-- TAB 4: NON-MCQ GAME -->
     <div id="quiz-tab" class="tab-content">
+      <div class="dashboard">
+        <div>ज्ञान अंक 🌟: <span id="game-score">0</span></div>
+      </div>
+
       <div class="quiz-box">
+        <span class="level-indicator" id="level-tag">स्तर 1</span>
         <div class="quiz-question" id="quiz-q">प्रश्न लोड हो रहा है...</div>
-        <div class="quiz-options" id="quiz-opts"></div>
+        <div id="quiz-interactive"></div>
         <div class="feedback" id="quiz-fb"></div>
       </div>
     </div>
   </div>
 
+  <!-- AUDIO SOUNDS -->
+  <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+  <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
   <script>
+    // --- APP START LOGIC ---
+    function startGameApp() {
+      document.getElementById('start-screen').style.display = 'none';
+      document.getElementById('main-app').style.display = 'block';
+    }
+
+    // --- TAB SWITCHING ---
     function switchTab(tabName) {
-      document.querySelectorAll('.tab-btn').forEach((b, i) => {
-        b.classList.remove('active');
-      });
+      const tabs = ['poem', 'facts', 'mixer', 'quiz'];
+      document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
 
-      const tabs = ['poem', 'facts', 'mixer', 'quiz'];
       const index = tabs.indexOf(tabName);
-      
       document.querySelectorAll('.tab-btn')[index].classList.add('active');
       document.getElementById(`${tabName}-tab`).classList.add('active');
 
-      if(tabName === 'quiz') loadQuiz();
+      if (tabName === 'quiz') initGame();
     }
 
-    // Color Mixing Logic
+    // --- COLOR MIXER LOGIC ---
     function mixColors() {
       const c1 = document.getElementById('color1').value;
       const c2 = document.getElementById('color2').value;
@@ -310,60 +429,195 @@
       if(c === 'blue') return 'नीला';
     }
 
-    // Quiz Data
-    const quizData = [
+    // --- NON-MCQ GAME ENGINE & RANDOMIZATION ---
+    let gameScore = 0;
+    let currentTaskIndex = 0;
+    let shuffledTasks = [];
+
+    // UNIQUE INTERACTIVE GAME MECHANICS (Chapter 4 Content & Grammar)
+    const rawGameTasks = [
+      // === LEVEL 1: Chapter 4 Content & Word Meanings (NO MCQs) ===
       {
-        q: "केसरिया रंग किसका प्रतीक है?[cite: 4]",
-        opts: ["प्रेम", "साहस", "विश्वास", "आशा"],
+        level: "स्तर 1: शब्द-सेतु (Word Unscramble)",
+        q: "अक्षरों को सही क्रम में लगाकर अर्थपूर्ण शब्द बनाएँ: [ जि - या - उ - रा ]",
+        type: "text",
+        ans: ["उजियारा"],
+        hint: "संकेत: इसका अर्थ 'उजाला' या 'प्रकाश' होता है"
+      },
+      {
+        level: "स्तर 1: अर्थ मिलाएँ (Word Meaning Hunt)",
+        q: "'सौगात' शब्द का सही अर्थ क्या है?",
+        type: "select-grid",
+        opts: ["भरोसा", "उपहार", "हिम्मत", "इंसानियत"],
         ans: 1
       },
       {
-        q: "नेपाल में होली पर क्या बरसाया जाता है?[cite: 4]",
-        opts: ["रंग", "पानी", "फूल", "गुलाल"],
-        ans: 2
+        level: "स्तर 1: लुप्त वर्ण भरें (Fill Missing Character)",
+        q: "शब्द पूरा करें: 'उ ज ि _ा रा' (अर्थ: प्रकाश)",
+        type: "text",
+        ans: ["या", "उजियारा"],
+        hint: "संकेत: 'या' वर्ण का प्रयोग करें"
       },
       {
-        q: "कविता के अनुसार सबसे बड़ी क्या है?[cite: 4]",
-        opts: ["मानवता", "मिठाई", "छुट्टी", "दीवारें"],
+        level: "स्तर 1: सत्य / असत्य (True / False)",
+        q: "कथन: नेपाल में होली पर लोग पशु-पक्षियों को रंग लगाने के बजाय उन पर फूल बरसाते हैं।",
+        type: "binary",
+        opts: ["सत्य (True)", "असत्य (False)"],
         ans: 0
       },
       {
-        q: "लठमार होली कहाँ खेली जाती है?[cite: 4]",
-        opts: ["जयपुर", "बरसाना", "दिल्ली", "मुंबई"],
+        level: "स्तर 1: एक-शब्द पहेली (One-Word Riddle)",
+        q: "जाति-धर्म की दीवारें तोड़कर कविता के अनुसार सबसे बड़ी क्या रही है?",
+        type: "text",
+        ans: ["मानवता", "इंसानियत"],
+        hint: "संकेत: इसका अर्थ 'इंसानियत' होता है"
+      },
+
+      // === LEVEL 2: Chapter 4 Grammar - Synonyms & Antonyms (NO MCQs) ===
+      {
+        level: "स्तर 2: व्याकरण - विलोम शब्द (Antonym Pairing)",
+        q: "'शत्रु' शब्द का सही विलोम (विपरीतार्थक) शब्द चुनें:",
+        type: "select-grid",
+        opts: ["सफ़लता", "मित्र", "निकट", "प्रेम"],
         ans: 1
+      },
+      {
+        level: "स्तर 2: व्याकरण - भिन्न शब्द पहचानें (Odd One Out)",
+        q: "इनमें से कौन-सा 'प्रेम' शब्द का पर्यायवाची नहीं है?",
+        type: "select-grid",
+        opts: ["प्यार", "स्नेह", "शत्रुता", "अनुराग"],
+        ans: 2
+      },
+      {
+        level: "स्तर 2: व्याकरण - विपरीतार्थक शब्द टाइप करें (Antonym Builder)",
+        q: "'निकट' शब्द का विलोम शब्द क्या होगा?",
+        type: "text",
+        ans: ["दूर"],
+        hint: "संकेत: पास का उल्टा"
+      },
+      {
+        level: "स्तर 2: व्याकरण - अशुद्ध-शुद्ध पहचान (Error Detection)",
+        q: "'सफ़लता' शब्द का सही विलोम कौन-सा है?",
+        type: "select-grid",
+        opts: ["विफलता / असफलता", "निकटता", "पराधीनता"],
+        ans: 0
       }
     ];
 
-    let qIndex = 0;
-
-    function loadQuiz() {
-      const q = quizData[qIndex];
-      document.getElementById('quiz-q').innerText = `प्र॰ ${qIndex + 1}: ${q.q}`;
-      const opts = document.getElementById('quiz-opts');
-      opts.innerHTML = '';
-      document.getElementById('quiz-fb').innerText = '';
-
-      q.opts.forEach((opt, idx) => {
-        const btn = document.createElement('button');
-        btn.className = 'opt-btn';
-        btn.innerText = opt;
-        btn.onclick = () => checkQuiz(idx);
-        opts.appendChild(btn);
-      });
+    // Helper: Randomization Array Shuffle
+    function shuffleArray(arr) {
+      return arr.sort(() => Math.random() - 0.5);
     }
 
-    function checkQuiz(selected) {
-      const q = quizData[qIndex];
-      const fb = document.getElementById('quiz-fb');
-      if (selected === q.ans) {
-        fb.style.color = 'green';
-        fb.innerText = 'उत्कृष्ट! सही उत्तर 🌟';
-        qIndex = (qIndex + 1) % quizData.length;
-        setTimeout(loadQuiz, 1500);
-      } else {
-        fb.style.color = 'red';
-        fb.innerText = 'पुनः प्रयास करें!';
+    function playSound(isCorrect) {
+      const audioId = isCorrect ? 'audio-correct' : 'audio-wrong';
+      const audio = document.getElementById(audioId);
+      if (audio) {
+        audio.currentTime = 0;
+        audio.play().catch(e => console.log('Audio playback prevented by browser'));
       }
+    }
+
+    function initGame() {
+      if (shuffledTasks.length === 0) {
+        shuffledTasks = shuffleArray([...rawGameTasks]);
+      }
+      loadTask();
+    }
+
+    function loadTask() {
+      const task = shuffledTasks[currentTaskIndex];
+      document.getElementById('level-tag').innerText = task.level;
+      document.getElementById('quiz-q').innerText = task.q;
+      
+      const container = document.getElementById('quiz-interactive');
+      container.innerHTML = '';
+      document.getElementById('quiz-fb').innerText = '';
+
+      if (task.type === 'binary' || task.type === 'select-grid') {
+        const grid = document.createElement('div');
+        grid.className = 'game-options-grid';
+
+        task.opts.forEach((opt, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'game-opt-btn';
+          btn.innerText = opt;
+          btn.onclick = () => checkOptionAnswer(idx);
+          grid.appendChild(btn);
+        });
+        container.appendChild(grid);
+      } else if (task.type === 'text') {
+        const group = document.createElement('div');
+        group.className = 'text-input-group';
+        
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'text-input';
+        input.id = 'text-ans';
+        input.placeholder = 'अपना उत्तर यहाँ लिखें...';
+
+        const submitBtn = document.createElement('button');
+        submitBtn.className = 'submit-btn';
+        submitBtn.innerText = 'जाँचें';
+        submitBtn.onclick = checkTextAnswer;
+
+        group.appendChild(input);
+        group.appendChild(submitBtn);
+        container.appendChild(group);
+
+        if(task.hint) {
+          const hintText = document.createElement('p');
+          hintText.style.fontSize = '0.85rem';
+          hintText.style.color = '#c2185b';
+          hintText.style.marginTop = '8px';
+          hintText.innerText = task.hint;
+          container.appendChild(hintText);
+        }
+      }
+    }
+
+    function checkOptionAnswer(selectedIdx) {
+      const task = shuffledTasks[currentTaskIndex];
+      const fb = document.getElementById('quiz-fb');
+
+      if (selectedIdx === task.ans) {
+        playSound(true);
+        fb.style.color = 'green';
+        fb.innerText = 'शानदार! सही उत्तर 🎉 (+20 अंक)';
+        gameScore += 20;
+        document.getElementById('game-score').innerText = gameScore;
+        nextTask();
+      } else {
+        playSound(false);
+        fb.style.color = 'red';
+        fb.innerText = 'गलत उत्तर, पुनः प्रयास करें!';
+      }
+    }
+
+    function checkTextAnswer() {
+      const task = shuffledTasks[currentTaskIndex];
+      const userAns = document.getElementById('text-ans').value.trim().toLowerCase();
+      const fb = document.getElementById('quiz-fb');
+
+      const isCorrect = task.ans.some(ans => ans.toLowerCase() === userAns);
+
+      if (isCorrect) {
+        playSound(true);
+        fb.style.color = 'green';
+        fb.innerText = 'बिल्कुल सही! 🎉 (+20 अंक)';
+        gameScore += 20;
+        document.getElementById('game-score').innerText = gameScore;
+        nextTask();
+      } else {
+        playSound(false);
+        fb.style.color = 'red';
+        fb.innerText = 'गलत उत्तर, दोबारा सोचें!';
+      }
+    }
+
+    function nextTask() {
+      currentTaskIndex = (currentTaskIndex + 1) % shuffledTasks.length;
+      setTimeout(loadTask, 1600);
     }
   </script>
 </body>
