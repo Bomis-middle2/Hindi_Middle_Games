@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secret Code Breaker - जागो प्यारे</title>
+  <title>Cyber Matrix Decryptor - जागो प्यारे</title>
   <style>
     :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --primary-color: #38bdf8;
+      --bg-color: #090d16;
+      --card-bg: #111827;
+      --primary-color: #06b6d4;
       --accent-color: #f59e0b;
-      --success-color: #22c55e;
+      --success-color: #10b981;
       --error-color: #ef4444;
-      --text-color: #f8fafc;
+      --text-color: #f3f4f6;
+      --selected-color: #8b5cf6;
     }
 
     body {
@@ -31,11 +32,11 @@
       background: var(--card-bg);
       padding: 30px;
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
       width: 100%;
       max-width: 650px;
       text-align: center;
-      border: 1px solid #334155;
+      border: 1px solid #1f2937;
       box-sizing: border-box;
     }
 
@@ -50,11 +51,11 @@
       display: none !important;
     }
 
-    /* Logo Screen */
-    .logo-img {
-      max-width: 240px;
+    /* Screen 1: Standalone Logo Screen */
+    .standalone-logo {
+      max-width: 280px;
       height: auto;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     /* Instruction Screen */
@@ -62,12 +63,13 @@
       text-align: left;
       margin: 20px 0;
       line-height: 1.8;
-      background: #0f172a;
+      background: #0b0f19;
       padding: 20px 30px;
       border-radius: 8px;
+      border-left: 4px solid var(--primary-color);
     }
 
-    /* Gameplay Screen */
+    /* Gameplay Header */
     .header {
       margin-bottom: 15px;
       width: 100%;
@@ -76,7 +78,7 @@
     .level-badge {
       display: inline-block;
       background: var(--primary-color);
-      color: #0f172a;
+      color: #090d16;
       font-weight: bold;
       padding: 6px 16px;
       border-radius: 20px;
@@ -84,100 +86,121 @@
       margin-bottom: 10px;
     }
 
-    .chances-tracker {
-      font-size: 0.95em;
-      color: #94a3b8;
-    }
-
     .mission-box {
-      background: #0f172a;
+      background: #0b0f19;
       border: 1px dashed var(--primary-color);
-      padding: 15px;
+      padding: 16px;
       border-radius: 8px;
       width: 100%;
       margin: 15px 0;
       box-sizing: border-box;
     }
 
-    .target-word {
-      font-size: 1.8em;
+    .clue-label {
+      font-size: 0.85em;
+      color: #9ca3af;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+
+    .target-clue {
+      font-size: 1.25em;
       font-weight: bold;
       color: var(--accent-color);
-      letter-spacing: 2px;
+      line-height: 1.4;
     }
 
-    /* Code Breaker Displays */
-    .slots-container {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
+    /* Level 1: Matrix Grid Styles */
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
       margin: 20px 0;
+      width: 100%;
+      max-width: 380px;
     }
 
-    .slot {
-      width: 45px;
-      height: 50px;
-      border: 2px solid var(--primary-color);
+    .matrix-cell {
+      background: #1f2937;
+      border: 2px solid #374151;
       border-radius: 8px;
-      font-size: 1.4em;
-      font-weight: bold;
+      height: 60px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #0f172a;
-      text-transform: uppercase;
+      font-size: 1.3em;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
     }
 
-    .letter-bank {
+    .matrix-cell:hover:not(.disabled) {
+      border-color: var(--primary-color);
+      transform: scale(1.05);
+    }
+
+    .matrix-cell.selected {
+      background: var(--selected-color) !important;
+      border-color: var(--selected-color) !important;
+      color: white;
+    }
+
+    /* Level 2: Categorization Sort Styles */
+    .sorting-buckets {
+      display: flex;
+      gap: 15px;
+      width: 100%;
+      margin-top: 15px;
+    }
+
+    .bucket {
+      flex: 1;
+      background: #0b0f19;
+      border: 2px solid #374151;
+      border-radius: 8px;
+      padding: 12px;
+      min-height: 140px;
+    }
+
+    .bucket-title {
+      font-weight: bold;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      font-size: 0.95em;
+    }
+
+    .word-pool {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       justify-content: center;
-      margin-bottom: 20px;
+      margin: 15px 0;
+      min-height: 50px;
     }
 
-    .letter-btn {
-      background: #334155;
+    .chip {
+      background: #374151;
       color: white;
-      border: 1px solid #475569;
-      width: 45px;
-      height: 45px;
-      border-radius: 8px;
-      font-size: 1.2em;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
       cursor: pointer;
       transition: all 0.2s;
+      border: 1px solid #4b5563;
     }
 
-    .letter-btn:hover:not(:disabled) {
+    .chip:hover {
       background: var(--primary-color);
-      color: #0f172a;
+      color: #090d16;
     }
 
-    /* Odd One Out Grid */
-    .pattern-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      width: 100%;
-      margin: 20px 0;
+    .chip.active-chip {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 8px var(--accent-color);
     }
 
-    .pattern-btn {
-      background: #334155;
-      border: 2px solid #475569;
-      color: white;
-      border-radius: 8px;
-      padding: 18px;
-      font-size: 1.2em;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .pattern-btn:hover:not(:disabled) {
-      border-color: var(--primary-color);
-    }
-
-    /* Feedback Styles */
+    /* Feedback & Utility */
     .correct {
       background: var(--success-color) !important;
       border-color: var(--success-color) !important;
@@ -195,14 +218,13 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      margin-top: 15px;
+      margin-top: 20px;
       font-weight: bold;
     }
 
-    /* Shared Buttons */
     .btn {
       background: var(--primary-color);
-      color: #0f172a;
+      color: #090d16;
       border: none;
       padding: 12px 28px;
       font-size: 1em;
@@ -213,7 +235,7 @@
     }
 
     .btn:hover {
-      background: #0284c7;
+      background: #0891b2;
       color: white;
     }
 
@@ -228,49 +250,65 @@
 <body>
 
 <div class="game-container">
-  <!-- 1. LOGO SCREEN -->
+  <!-- 1. FIRST SCREEN: ONLY LOGO -->
   <div id="logo-screen" class="screen">
-    <img src="assets/logo.png" alt="Innovine Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/250x100/1e293b/38bdf8?text=Innovine+Logo'">
-    <h2>Chapter 1: Code Breaker Quest</h2>
-    <p style="color: #94a3b8;">"जागो प्यारे" (Jago Pyaare)</p>
-    <button class="btn" onclick="showInstructionScreen()">Access Mission</button>
+    <img src="assets/logo.png" alt="Innovine Logo" class="standalone-logo" onerror="this.src='https://via.placeholder.com/280x120/111827/06b6d4?text=Innovine+Logo'">
+    <button class="btn" onclick="showInstructionScreen()">Start Game</button>
   </div>
 
-  <!-- 2. INSTRUCTION SCREEN -->
+  <!-- 2. SECOND SCREEN: TITLE & INSTRUCTIONS -->
   <div id="instruction-screen" class="screen hidden">
-    <h2>Mission Briefing</h2>
-    <ul class="instruction-list">
-      <li><strong>Level 1 (Secret Code Breaker):</strong> Decrypt the hidden English meaning of Hindi vocabulary by assembling the correct letters.</li>
-      <li><strong>Level 2 (Pattern Finder - Odd One Out):</strong> Analyze word patterns to identify the grammatical outlier.</li>
-      <li><strong>Rules:</strong> You have <strong>2 attempts</strong> per question.</li>
-      <li>Sound effects will guide your security clearances!</li>
-    </ul>
-    <button class="btn" onclick="startGame()">Start Operation</button>
+    <h2>Chapter 1: Cyber Matrix Decryptor</h2>
+    <p style="color: #9ca3af; margin-top: -10px;">"जागो प्यारे" (Jago Pyaare)</p>
+    
+    <div class="instruction-list">
+      <h3 style="margin-top: 0; color: var(--primary-color);">Mission Briefing</h3>
+      <ul>
+        <li><strong>Level 1 (Matrix Decryption):</strong> Read the clue and locate the target Hindi word in the grid matrix by selecting its letters in sequence.</li>
+        <li><strong>Level 2 (Category Sorting):</strong> Select a word chip and assign it to its correct grammatical category bucket (Anusvaar vs Anunasik).</li>
+        <li><strong>Dynamic System:</strong> Questions are randomized on every attempt!</li>
+      </ul>
+    </div>
+    <button class="btn" onclick="startGame()">Initialize Operation</button>
   </div>
 
   <!-- 3. GAMEPLAY SCREEN -->
   <div id="game-screen" class="screen hidden">
     <div class="header">
-      <span class="level-badge" id="level-indicator">Level 1: Secret Code Breaker</span>
-      <div class="chances-tracker">Attempts Left: <span id="chances-left">2</span>/2</div>
+      <span class="level-badge" id="level-indicator">Level 1: Matrix Grid Decryptor</span>
     </div>
 
-    <!-- Level 1 Code Breaker UI -->
-    <div id="level1-ui" style="width: 100%;">
+    <!-- Level 1 Matrix UI -->
+    <div id="level1-ui" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
       <div class="mission-box">
-        <div style="font-size: 0.9em; color: #94a3b8;">DECRYPT HINDI WORD:</div>
-        <div class="target-word" id="target-hindi">--</div>
+        <div class="clue-label">TARGET DEFINITION:</div>
+        <div class="target-clue" id="target-clue">--</div>
       </div>
-      <div class="slots-container" id="slots-container"></div>
-      <div class="letter-bank" id="letter-bank"></div>
+      
+      <div class="matrix-grid" id="matrix-grid"></div>
+      <button class="btn" id="submit-grid-btn" onclick="verifyGridSelection()" style="margin-top: 10px;">Verify Signal</button>
     </div>
 
-    <!-- Level 2 Pattern Finder UI -->
+    <!-- Level 2 Sorting UI -->
     <div id="level2-ui" class="hidden" style="width: 100%;">
       <div class="mission-box">
-        <div id="grammar-prompt" style="font-size: 1.1em; font-weight: bold;">Find the Odd One Out:</div>
+        <div class="clue-label">SORTING INSTRUCTIONS:</div>
+        <div style="font-size: 1.1em; font-weight: bold;">Select a word chip below, then click its matching bucket!</div>
       </div>
-      <div class="pattern-grid" id="pattern-container"></div>
+
+      <div class="word-pool" id="word-pool"></div>
+
+      <div class="sorting-buckets">
+        <div class="bucket" onclick="placeInBucket('Anusvaar')">
+          <div class="bucket-title">अं (Anusvaar)</div>
+          <div id="bucket-Anusvaar"></div>
+        </div>
+        <div class="bucket" onclick="placeInBucket('Anunasik')">
+          <div class="bucket-title">अँ (Anunasik)</div>
+          <div id="bucket-Anunasik"></div>
+        </div>
+      </div>
+      <button class="btn" id="verify-sort-btn" onclick="verifySorting()" style="margin-top: 15px;">Submit Classifications</button>
     </div>
 
     <div class="status-bar">
@@ -281,9 +319,9 @@
 
   <!-- 4. END GAME SCREEN -->
   <div id="end-screen" class="screen hidden">
-    <h2>🔒 Mission Accomplished!</h2>
+    <h2>🔒 Matrix Fully Decrypted!</h2>
     <div class="appreciation-box">
-      Master Codebreaker Status Achieved!
+      Master Cyber Operator Clearance Granted!
     </div>
     <p>You decrypted Chapter 1 vocabulary and mastered its grammar patterns successfully.</p>
     <p>Final Score: <strong id="final-score">0</strong></p>
@@ -292,50 +330,81 @@
 </div>
 
 <script>
-  // Audio Assets
+  // Sound Effects
   const soundCorrect = new Audio('assets/correct.mp3');
   const soundWrong = new Audio('assets/wrong.mp3');
 
-  // Chapter 1 Data (Jago Pyaare)
-  const gameData = {
+  // Chapter 1 Source Data
+  const rawGameData = {
     level1: [
-      { hindi: "नभ", answer: "SKY", bank: ["S", "K", "Y", "A", "O", "R"] },
-      { hindi: "भोर", answer: "MORNING", bank: ["M", "O", "R", "N", "I", "N", "G", "E", "T"] },
-      { hindi: "छवि", answer: "FORM", bank: ["F", "O", "R", "M", "S", "H", "A", "P"] },
-      { hindi: "न्यारी", answer: "UNIQUE", bank: ["U", "N", "I", "Q", "U", "E", "R", "A", "S"] }
-    ],
-    level2: [
-      { 
-        prompt: "Find the word that does NOT use Anusvaar (ं):", 
-        options: ["गंगा", "चंचल", "आँख", "कंपन"], 
-        answer: "आँख", // Uses Anunasik (ँ)
-        reason: "'आँख' uses Anunasik (ँ), whereas others use Anusvaar (ं)."
+      {
+        clue: "जिसका कोई मूल्य न आँका जा सके",
+        target: "अनमोल",
+        grid: [
+          ["म", "हि", "मा", "ज्ञान", "स"],
+          ["अ", "न", "मो", "ल", "स्कृ"],
+          ["ति", "सं", "र", "क्ष", "क"]
+        ]
       },
-      { 
-        prompt: "Find the word that does NOT use Anunasik (ँ):", 
-        options: ["मुँह", "धुँधला", "सुंदर", "कुआँ"], 
-        answer: "सुंदर", // Uses Anusvaar (ं)
-        reason: "'सुंदर' uses Anusvaar (ं), whereas others use Anunasik (ँ)."
+      {
+        clue: "संरक्षण करने वाला / देखभाल करने वाला",
+        target: "संरक्षक",
+        grid: [
+          ["सं", "र", "क्ष", "क", "धा"],
+          ["न्या", "री", "छ", "वि", "भों"],
+          ["अ", "न", "मो", "ल", "र"]
+        ]
       },
-      { 
-        prompt: "Identify the word that is NOT a Noun (संज्ञा) from the chapter:", 
-        options: ["चिड़िया", "सूरज", "कमल", "सुंदर"], 
-        answer: "सुंदर", // Adjective (विशेषण)
-        reason: "'सुंदर' is an Adjective (विशेषण); the rest are Nouns (संज्ञा)."
+      {
+        clue: "सुबह का समय (प्रातः काल)",
+        target: "भोर",
+        grid: [
+          ["न", "भ", "भोर", "क", "म"],
+          ["ल", "जल", "सूर", "ज", "कि"],
+          ["र", "ण", "छ", "वि", "न्या"]
+        ]
+      },
+      {
+        clue: "आकाश / आसमान",
+        target: "नभ",
+        grid: [
+          ["न", "भ", "वि", "ता", "न"],
+          ["सु", "ं", "द", "र", "म"],
+          ["ज", "ल", "ज", "क", "ल"]
+        ]
       }
-    ]
+    ],
+    level2: {
+      words: [
+        { text: "गंगा", type: "Anusvaar" },
+        { text: "आँख", type: "Anunasik" },
+        { text: "चंचल", type: "Anusvaar" },
+        { text: "मुँह", type: "Anunasik" },
+        { text: "कंपन", type: "Anusvaar" },
+        { text: "कुआँ", type: "Anunasik" }
+      ]
+    }
   };
 
   // State Variables
   let currentLevel = 1;
   let currentQuestionIndex = 0;
   let score = 0;
-  let attempts = 0;
-  const maxAttempts = 2;
+  let selectedCells = [];
+  let selectedChip = null;
+  let userSortAssignments = {};
+  let randomizedLevel1Data = [];
+  let randomizedLevel2Words = [];
 
-  // Level 1 Specific State
-  let currentSolution = [];
-  let userSlots = [];
+  // Fisher-Yates Array Randomizer Utility
+  function shuffleArray(array) {
+    const arr = [...array];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
 
   // Navigation Logic
   function showInstructionScreen() {
@@ -344,213 +413,174 @@
   }
 
   function startGame() {
+    // Randomize Question Data on Game Initialization
+    randomizedLevel1Data = shuffleArray(rawGameData.level1);
+    randomizedLevel2Words = shuffleArray(rawGameData.level2.words);
+
     document.getElementById("instruction-screen").classList.add("hidden");
     document.getElementById("game-screen").classList.remove("hidden");
     loadQuestion();
   }
 
   function loadQuestion() {
-    attempts = 0;
-    document.getElementById("chances-left").innerText = maxAttempts - attempts;
     document.getElementById("next-btn").classList.add("hidden");
 
     if (currentLevel === 1) {
       document.getElementById("level1-ui").classList.remove("hidden");
       document.getElementById("level2-ui").classList.add("hidden");
-      document.getElementById("level-indicator").innerText = "Level 1: Secret Code Breaker";
-      setupCodeBreaker();
+      document.getElementById("level-indicator").innerText = "Level 1: Matrix Grid Decryptor";
+      setupMatrixLevel();
     } else {
       document.getElementById("level1-ui").classList.add("hidden");
       document.getElementById("level2-ui").classList.remove("hidden");
-      document.getElementById("level-indicator").innerText = "Level 2: Pattern Finder (Odd One Out)";
-      setupPatternFinder();
+      document.getElementById("level-indicator").innerText = "Level 2: Category Sorting";
+      setupSortingLevel();
     }
   }
 
-  // --- LEVEL 1: CODE BREAKER LOGIC ---
-  function setupCodeBreaker() {
-    const qData = gameData.level1[currentQuestionIndex];
-    document.getElementById("target-hindi").innerText = qData.hindi;
-    currentSolution = qData.answer.split("");
-    userSlots = new Array(currentSolution.length).fill("");
+  // --- LEVEL 1: MATRIX GRID LOGIC ---
+  function setupMatrixLevel() {
+    selectedCells = [];
+    const qData = randomizedLevel1Data[currentQuestionIndex];
+    document.getElementById("target-clue").innerText = qData.clue;
+    document.getElementById("submit-grid-btn").disabled = false;
 
-    // Create Slot Displays
-    const slotsContainer = document.getElementById("slots-container");
-    slotsContainer.innerHTML = "";
-    for (let i = 0; i < currentSolution.length; i++) {
-      const slot = document.createElement("div");
-      slot.className = "slot";
-      slot.id = `slot-${i}`;
-      slotsContainer.appendChild(slot);
+    const gridContainer = document.getElementById("matrix-grid");
+    gridContainer.innerHTML = "";
+
+    qData.grid.forEach((row, rIdx) => {
+      row.forEach((char, cIdx) => {
+        const cell = document.createElement("div");
+        cell.className = "matrix-cell";
+        cell.innerText = char;
+        cell.dataset.char = char;
+        cell.dataset.row = rIdx;
+        cell.dataset.col = cIdx;
+        cell.onclick = () => toggleCellSelection(cell);
+        gridContainer.appendChild(cell);
+      });
+    });
+  }
+
+  function toggleCellSelection(cell) {
+    if (cell.classList.contains("disabled")) return;
+
+    if (cell.classList.contains("selected")) {
+      cell.classList.remove("selected");
+      selectedCells = selectedCells.filter(c => c !== cell);
+    } else {
+      cell.classList.add("selected");
+      selectedCells.push(cell);
     }
+  }
 
-    // Create Scrambled Letter Bank
-    const letterBank = document.getElementById("letter-bank");
-    letterBank.innerHTML = "";
+  function verifyGridSelection() {
+    const qData = randomizedLevel1Data[currentQuestionIndex];
+    const constructedWord = selectedCells.map(c => c.dataset.char).join("");
+
+    if (constructedWord === qData.target) {
+      playSound(soundCorrect);
+      selectedCells.forEach(c => {
+        c.classList.remove("selected");
+        c.classList.add("correct", "disabled");
+      });
+      score += 10;
+      document.getElementById("score").innerText = score;
+      document.getElementById("submit-grid-btn").disabled = true;
+      document.getElementById("next-btn").classList.remove("hidden");
+    } else {
+      playSound(soundWrong);
+      selectedCells.forEach(c => {
+        c.classList.add("wrong");
+      });
+
+      setTimeout(() => {
+        selectedCells.forEach(c => {
+          c.classList.remove("wrong", "selected");
+        });
+        selectedCells = [];
+      }, 800);
+    }
+  }
+
+  // --- LEVEL 2: SORTING LOGIC ---
+  function setupSortingLevel() {
+    userSortAssignments = {};
+    selectedChip = null;
+    const pool = document.getElementById("word-pool");
+    const bucketAnusvaar = document.getElementById("bucket-Anusvaar");
+    const bucketAnunasik = document.getElementById("bucket-Anunasik");
+
+    pool.innerHTML = "";
+    bucketAnusvaar.innerHTML = "";
+    bucketAnunasik.innerHTML = "";
+
+    randomizedLevel2Words.forEach((item, index) => {
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      chip.innerText = item.text;
+      chip.id = `chip-${index}`;
+      chip.onclick = (e) => {
+        e.stopPropagation();
+        selectChip(chip, item);
+      };
+      pool.appendChild(chip);
+    });
+  }
+
+  function selectChip(chipElement, itemData) {
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active-chip"));
+    selectedChip = { element: chipElement, data: itemData };
+    chipElement.classList.add("active-chip");
+  }
+
+  function placeInBucket(bucketType) {
+    if (!selectedChip) return;
+
+    const bucketElem = document.getElementById(`bucket-${bucketType}`);
+    selectedChip.element.classList.remove("active-chip");
+    bucketElem.appendChild(selectedChip.element);
     
-    // Shuffle letter bank
-    let shuffledLetters = [...qData.bank].sort(() => Math.random() - 0.5);
-
-    shuffledLetters.forEach((char, index) => {
-      const btn = document.createElement("button");
-      btn.className = "letter-btn";
-      btn.innerText = char;
-      btn.id = `lbtn-${index}`;
-      btn.onclick = () => fillSlot(char, btn);
-      letterBank.appendChild(btn);
-    });
+    userSortAssignments[selectedChip.data.text] = bucketType;
+    selectedChip = null;
   }
 
-  function fillSlot(char, btnObj) {
-    const emptyIndex = userSlots.indexOf("");
-    if (emptyIndex !== -1) {
-      userSlots[emptyIndex] = char;
-      const slotElement = document.getElementById(`slot-${emptyIndex}`);
-      slotElement.innerText = char;
-      btnObj.disabled = true;
-      btnObj.style.opacity = "0.3";
+  function verifySorting() {
+    let allCorrect = true;
 
-      // If all slots are filled, evaluate submission
-      if (!userSlots.includes("")) {
-        checkCodeSolution();
+    randomizedLevel2Words.forEach(item => {
+      const assigned = userSortAssignments[item.text];
+      if (assigned !== item.type) {
+        allCorrect = false;
       }
-    }
-  }
+    });
 
-  function checkCodeSolution() {
-    attempts++;
-    document.getElementById("chances-left").innerText = maxAttempts - attempts;
-
-    const userAttempt = userSlots.join("");
-    const targetAnswer = currentSolution.join("");
-
-    if (userAttempt === targetAnswer) {
+    if (allCorrect && Object.keys(userSortAssignments).length === randomizedLevel2Words.length) {
       playSound(soundCorrect);
-      highlightSlots(true);
-      score += (attempts === 1) ? 10 : 5;
+      score += 20;
       document.getElementById("score").innerText = score;
+      document.getElementById("verify-sort-btn").disabled = true;
       finishTurn();
     } else {
       playSound(soundWrong);
-      highlightSlots(false);
-
-      if (attempts < maxAttempts) {
-        // Reset slots for 2nd chance after short delay
-        setTimeout(() => {
-          resetSlots();
-        }, 1000);
-      } else {
-        // Reveal correct answer on final failure
-        revealCodeSolution();
-        finishTurn();
-      }
+      alert("Some words are in the incorrect bucket or unassigned! Review your placements.");
     }
-  }
-
-  function highlightSlots(isCorrect) {
-    for (let i = 0; i < currentSolution.length; i++) {
-      const slot = document.getElementById(`slot-${i}`);
-      if (isCorrect) {
-        slot.classList.add("correct");
-      } else {
-        slot.classList.add("wrong");
-      }
-    }
-  }
-
-  function resetSlots() {
-    userSlots.fill("");
-    for (let i = 0; i < currentSolution.length; i++) {
-      const slot = document.getElementById(`slot-${i}`);
-      slot.innerText = "";
-      slot.className = "slot";
-    }
-    const buttons = document.querySelectorAll(".letter-btn");
-    buttons.forEach(btn => {
-      btn.disabled = false;
-      btn.style.opacity = "1";
-    });
-  }
-
-  function revealCodeSolution() {
-    for (let i = 0; i < currentSolution.length; i++) {
-      const slot = document.getElementById(`slot-${i}`);
-      slot.innerText = currentSolution[i];
-      slot.className = "slot correct";
-    }
-  }
-
-  // --- LEVEL 2: PATTERN FINDER LOGIC ---
-  function setupPatternFinder() {
-    const qData = gameData.level2[currentQuestionIndex];
-    document.getElementById("grammar-prompt").innerText = qData.prompt;
-
-    const patternContainer = document.getElementById("pattern-container");
-    patternContainer.innerHTML = "";
-
-    qData.options.forEach(option => {
-      const btn = document.createElement("button");
-      btn.className = "pattern-btn";
-      btn.innerText = option;
-      btn.onclick = () => checkPatternAnswer(btn, option, qData.answer);
-      patternContainer.appendChild(btn);
-    });
-  }
-
-  function checkPatternAnswer(selectedBtn, selectedOption, correctAnswer) {
-    attempts++;
-    document.getElementById("chances-left").innerText = maxAttempts - attempts;
-
-    if (selectedOption === correctAnswer) {
-      playSound(soundCorrect);
-      selectedBtn.classList.add("correct");
-      score += (attempts === 1) ? 10 : 5;
-      document.getElementById("score").innerText = score;
-      finishTurn();
-    } else {
-      playSound(soundWrong);
-      selectedBtn.classList.add("wrong");
-      selectedBtn.disabled = true;
-
-      if (attempts >= maxAttempts) {
-        revealPatternAnswer(correctAnswer);
-        finishTurn();
-      }
-    }
-  }
-
-  function revealPatternAnswer(correctAnswer) {
-    const buttons = document.querySelectorAll(".pattern-btn");
-    buttons.forEach(btn => {
-      btn.disabled = true;
-      if (btn.innerText === correctAnswer) {
-        btn.classList.add("correct");
-      }
-    });
   }
 
   function finishTurn() {
-    // Lock remaining input elements
-    const letterBtns = document.querySelectorAll(".letter-btn");
-    letterBtns.forEach(btn => btn.disabled = true);
-    
-    const patternBtns = document.querySelectorAll(".pattern-btn");
-    patternBtns.forEach(btn => btn.disabled = true);
-
     document.getElementById("next-btn").classList.remove("hidden");
   }
 
   function nextQuestion() {
-    const currentList = currentLevel === 1 ? gameData.level1 : gameData.level2;
-    currentQuestionIndex++;
-
-    if (currentQuestionIndex < currentList.length) {
-      loadQuestion();
-    } else if (currentLevel === 1) {
-      currentLevel = 2;
-      currentQuestionIndex = 0;
-      alert("Secret Codes Decrypted! Proceeding to Level 2: Pattern Finder (Grammar Concepts).");
-      loadQuestion();
+    if (currentLevel === 1) {
+      currentQuestionIndex++;
+      if (currentQuestionIndex < randomizedLevel1Data.length) {
+        loadQuestion();
+      } else {
+        currentLevel = 2;
+        alert("Matrix Decrypted! Advancing to Stage 2: Category Sorting.");
+        loadQuestion();
+      }
     } else {
       showEndScreen();
     }
