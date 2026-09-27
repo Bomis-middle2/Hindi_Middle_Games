@@ -33,6 +33,21 @@
       box-shadow: 0 10px 30px rgba(255, 202, 40, 0.2);
     }
 
+    /* Logo Container & Styling */
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .brand-logo {
+      max-width: 150px;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0px 4px 8px rgba(255, 202, 40, 0.3));
+    }
+
     .header {
       text-align: center;
       margin-bottom: 20px;
@@ -153,6 +168,12 @@
 <body>
 
   <div id="game-card">
+    <!-- LOGO FROM ASSETS FOLDER -->
+    <div class="logo-container">
+      <img src="assets/innovine-logo.png" alt="Innovine Logo" class="brand-logo" onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='block';">
+      <h2 id="alt-logo" style="display:none; color:#ffca28;">INNOVINE</h2>
+    </div>
+
     <div class="header">
       <h1>🎵 पाठ 10: भारत कोकिला 🎵</h1>
       <p>लता मंगेशकर की जीवन-यात्रा - 2 स्तर का खेल</p>
@@ -193,6 +214,71 @@
   </div>
 
   <script>
+    // Audio Context (Web Audio API for sound effects without external files)
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSound(type) {
+      initAudio();
+      if (!audioCtx) return;
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      const now = audioCtx.currentTime;
+
+      if (type === 'correct') {
+        // High Chime Sound
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.3); // A5
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'wrong') {
+        // Low Buzzer Sound
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.linearRampToValueAtTime(100, now + 0.3);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      } else if (type === 'click') {
+        // Click Sound
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400, now);
+        gain.gain.setValueAtTime(0.1, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+        osc.start(now);
+        osc.stop(now + 0.05);
+      } else if (type === 'win') {
+        // Fanfare Victory Sound
+        [261.63, 329.63, 392.00, 523.25].forEach((freq, idx) => {
+          const noteOsc = audioCtx.createOscillator();
+          const noteGain = audioCtx.createGain();
+          noteOsc.connect(noteGain);
+          noteGain.connect(audioCtx.destination);
+          
+          noteOsc.type = 'sine';
+          noteOsc.frequency.setValueAtTime(freq, now + idx * 0.1);
+          noteGain.gain.setValueAtTime(0.2, now + idx * 0.1);
+          noteGain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.25);
+          
+          noteOsc.start(now + idx * 0.1);
+          noteOsc.stop(now + idx * 0.1 + 0.25);
+        });
+      }
+    }
+
     // LEVEL 1: CHAPTER BASED QUESTIONS
     const level1Data = [
       {
@@ -262,6 +348,7 @@
     }
 
     function startLevel(lvl) {
+      playSound('click');
       currentLevel = lvl;
       currentQIndex = 0;
       currentQuestions = (lvl === 1) ? level1Data : level2Data;
@@ -299,6 +386,7 @@
       btns.forEach(b => b.style.pointerEvents = 'none');
 
       if (selectedIdx === q.ans) {
+        playSound('correct');
         feedback.style.color = '#81c784';
         feedback.innerText = '✓ अति उत्तम! सही उत्तर।';
         btns[selectedIdx].style.background = '#2e7d32';
@@ -306,6 +394,7 @@
         score += 10;
         document.getElementById('score-num').innerText = score;
       } else {
+        playSound('wrong');
         feedback.style.color = '#e57373';
         feedback.innerText = `✗ गलत उत्तर! सही उत्तर था: ${q.opts[q.ans]}`;
         btns[selectedIdx].style.background = '#c62828';
@@ -323,6 +412,7 @@
     }
 
     function finishLevel() {
+      playSound('win');
       showScreen('end-screen');
       const title = document.getElementById('end-title');
       const desc = document.getElementById('end-desc');
@@ -341,6 +431,7 @@
     }
 
     function nextAction() {
+      playSound('click');
       if (currentLevel === 1) {
         startLevel(2);
       } else {
