@@ -8,6 +8,7 @@
         * {
             box-sizing: border-box;
             user-select: none;
+            -webkit-user-select: none;
         }
         body {
             margin: 0;
@@ -22,7 +23,7 @@
         }
         #game-header {
             width: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             padding: 10px 15px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
@@ -43,7 +44,7 @@
         }
         #question-box {
             margin-top: 8px;
-            font-size: 18px;
+            font-size: 17px;
             font-weight: bold;
             color: #d35400;
             background: #fff;
@@ -51,6 +52,7 @@
             border-radius: 20px;
             display: inline-block;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            max-width: 90%;
         }
         #game-container {
             position: relative;
@@ -60,7 +62,7 @@
         }
         .balloon {
             position: absolute;
-            bottom: -130px;
+            bottom: -140px;
             width: 110px;
             height: 130px;
             border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
@@ -71,10 +73,11 @@
             padding: 10px;
             color: white;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
             cursor: pointer;
             box-shadow: inset -10px -10px 20px rgba(0,0,0,0.2);
             animation: floatUp 6s linear forwards;
+            line-height: 1.2;
         }
         .balloon::after {
             content: "";
@@ -100,7 +103,7 @@
                 opacity: 1;
             }
             100% {
-                bottom: 100%;
+                bottom: 105%;
                 opacity: 1;
             }
         }
@@ -133,6 +136,7 @@
             border: none;
             padding: 10px 20px;
             font-size: 16px;
+            font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
             margin-top: 15px;
@@ -235,6 +239,7 @@
         let score = 0;
         let balloonInterval;
         let activeQuestions = [];
+        let isQuestionTransitioning = false;
 
         const questionBox = document.getElementById("question-box");
         const scoreDisplay = document.getElementById("score");
@@ -247,6 +252,7 @@
             score = 0;
             currentLevel = 1;
             currentQIndex = 0;
+            isQuestionTransitioning = false;
             scoreDisplay.innerText = score;
             levelDisplay.innerText = currentLevel;
             levelModal.style.display = "none";
@@ -257,6 +263,8 @@
 
         function loadQuestion() {
             clearBalloons();
+            isQuestionTransitioning = false;
+
             if (currentQIndex >= activeQuestions.length) {
                 if (currentLevel === 1) {
                     showLevelTransition();
@@ -269,26 +277,29 @@
             const qData = activeQuestions[currentQIndex];
             questionBox.innerText = `L${currentLevel} Q${currentQIndex + 1}: ${qData.q}`;
 
+            // विकल्पों को रैंडम क्रम (Shuffle) में प्रस्तुत करना
+            let shuffledOptions = [...qData.options].sort(() => Math.random() - 0.5);
             let optionIndex = 0;
-            spawnBalloon(qData.options[optionIndex], qData.correct);
+
+            // पहला गुब्बारा तुरंत छोड़ें
+            spawnBalloon(shuffledOptions[optionIndex], qData.correct);
             optionIndex++;
 
+            // लगातार गुब्बारे ऊपर भेजने का लूप
             balloonInterval = setInterval(() => {
-                if (optionIndex < qData.options.length) {
-                    spawnBalloon(qData.options[optionIndex], qData.correct);
-                    optionIndex++;
-                } else {
-                    optionIndex = 0;
-                }
-            }, 1200);
+                if (isQuestionTransitioning) return;
+                
+                spawnBalloon(shuffledOptions[optionIndex], qData.correct);
+                optionIndex = (optionIndex + 1) % shuffledOptions.length;
+            }, 1400);
         }
 
         function spawnBalloon(text, correctAnswer) {
             const balloon = document.createElement("div");
             balloon.className = "balloon";
             
-            const maxLeft = gameContainer.offsetWidth - 120;
-            const randomLeft = Math.max(10, Math.floor(Math.random() * maxLeft));
+            const maxLeft = Math.max(20, gameContainer.offsetWidth - 130);
+            const randomLeft = Math.floor(Math.random() * maxLeft);
             balloon.style.left = randomLeft + "px";
 
             const randomColor = colors[Math.floor(Math.random() * colors.length)];
@@ -301,7 +312,9 @@
             balloon.appendChild(string);
 
             balloon.onclick = function() {
-                popBalloon(balloon, text, correctAnswer);
+                if (!isQuestionTransitioning) {
+                    popBalloon(balloon, text, correctAnswer);
+                }
             };
 
             balloon.addEventListener('animationend', () => {
@@ -319,11 +332,12 @@
             }, 300);
 
             if (selectedText === correctAnswer) {
+                isQuestionTransitioning = true;
                 score += 10;
                 scoreDisplay.innerText = score;
                 currentQIndex++;
                 clearInterval(balloonInterval);
-                setTimeout(loadQuestion, 500);
+                setTimeout(loadQuestion, 600);
             } else {
                 score = Math.max(0, score - 2);
                 scoreDisplay.innerText = score;
